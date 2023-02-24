@@ -23,9 +23,10 @@ int main(int argc, char* args[]) {
     IMG_Init(IMG_INIT_JPG);
     TTF_Init();
     SDL_ShowCursor(SDL_DISABLE);
-
     loadSettingsFile();
+
     window.init(settings.widowWidth, settings.windowHeight, "Loading...");
+    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 100, 100);
     
     while(mode != QUIT) {
         if (mode == TITLE_SCREEN) {
@@ -47,5 +48,6 @@ int main(int argc, char* args[]) {
     return 0;
 }
 
+// TODO: Fix memory leak
 // TODO: Make main menu
 // TODO: Make video settings (1920|1080 && 1280|720)

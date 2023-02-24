@@ -6,14 +6,13 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static void imagesInit();
+static void imagesInit(void);
 
 void runMainMenu(void) {
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;
 
-    SDL_GetMouseState(&xMousePos, &yMousePos);
     SDL_SetWindowTitle(window.window, "Title");
     imagesInit();
 
@@ -45,6 +44,10 @@ void runMainMenu(void) {
 
 }
 
-static void imagesInit() {
-    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 100, 100, xMousePos, yMousePos);
+static void imagesInit(void) {
+    updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
+}
+
+static void destroyImages(void) {
+
 }

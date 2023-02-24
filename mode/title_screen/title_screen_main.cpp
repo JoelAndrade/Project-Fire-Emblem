@@ -8,30 +8,28 @@
 
 textureImage titleScreen;
 
-static void imagesInit();
+static void imagesInit(void);
+static void destroyImages(void);
 
 void runTitleScreen(void) {
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;
 
-    SDL_GetMouseState(&xMousePos, &yMousePos);
     SDL_SetWindowTitle(window.window, "Title");
     imagesInit();
 
-    while(true) {
+    while(mode == TITLE_SCREEN) {
         startingTick = SDL_GetTicks();
         while(SDL_PollEvent(&event)) {
             updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             if (event.type == SDL_QUIT) {
                 mode = QUIT;
-                return;
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     mode = MAIN_MENU;
-                    return;
                 }
             }
 
@@ -46,9 +44,14 @@ void runTitleScreen(void) {
         SDL_RenderPresent(window.renderer);
     }
 
+    destroyImages();
 }
 
-static void imagesInit() {
-    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 100, 100, xMousePos, yMousePos);
+static void imagesInit(void) {
+    updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
     titleScreen.init(window.renderer, "images/Images/title_images/Start Menu.jpg", window.w, window.h);
+}
+
+static void destroyImages(void) {
+    titleScreen.destroy();
 }

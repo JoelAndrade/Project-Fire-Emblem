@@ -45,7 +45,7 @@ class win {
             SDL_SetWindowSize(window, w, h);
         }
 
-        void getWindowSize() {
+        void getWindowSize(void) {
             SDL_GetWindowSize(window, &w, &h);
         }
 
@@ -56,7 +56,7 @@ class win {
             return texture;
         }
         
-        void clearRender() {
+        void clearRender(void) {
             SDL_SetRenderDrawColor(renderer, renderColor.r, renderColor.g, renderColor.b, renderColor.a);
             SDL_RenderClear(renderer);
         }
@@ -341,7 +341,7 @@ class textureImage {
             SDL_RenderCopy(renderer, texture, &originalRect, &newRect);
         }
 
-        void destroy() {
+        void destroy(void) {
             SDL_DestroyTexture(texture);
         }
 };
@@ -477,7 +477,7 @@ class textureText {
             font = TTF_OpenFont(fontFile, fontSize);
         }
 
-        void destroy() {
+        void destroy(void) {
             SDL_DestroyTexture(texture);
             TTF_CloseFont(font);
         }
