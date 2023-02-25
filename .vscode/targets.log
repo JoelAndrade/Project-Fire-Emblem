@@ -6,7 +6,7 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri Feb 24 14:15:09 2023
+# Make data base, printed on Fri Feb 24 22:10:50 2023
 
 # Variables
 
@@ -27,8 +27,7 @@ VBOX_MSI_INSTALL_PATH = D:\Program Files\Oracle\VirtualBox\
 # environment
 LOCALAPPDATA = C:\Users\Joel\AppData\Local
 # environment
-VSCODE_CWD = C:\Users\Joel\App 
-Data\Local\Programs\Microsoft VS Code
+VSCODE_CWD = C:\Users\Joel\AppData\Local\Programs\Microsoft VS Code
 # environment
 CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
 # environment
@@ -44,7 +43,7 @@ MAKE_COMMAND := C:/ProgramData/chocolatey/lib/make/tools/install/bin/make.exe
 # automatic
 @D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\LOCAL\crashpad_2996_XBNLIIHNGUKUWQOE
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\LOCAL\crashpad_7884_QLYHDINKVFVZGRTT
 # environment
 ONEDRIVECOMMERCIAL = D:\Joel\OneDrive - csulb
 # environment
@@ -98,7 +97,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 2996
+VSCODE_PID = 7884
 # automatic
 ?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
 # environment
@@ -234,7 +233,7 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 94 Stepping 3, GenuineIntel
 
 # Directories
 
-# . (key d:/Users/Joel/Documents/C++/Project_Fire_Emblem, mtime 1677276896): 26 files, no impossibilities.
+# . (key d:/Users/Joel/Documents/C++/Project_Fire_Emblem, mtime 1677304693): 26 files, no impossibilities.
 
 # 26 files, no impossibilities in 1 directories.
 
@@ -247,7 +246,7 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 94 Stepping 3, GenuineIntel
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2023-02-24 14:14:37
+#  Last modified 2023-02-24 14:32:06
 #  File has been updated.
 #  Successfully updated.
 
@@ -302,8 +301,7 @@ all:
 	save/*.cpp \
 	-I src/include -I utilities/SDL2 -I utilities/file \
 	-L src/lib \
-	-o game images/icon/exe_ic 
-on.res \
+	-o game images/icon/exe_icon.res \
 	-l mingw32 -l SDL2main -l SDL2 -l SDL2_image -l SDL2_ttf
 
 # Not a target:
@@ -326,6 +324,6 @@ on.res \
 # strcache performance: lookups = 36 / hit rate = 19%
 # hash-table stats:
 # Load=29/8192=0%, Rehash=0, Collisions=0/36=0%
-# Finished Make data base on Fri Feb 24 14:15:09 2023
+# Finished Make data base on Fri Feb 24 22:10:50 2023
 
  

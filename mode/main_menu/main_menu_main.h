@@ -1,6 +1,6 @@
 #ifndef MAIN_MENU_MAIN
 #define MAIN_MENU_MAIN
 
-void runMainMenu(void);
+void mainMenu_main(void);
 
 #endif // MAIN_MENU_MAIN

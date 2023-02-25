@@ -16,6 +16,8 @@ int mode = TITLE_SCREEN;
 int xMousePos;
 int yMousePos;
 
+static double scale(double scaleNumber);
+
 int main(int argc, char* args[]) {
     //Init SDL Stuff
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -26,16 +28,15 @@ int main(int argc, char* args[]) {
     loadSettingsFile();
 
     window.init(settings.widowWidth, settings.windowHeight, "Loading...");
-    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 100, 100);
+    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
     
     while(mode != QUIT) {
         if (mode == TITLE_SCREEN) {
-            runTitleScreen(); 
+            titleScreen_main();
         }
         if (mode == MAIN_MENU) {
-            runMainMenu();
+            mainMenu_main();
         }
-          
     }
 
     // Save and clean everything
@@ -48,6 +49,9 @@ int main(int argc, char* args[]) {
     return 0;
 }
 
-// TODO: Fix memory leak
+static double scale(double scaleNumber) {
+     return scaleNumber * (window.h/720.0);
+}
+
 // TODO: Make main menu
 // TODO: Make video settings (1920|1080 && 1280|720)

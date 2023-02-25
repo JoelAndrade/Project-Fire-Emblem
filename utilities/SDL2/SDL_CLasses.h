@@ -247,7 +247,7 @@ class textureImage {
         SDL_Rect newRect;
 
         textureImage() {}
-        textureImage(SDL_Renderer* renderer, const char* file) {
+        textureImage(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 1, int yPos = 1) {
             SDL_Surface* imageSurface = IMG_Load(file);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
@@ -256,10 +256,10 @@ class textureImage {
             originalRect.w = imageSurface->w;
             originalRect.h = imageSurface->h;
             originalRect.makeDimensions();
-            newRect.x = 0;
-            newRect.y = 0;
-            newRect.w = imageSurface->w;
-            newRect.h = imageSurface->h;
+            newRect.x = xPos;
+            newRect.y = xPos;
+            newRect.w = imageSurface->w * scaleImage;
+            newRect.h = imageSurface->h * scaleImage;
             newRect.makeDimensions();
                         
             SDL_FreeSurface(imageSurface);
@@ -282,7 +282,7 @@ class textureImage {
             SDL_FreeSurface(imageSurface);
         }
 
-        void init(SDL_Renderer* renderer, const char* file) {
+        void init(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
             SDL_Surface* imageSurface = IMG_Load(file);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
@@ -291,10 +291,10 @@ class textureImage {
             originalRect.w = imageSurface->w;
             originalRect.h = imageSurface->h;
             originalRect.makeDimensions();
-            newRect.x = 0;
-            newRect.y = 0;
-            newRect.w = imageSurface->w;
-            newRect.h = imageSurface->h;
+            newRect.x = xPos;
+            newRect.y = yPos;
+            newRect.w = imageSurface->w * scaleImage;
+            newRect.h = imageSurface->h * scaleImage;
             newRect.makeDimensions();
                         
             SDL_FreeSurface(imageSurface);

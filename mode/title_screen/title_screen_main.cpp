@@ -11,7 +11,7 @@ textureImage titleScreen;
 static void imagesInit(void);
 static void destroyImages(void);
 
-void runTitleScreen(void) {
+void titleScreen_main(void) {
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;

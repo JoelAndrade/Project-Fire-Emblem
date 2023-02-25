@@ -1,4 +1,4 @@
-make.exe --dry-run --keep-going --print-directory
+make.exe --dry-run --always-make --keep-going --print-directory
 make: Entering directory 'd:/Users/Joel/Documents/C++/Project_Fire_Emblem'
 windres -i images/icon/exe_icon.rc -O coff -o images/icon/exe_icon.res
 g++ \
