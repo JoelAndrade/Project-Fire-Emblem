@@ -1,12 +1,9 @@
 #include "../../main.h"
-#include "settings_main_menu.h"
 #include "private_main_menu.h"
 
 #include <SDL2/SDL.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
-
-static bool hold;
 
 static void runSettings(void);
 static void renderScreen(void);

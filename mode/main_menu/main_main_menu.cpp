@@ -1,6 +1,5 @@
 #include "../../main.h"
 #include "main_main_menu.h"
-#include "settings_main_menu.h"
 #include "private_main_menu.h"
 
 #include <SDL2/SDL.h>
@@ -8,7 +7,7 @@
 #include <SDL_Util.h>
 
 int mainMenuMode;
-static bool hold;
+bool hold;
 
 SDL_Point point = {
     .x = xMousePos,
@@ -16,16 +15,6 @@ SDL_Point point = {
 };
 
 textureImage background;
-
-static textureImage newGame_flat;
-static textureImage newGame_light;
-static textureImage newGame_click;
-static textureImage continue_flat;
-static textureImage continue_light;
-static textureImage continue_click;
-static textureImage settings_flat;
-static textureImage settings_light;
-static textureImage settings_click;
 
 textureImage game_flat;
 textureImage game_light;
@@ -37,12 +26,32 @@ textureImage audio_flat;
 textureImage audio_light;
 textureImage audio_click;
 
+static textureImage newGame_flat;
+static textureImage newGame_light;
+static textureImage newGame_click;
+static textureImage continue_flat;
+static textureImage continue_light;
+static textureImage continue_click;
+static textureImage settings_flat;
+static textureImage settings_light;
+static textureImage settings_click;
 
-
+void menuEvent(SDL_Rect rect, int event);
 static void runMainMenu(void);
 static void renderScreen(void);
 static void imagesInit(void);
 static void destroyImages(void);
+
+void menuEvent(SDL_Rect rect, int event) {
+    point = {
+        .x = xMousePos,
+        .y = yMousePos,
+    };
+
+    if (SDL_PointInRect(&point, &rect)) {
+        mainMenuMode = event;
+    }
+}
 
 void main_main_menu(void) {
     imagesInit();
@@ -97,7 +106,7 @@ static void runMainMenu(void) {
             if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
-                    mainMenuMode = SETTINGS;
+                    menuEvent(settings_flat.newRect, SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
                     mainMenuMode = QUIT_MAIN_MENU;
