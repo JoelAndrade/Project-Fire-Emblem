@@ -1,7 +1,7 @@
 #include "main.h"
 #include "save/settings.h"
 #include "mode/title_screen/title_screen_main.h"
-#include "mode/main_menu/main_menu_main.h"
+#include "mode/main_menu/main_main_menu.h"
 
 #include <iostream>
 #include <SDL2/SDL.h>
@@ -30,12 +30,12 @@ int main(int argc, char* args[]) {
     window.init(settings.widowWidth, settings.windowHeight, "Loading...");
     mouseCursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
     
-    while(mode != QUIT) {
+    while (mode != QUIT) {
         if (mode == TITLE_SCREEN) {
             titleScreen_main();
         }
         if (mode == MAIN_MENU) {
-            mainMenu_main();
+            main_main_menu();
         }
     }
 
@@ -54,4 +54,5 @@ static double scale(double scaleNumber) {
 }
 
 // TODO: Make main menu
+// TODO: Create hit box to the menu options
 // TODO: Make video settings (1920|1080 && 1280|720)

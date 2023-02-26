@@ -27,7 +27,7 @@ void titleScreen_main(void) {
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
+            if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     mode = MAIN_MENU;
                 }
@@ -49,7 +49,7 @@ void titleScreen_main(void) {
 
 static void imagesInit(void) {
     updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
-    titleScreen.init(window.renderer, "images/Images/title_images/Start Menu.jpg", window.w, window.h);
+    titleScreen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 
 static void destroyImages(void) {
