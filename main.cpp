@@ -32,7 +32,7 @@ int main(int argc, char* args[]) {
     
     while (mode != QUIT) {
         if (mode == TITLE_SCREEN) {
-            titleScreen_main();
+            main_titleScreen();
         }
         if (mode == MAIN_MENU) {
             main_main_menu();
@@ -54,5 +54,7 @@ static double scale(double scaleNumber) {
 }
 
 // TODO: Make main menu
-// TODO: Create hit box to the menu options
-// TODO: Make video settings (1920|1080 && 1280|720)
+// remove the 1080 highlights if not used
+// Implement aspect ratio change 
+
+// TODO: Implement sound

@@ -26,6 +26,13 @@ textureImage audio_flat;
 textureImage audio_light;
 textureImage audio_click;
 
+textureImage apRatio1080_flat;
+textureImage apRatio1080_light;
+textureImage apRatio1080_click;
+textureImage apRatio720_flat;
+textureImage apRatio720_light;
+textureImage apRatio720_click;
+
 static textureImage newGame_flat;
 static textureImage newGame_light;
 static textureImage newGame_click;
@@ -36,7 +43,14 @@ static textureImage settings_flat;
 static textureImage settings_light;
 static textureImage settings_click;
 
+textureImage arrow_flat;
+textureImage arrow_light;
+textureImage arrow_click;
+
 void menuEvent(SDL_Rect rect, int event);
+void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click, SDL_RendererFlip);
+void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click);
+
 static void runMainMenu(void);
 static void renderScreen(void);
 static void imagesInit(void);
@@ -53,15 +67,37 @@ void menuEvent(SDL_Rect rect, int event) {
     }
 }
 
+void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click) {
+    if (SDL_PointInRect(&point, &box_flat.newRect) && hold) {
+        box_click.render(window.renderer);
+    }
+    else if (SDL_PointInRect(&point, &box_flat.newRect)) {
+        box_light.render(window.renderer);
+    }
+    else {
+        box_flat.render(window.renderer);
+    }
+}
+void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click, SDL_RendererFlip) {
+    if (SDL_PointInRect(&point, &box_flat.newRect) && hold) {
+        box_click.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
+    }
+    else if (SDL_PointInRect(&point, &box_flat.newRect)) {
+        box_light.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
+    }
+    else {
+        box_flat.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
+    }
+}
+
 void main_main_menu(void) {
     imagesInit();
     mainMenuMode = MAIN_MENU_MAIN;
 
     while (mode == MAIN_MENU) {
-        if (mainMenuMode == MAIN_MENU_MAIN) {
-            runMainMenu();
-        }
-        else if (mainMenuMode == NEWGAME) {
+        runMainMenu();
+
+        if (mainMenuMode == NEWGAME) {
 
         }
         else if (mainMenuMode == COUNTINUE) {
@@ -69,9 +105,6 @@ void main_main_menu(void) {
         }
         else if (mainMenuMode == SETTINGS) {
             settings_main_menu();
-        }
-        else {
-            break;
         }
     }
 
@@ -88,10 +121,13 @@ static void runMainMenu(void) {
         startingTick = SDL_GetTicks();
 
         while(SDL_PollEvent(&event)) {
-            updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             if (event.type == SDL_QUIT) {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
+            }
+
+            if (event.motion.type) {
+                updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -131,35 +167,9 @@ static void renderScreen(void) {
 
     background.render(window.renderer);
 
-    if (SDL_PointInRect(&point, &newGame_flat.newRect) && hold) {
-        newGame_click.render(window.renderer);
-    }
-    else if (SDL_PointInRect(&point, &newGame_flat.newRect)) {
-        newGame_light.render(window.renderer);
-    }
-    else {
-        newGame_flat.render(window.renderer);
-    }
-
-    if (SDL_PointInRect(&point, &continue_flat.newRect) && hold) {
-    continue_click.render(window.renderer);
-    }
-    else if (SDL_PointInRect(&point, &continue_flat.newRect)) {
-        continue_light.render(window.renderer);
-    }
-    else {
-        continue_flat.render(window.renderer);
-    }
-
-    if (SDL_PointInRect(&point, &settings_flat.newRect) && hold) {
-        settings_click.render(window.renderer);
-    }
-    else if (SDL_PointInRect(&point, &settings_flat.newRect)) {
-        settings_light.render(window.renderer);
-    }
-    else {
-        settings_flat.render(window.renderer);
-    }
+    renderBox(newGame_flat, newGame_light, newGame_click);
+    renderBox(continue_flat, continue_light, continue_click);
+    renderBox(settings_flat, settings_light, settings_click);
 
     mouseCursor.render(window.renderer);
     
@@ -190,26 +200,18 @@ static void imagesInit(void) {
     audio_flat.init(window.renderer,  "images/Images/main_menu_images/Audio.png",   0.2, window.w/2, 5*window.h/6);
     audio_light.init(window.renderer, "images/Images/main_menu_images/AudioH.png",  0.2, window.w/2, 5*window.h/6);
     audio_click.init(window.renderer, "images/Images/main_menu_images/AudioHL.png", 0.2, window.w/2, 5*window.h/6);
+    
+    apRatio1080_flat.init(window.renderer,  "images/Images/main_menu_images/1080.png",   0.2, window.w/2, window.h/2);
+    // apRatio1080_light.init(window.renderer, "images/Images/main_menu_images/1080H.png",  0.2, window.w/2, window.h/2);
+    // apRatio1080_click.init(window.renderer, "images/Images/main_menu_images/1080HL.png", 0.2, window.w/2, window.h/2);
+    apRatio720_flat.init(window.renderer,   "images/Images/main_menu_images/720.png",    0.2, window.w/2, window.h/2);
+    // apRatio720_light.init(window.renderer,  "images/Images/main_menu_images/720H.png",   0.2, window.w/2, window.h/2);
+    // apRatio720_click.init(window.renderer,  "images/Images/main_menu_images/720HL.png",  0.2, window.w/2, window.h/2);
 
-    newGame_flat.newRect.makeDimensions();
-    newGame_light.newRect.makeDimensions();
-    newGame_click.newRect.makeDimensions();
-    continue_light.newRect.makeDimensions();
-    continue_flat.newRect.makeDimensions();
-    continue_click.newRect.makeDimensions();
-    settings_flat.newRect.makeDimensions();
-    settings_light.newRect.makeDimensions();
-    settings_click.newRect.makeDimensions();
+    arrow_flat.init(window.renderer,  "images/Images/main_menu_images/Arrow.png",   0.2);
+    arrow_light.init(window.renderer, "images/Images/main_menu_images/ArrowH.png",  0.2);
+    arrow_click.init(window.renderer, "images/Images/main_menu_images/ArrowHL.png", 0.2);
 
-    game_flat.newRect.makeDimensions();
-    game_light.newRect.makeDimensions();
-    game_click.newRect.makeDimensions();
-    video_light.newRect.makeDimensions();
-    video_flat.newRect.makeDimensions();
-    video_click.newRect.makeDimensions();
-    audio_flat.newRect.makeDimensions();
-    audio_light.newRect.makeDimensions();
-    audio_click.newRect.makeDimensions();
 
     newGame_flat.newRect.shiftXY();
     newGame_light.newRect.shiftXY();
@@ -230,6 +232,17 @@ static void imagesInit(void) {
     audio_flat.newRect.shiftXY();
     audio_light.newRect.shiftXY();
     audio_click.newRect.shiftXY();
+
+    apRatio1080_flat.newRect.shiftXY();
+    apRatio1080_light.newRect.shiftXY();
+    apRatio1080_click.newRect.shiftXY();
+    apRatio720_flat.newRect.shiftXY();
+    apRatio720_light.newRect.shiftXY();
+    apRatio720_click.newRect.shiftXY();
+
+    arrow_flat.newRect.shiftXY();
+    arrow_light.newRect.shiftXY();
+    arrow_click.newRect.shiftXY();
 }
 
 static void destroyImages(void) {
@@ -254,4 +267,15 @@ static void destroyImages(void) {
     audio_flat.destroy();
     audio_light.destroy();
     audio_click.destroy();
+
+    apRatio1080_flat.destroy();
+    apRatio1080_light.destroy();
+    apRatio1080_click.destroy();
+    apRatio720_flat.destroy();
+    apRatio720_light.destroy();
+    apRatio720_click.destroy();
+
+    arrow_flat.destroy();
+    arrow_light.destroy();
+    arrow_click.destroy();
 }

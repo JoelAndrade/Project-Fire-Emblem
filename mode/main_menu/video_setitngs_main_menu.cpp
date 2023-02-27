@@ -5,33 +5,19 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static void runSettings(void);
+static void runVideoSettings(void);
 static void renderScreen(void);
 
-void settings_main_menu(void) {
-
-    while (mainMenuMode == SETTINGS) {
-        runSettings();
-
-        if (mainMenuMode == GAME_SETTINGS) {
-
-        }
-        else if (mainMenuMode == VIDEO_SETTINGS) {
-            video_settings_main_menu();
-        }
-        else if (mainMenuMode == AUDIO_SETTINGS) {
-
-        }
-    }
+void video_settings_main_menu(void) {
+    runVideoSettings();
 }
 
-static void runSettings(void) {
+static void runVideoSettings(void) {
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;
 
-
-    while (mainMenuMode == SETTINGS) {
+    while (mainMenuMode == VIDEO_SETTINGS) {
         startingTick = SDL_GetTicks();
 
         while(SDL_PollEvent(&event)) {
@@ -56,10 +42,9 @@ static void runSettings(void) {
             if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
-                    menuEvent(video_flat.newRect, VIDEO_SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    mainMenuMode = MAIN_MENU_MAIN;
+                    mainMenuMode = SETTINGS;
                 }
             }
 
@@ -76,13 +61,28 @@ static void renderScreen(void) {
         .y = yMousePos,
     };
 
+
     window.clearRender();
 
     background.render(window.renderer);
 
-    renderBox(game_flat, game_light, game_click);
-    renderBox(video_flat, video_light, video_click);
-    renderBox(audio_flat, audio_light, audio_click);
+    apRatio1080_flat.render(window.renderer);
+
+    arrow_flat.changePos(window.w/5, window.h/2);
+    arrow_light.changePos(window.w/5, window.h/2);
+    arrow_click.changePos(window.w/5, window.h/2);
+    arrow_flat.newRect.shiftXY();
+    arrow_light.newRect.shiftXY();
+    arrow_click.newRect.shiftXY();
+    renderBox(arrow_flat, arrow_light, arrow_click, SDL_FLIP_HORIZONTAL);
+
+    arrow_flat.changePos(4*window.w/5, window.h/2);
+    arrow_light.changePos(4*window.w/5, window.h/2);
+    arrow_click.changePos(4*window.w/5, window.h/2);
+    arrow_flat.newRect.shiftXY();
+    arrow_light.newRect.shiftXY();
+    arrow_click.newRect.shiftXY();
+    renderBox(arrow_flat, arrow_light, arrow_click);
 
     mouseCursor.render(window.renderer);
     

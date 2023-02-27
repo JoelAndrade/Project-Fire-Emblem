@@ -341,6 +341,14 @@ class textureImage {
             SDL_RenderCopy(renderer, texture, &originalRect, &newRect);
         }
 
+        void renderRotate(SDL_Renderer* renderer, double angle, SDL_Point* center = NULL) {
+            SDL_RenderCopyEx(renderer, texture, &originalRect, &newRect, angle, center, SDL_FLIP_NONE);
+        }
+
+        void renderFlip(SDL_Renderer* renderer, SDL_RendererFlip flip) {
+            SDL_RenderCopyEx(renderer, texture, &originalRect, &newRect, 0.0, NULL, flip);
+        }
+
         void destroy(void) {
             SDL_DestroyTexture(texture);
         }
