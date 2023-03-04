@@ -38,6 +38,10 @@ extern textureImage apRatio720_flat;
 extern textureImage apRatio720_light;
 extern textureImage apRatio720_click;
 
+extern textureImage apply_flat;
+extern textureImage apply_light;
+extern textureImage apply_click;
+
 extern textureImage arrow_flat;
 extern textureImage arrow_light;
 extern textureImage arrow_click;
@@ -48,5 +52,8 @@ void menuEvent(SDL_Rect rect, int event);
 
 void settings_main_menu(void);
 void video_settings_main_menu(void);
+
+void imagesInit(void);
+void destroyImages(void);
 
 #endif // PRIVATE_MAIN_MENU

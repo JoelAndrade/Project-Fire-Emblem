@@ -6,7 +6,7 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-textureImage titleScreen;
+static textureImage titleScreen;
 
 static void runTitleScreen(void);
 static void imagesInit(void);
@@ -26,6 +26,7 @@ static void runTitleScreen(void) {
 
     while(mode == TITLE_SCREEN) {
         startingTick = SDL_GetTicks();
+
         while(SDL_PollEvent(&event)) {
             updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             if (event.type == SDL_QUIT) {
@@ -38,7 +39,18 @@ static void runTitleScreen(void) {
                 }
             }
 
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    mode = QUIT;
+                }
+                if (event.key.keysym.sym == SDLK_KP_ENTER || 
+                    event.key.keysym.sym == SDLK_SPACE)
+                {
+                    mode = MAIN_MENU;
+                }
+            }
         }
+
         frameCap(fps, startingTick);
 
         window.clearRender();

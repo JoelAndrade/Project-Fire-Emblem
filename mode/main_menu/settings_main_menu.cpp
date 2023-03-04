@@ -63,7 +63,13 @@ static void runSettings(void) {
                 }
             }
 
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    mainMenuMode = MAIN_MENU_MAIN;
+                }
+            }
         }
+
         frameCap(fps, startingTick);
 
         renderScreen();

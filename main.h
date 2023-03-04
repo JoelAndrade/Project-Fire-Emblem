@@ -7,6 +7,8 @@
 #include <SDL_CLasses.h>
 #include <File_Util.h>
 
+#define SCALE settings.windowHeight/720
+
 typedef enum Modes_e {
     QUIT,
     TITLE_SCREEN,

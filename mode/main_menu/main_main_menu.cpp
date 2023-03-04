@@ -43,6 +43,10 @@ static textureImage settings_flat;
 static textureImage settings_light;
 static textureImage settings_click;
 
+textureImage apply_flat;
+textureImage apply_light;
+textureImage apply_click;
+
 textureImage arrow_flat;
 textureImage arrow_light;
 textureImage arrow_click;
@@ -53,8 +57,8 @@ void renderBox(textureImage box_flat, textureImage box_light, textureImage box_c
 
 static void runMainMenu(void);
 static void renderScreen(void);
-static void imagesInit(void);
-static void destroyImages(void);
+void imagesInit(void);
+void destroyImages(void);
 
 void menuEvent(SDL_Rect rect, int event) {
     point = {
@@ -150,7 +154,14 @@ static void runMainMenu(void) {
                 }
             }
 
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    mainMenuMode = QUIT_MAIN_MENU;
+                    mode = TITLE_SCREEN;
+                }
+            }
         }
+
         frameCap(fps, startingTick);
 
         renderScreen();
@@ -176,42 +187,41 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-static void imagesInit(void) {
+void imagesInit(void) {
     updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
 
-    background.init(window.renderer,     "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
+    background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
 
-    newGame_flat.init(window.renderer,   "images/Images/main_menu_images/NewGame.png",    0.2, window.w/2,   window.h/6);
-    newGame_light.init(window.renderer,  "images/Images/main_menu_images/NewGameH.png",   0.2, window.w/2,   window.h/6);
-    newGame_click.init(window.renderer,  "images/Images/main_menu_images/NewGameHL.png",  0.2, window.w/2,   window.h/6);
-    continue_flat.init(window.renderer,  "images/Images/main_menu_images/Continue.png",   0.2, window.w/2,   window.h/2);
-    continue_light.init(window.renderer, "images/Images/main_menu_images/ContinueH.png",  0.2, window.w/2,   window.h/2);
-    continue_click.init(window.renderer, "images/Images/main_menu_images/ContinueHL.png", 0.2, window.w/2,   window.h/2);
-    settings_flat.init(window.renderer,  "images/Images/main_menu_images/Settings.png",   0.2, window.w/2, 5*window.h/6);
-    settings_light.init(window.renderer, "images/Images/main_menu_images/SettingsH.png",  0.2, window.w/2, 5*window.h/6);
-    settings_click.init(window.renderer, "images/Images/main_menu_images/SettingsHL.png", 0.2, window.w/2, 5*window.h/6);
+    newGame_flat.init(window.renderer,   "images/Images/main_menu_images/NewGame.png",    0.2*SCALE, window.w/2,   window.h/6);
+    newGame_light.init(window.renderer,  "images/Images/main_menu_images/NewGameH.png",   0.2*SCALE, window.w/2,   window.h/6);
+    newGame_click.init(window.renderer,  "images/Images/main_menu_images/NewGameHL.png",  0.2*SCALE, window.w/2,   window.h/6);
+    continue_flat.init(window.renderer,  "images/Images/main_menu_images/Continue.png",   0.2*SCALE, window.w/2,   window.h/2);
+    continue_light.init(window.renderer, "images/Images/main_menu_images/ContinueH.png",  0.2*SCALE, window.w/2,   window.h/2);
+    continue_click.init(window.renderer, "images/Images/main_menu_images/ContinueHL.png", 0.2*SCALE, window.w/2,   window.h/2);
+    settings_flat.init(window.renderer,  "images/Images/main_menu_images/Settings.png",   0.2*SCALE, window.w/2, 5*window.h/6);
+    settings_light.init(window.renderer, "images/Images/main_menu_images/SettingsH.png",  0.2*SCALE, window.w/2, 5*window.h/6);
+    settings_click.init(window.renderer, "images/Images/main_menu_images/SettingsHL.png", 0.2*SCALE, window.w/2, 5*window.h/6);
 
-    game_flat.init(window.renderer,   "images/Images/main_menu_images/Game.png",    0.2, window.w/2,   window.h/6);
-    game_light.init(window.renderer,  "images/Images/main_menu_images/GameH.png",   0.2, window.w/2,   window.h/6);
-    game_click.init(window.renderer,  "images/Images/main_menu_images/GameHL.png",  0.2, window.w/2,   window.h/6);
-    video_flat.init(window.renderer,  "images/Images/main_menu_images/Video.png",   0.2, window.w/2,   window.h/2);
-    video_light.init(window.renderer, "images/Images/main_menu_images/VideoH.png",  0.2, window.w/2,   window.h/2);
-    video_click.init(window.renderer, "images/Images/main_menu_images/VideoHL.png", 0.2, window.w/2,   window.h/2);
-    audio_flat.init(window.renderer,  "images/Images/main_menu_images/Audio.png",   0.2, window.w/2, 5*window.h/6);
-    audio_light.init(window.renderer, "images/Images/main_menu_images/AudioH.png",  0.2, window.w/2, 5*window.h/6);
-    audio_click.init(window.renderer, "images/Images/main_menu_images/AudioHL.png", 0.2, window.w/2, 5*window.h/6);
+    game_flat.init(window.renderer,   "images/Images/main_menu_images/Game.png",          0.2*SCALE, window.w/2,   window.h/6);
+    game_light.init(window.renderer,  "images/Images/main_menu_images/GameH.png",         0.2*SCALE, window.w/2,   window.h/6);
+    game_click.init(window.renderer,  "images/Images/main_menu_images/GameHL.png",        0.2*SCALE, window.w/2,   window.h/6);
+    video_flat.init(window.renderer,  "images/Images/main_menu_images/Video.png",         0.2*SCALE, window.w/2,   window.h/2);
+    video_light.init(window.renderer, "images/Images/main_menu_images/VideoH.png",        0.2*SCALE, window.w/2,   window.h/2);
+    video_click.init(window.renderer, "images/Images/main_menu_images/VideoHL.png",       0.2*SCALE, window.w/2,   window.h/2);
+    audio_flat.init(window.renderer,  "images/Images/main_menu_images/Audio.png",         0.2*SCALE, window.w/2, 5*window.h/6);
+    audio_light.init(window.renderer, "images/Images/main_menu_images/AudioH.png",        0.2*SCALE, window.w/2, 5*window.h/6);
+    audio_click.init(window.renderer, "images/Images/main_menu_images/AudioHL.png",       0.2*SCALE, window.w/2, 5*window.h/6);
     
-    apRatio1080_flat.init(window.renderer,  "images/Images/main_menu_images/1080.png",   0.2, window.w/2, window.h/2);
-    // apRatio1080_light.init(window.renderer, "images/Images/main_menu_images/1080H.png",  0.2, window.w/2, window.h/2);
-    // apRatio1080_click.init(window.renderer, "images/Images/main_menu_images/1080HL.png", 0.2, window.w/2, window.h/2);
-    apRatio720_flat.init(window.renderer,   "images/Images/main_menu_images/720.png",    0.2, window.w/2, window.h/2);
-    // apRatio720_light.init(window.renderer,  "images/Images/main_menu_images/720H.png",   0.2, window.w/2, window.h/2);
-    // apRatio720_click.init(window.renderer,  "images/Images/main_menu_images/720HL.png",  0.2, window.w/2, window.h/2);
+    apRatio1080_flat.init(window.renderer,  "images/Images/main_menu_images/1080.png",    0.2*SCALE, window.w/2,   window.h/2);
+    apRatio720_flat.init(window.renderer,   "images/Images/main_menu_images/720.png",     0.2*SCALE, window.w/2,   window.h/2);
 
-    arrow_flat.init(window.renderer,  "images/Images/main_menu_images/Arrow.png",   0.2);
-    arrow_light.init(window.renderer, "images/Images/main_menu_images/ArrowH.png",  0.2);
-    arrow_click.init(window.renderer, "images/Images/main_menu_images/ArrowHL.png", 0.2);
+    apply_flat.init(window.renderer,   "images/Images/main_menu_images/Apply.png",        0.2*SCALE, window.w/2, 5*window.h/6);
+    apply_light.init(window.renderer,  "images/Images/main_menu_images/ApplyH.png",       0.2*SCALE, window.w/2, 5*window.h/6);
+    apply_click.init(window.renderer,  "images/Images/main_menu_images/ApplyHL.png",      0.2*SCALE, window.w/2, 5*window.h/6);
 
+    arrow_flat.init(window.renderer,  "images/Images/main_menu_images/Arrow.png",         0.2*SCALE);
+    arrow_light.init(window.renderer, "images/Images/main_menu_images/ArrowH.png",        0.2*SCALE);
+    arrow_click.init(window.renderer, "images/Images/main_menu_images/ArrowHL.png",       0.2*SCALE);
 
     newGame_flat.newRect.shiftXY();
     newGame_light.newRect.shiftXY();
@@ -234,18 +244,18 @@ static void imagesInit(void) {
     audio_click.newRect.shiftXY();
 
     apRatio1080_flat.newRect.shiftXY();
-    apRatio1080_light.newRect.shiftXY();
-    apRatio1080_click.newRect.shiftXY();
     apRatio720_flat.newRect.shiftXY();
-    apRatio720_light.newRect.shiftXY();
-    apRatio720_click.newRect.shiftXY();
+
+    apply_flat.newRect.shiftXY();
+    apply_light.newRect.shiftXY();
+    apply_click.newRect.shiftXY();
 
     arrow_flat.newRect.shiftXY();
     arrow_light.newRect.shiftXY();
     arrow_click.newRect.shiftXY();
 }
 
-static void destroyImages(void) {
+void destroyImages(void) {
     background.destroy();
 
     newGame_flat.destroy();
@@ -274,6 +284,10 @@ static void destroyImages(void) {
     apRatio720_flat.destroy();
     apRatio720_light.destroy();
     apRatio720_click.destroy();
+
+    apply_flat.destroy();
+    apply_light.destroy();
+    apply_click.destroy();
 
     arrow_flat.destroy();
     arrow_light.destroy();

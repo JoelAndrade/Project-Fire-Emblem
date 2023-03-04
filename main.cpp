@@ -54,7 +54,6 @@ static double scale(double scaleNumber) {
 }
 
 // TODO: Make main menu
-// remove the 1080 highlights if not used
-// Implement aspect ratio change 
+// Make audio settings
 
 // TODO: Implement sound

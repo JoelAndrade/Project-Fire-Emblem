@@ -49,6 +49,10 @@ class win {
             SDL_GetWindowSize(window, &w, &h);
         }
 
+        void setWindowPos(int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED) {
+            SDL_SetWindowPosition(window, x, y);
+        }
+
         SDL_Texture* createSurfaceTexture(int widthVal, int heightVal, int r = 255, int g = 255, int b = 255, int a = 0xFF) {
             SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
             SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, r, g, b, a));
