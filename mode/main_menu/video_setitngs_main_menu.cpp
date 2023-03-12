@@ -173,8 +173,8 @@ static void applyEvent(SDL_Rect rect) {
             break;
         }
 
-        destroyImages();
-        imagesInit();
+        destroyImages_mainMenu();
+        imagesInit_mainMenu();
 
         apRatioBox.box[0] = apRatio720_flat;
         apRatioBox.box[1] = apRatio1080_flat;

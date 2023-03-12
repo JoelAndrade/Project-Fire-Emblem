@@ -13,6 +13,7 @@ typedef enum Modes_e {
     QUIT,
     TITLE_SCREEN,
     MAIN_MENU,
+    LEVEL_1,
 
 } Modes_t;
 

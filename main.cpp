@@ -1,7 +1,8 @@
 #include "main.h"
 #include "save/settings.h"
-#include "mode/title_screen/title_screen_main.h"
+#include "mode/title_screen/main_title_screen.h"
 #include "mode/main_menu/main_main_menu.h"
+#include "mode/level_1/main_level_1.h"
 
 #include <iostream>
 #include <SDL2/SDL.h>
@@ -37,6 +38,9 @@ int main(int argc, char* args[]) {
         if (mode == MAIN_MENU) {
             main_main_menu();
         }
+        if (mode == LEVEL_1) {
+            main_level_1();
+        }
     }
 
     // Save and clean everything
@@ -57,3 +61,5 @@ static double scale(double scaleNumber) {
 // Make audio settings
 
 // TODO: Implement sound
+
+// TODO: Implement transparcy effect

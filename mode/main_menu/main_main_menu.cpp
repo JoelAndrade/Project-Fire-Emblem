@@ -55,10 +55,11 @@ void menuEvent(SDL_Rect rect, int event);
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click, SDL_RendererFlip);
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click);
 
+void imagesInit_mainMenu(void);
+void destroyImages_mainMenu(void);
+
 static void runMainMenu(void);
 static void renderScreen(void);
-void imagesInit(void);
-void destroyImages(void);
 
 void menuEvent(SDL_Rect rect, int event) {
     point = {
@@ -95,14 +96,14 @@ void renderBox(textureImage box_flat, textureImage box_light, textureImage box_c
 }
 
 void main_main_menu(void) {
-    imagesInit();
+    imagesInit_mainMenu();
     mainMenuMode = MAIN_MENU_MAIN;
 
     while (mode == MAIN_MENU) {
         runMainMenu();
 
         if (mainMenuMode == NEWGAME) {
-
+            mode = LEVEL_1;
         }
         else if (mainMenuMode == COUNTINUE) {
 
@@ -112,7 +113,7 @@ void main_main_menu(void) {
         }
     }
 
-    destroyImages();
+    destroyImages_mainMenu();
 }
 
 static void runMainMenu(void) {
@@ -146,6 +147,7 @@ static void runMainMenu(void) {
             if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
+                    menuEvent(newGame_flat.newRect, NEWGAME);
                     menuEvent(settings_flat.newRect, SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
@@ -187,7 +189,7 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-void imagesInit(void) {
+void imagesInit_mainMenu(void) {
     updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
 
     background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
@@ -255,7 +257,7 @@ void imagesInit(void) {
     arrow_click.newRect.shiftXY();
 }
 
-void destroyImages(void) {
+void destroyImages_mainMenu(void) {
     background.destroy();
 
     newGame_flat.destroy();
