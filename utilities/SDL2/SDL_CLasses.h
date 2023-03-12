@@ -49,6 +49,10 @@ class win {
             SDL_GetWindowSize(window, &w, &h);
         }
 
+        void setWindowPos(int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED) {
+            SDL_SetWindowPosition(window, x, y);
+        }
+
         SDL_Texture* createSurfaceTexture(int widthVal, int heightVal, int r = 255, int g = 255, int b = 255, int a = 0xFF) {
             SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
             SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, r, g, b, a));
@@ -247,7 +251,7 @@ class textureImage {
         SDL_Rect newRect;
 
         textureImage() {}
-        textureImage(SDL_Renderer* renderer, const char* file) {
+        textureImage(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 1, int yPos = 1) {
             SDL_Surface* imageSurface = IMG_Load(file);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
@@ -256,10 +260,10 @@ class textureImage {
             originalRect.w = imageSurface->w;
             originalRect.h = imageSurface->h;
             originalRect.makeDimensions();
-            newRect.x = 0;
-            newRect.y = 0;
-            newRect.w = imageSurface->w;
-            newRect.h = imageSurface->h;
+            newRect.x = xPos;
+            newRect.y = xPos;
+            newRect.w = imageSurface->w * scaleImage;
+            newRect.h = imageSurface->h * scaleImage;
             newRect.makeDimensions();
                         
             SDL_FreeSurface(imageSurface);
@@ -282,7 +286,7 @@ class textureImage {
             SDL_FreeSurface(imageSurface);
         }
 
-        void init(SDL_Renderer* renderer, const char* file) {
+        void init(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
             SDL_Surface* imageSurface = IMG_Load(file);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
@@ -291,10 +295,10 @@ class textureImage {
             originalRect.w = imageSurface->w;
             originalRect.h = imageSurface->h;
             originalRect.makeDimensions();
-            newRect.x = 0;
-            newRect.y = 0;
-            newRect.w = imageSurface->w;
-            newRect.h = imageSurface->h;
+            newRect.x = xPos;
+            newRect.y = yPos;
+            newRect.w = imageSurface->w * scaleImage;
+            newRect.h = imageSurface->h * scaleImage;
             newRect.makeDimensions();
                         
             SDL_FreeSurface(imageSurface);
@@ -339,6 +343,14 @@ class textureImage {
 
         void render(SDL_Renderer* renderer) {
             SDL_RenderCopy(renderer, texture, &originalRect, &newRect);
+        }
+
+        void renderRotate(SDL_Renderer* renderer, double angle, SDL_Point* center = NULL) {
+            SDL_RenderCopyEx(renderer, texture, &originalRect, &newRect, angle, center, SDL_FLIP_NONE);
+        }
+
+        void renderFlip(SDL_Renderer* renderer, SDL_RendererFlip flip) {
+            SDL_RenderCopyEx(renderer, texture, &originalRect, &newRect, 0.0, NULL, flip);
         }
 
         void destroy(void) {

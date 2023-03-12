@@ -6,12 +6,17 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-textureImage titleScreen;
+static textureImage titleScreen;
 
+static void runTitleScreen(void);
 static void imagesInit(void);
 static void destroyImages(void);
 
-void runTitleScreen(void) {
+void main_titleScreen(void) {
+    runTitleScreen();
+}
+
+static void runTitleScreen(void) {
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;
@@ -21,19 +26,31 @@ void runTitleScreen(void) {
 
     while(mode == TITLE_SCREEN) {
         startingTick = SDL_GetTicks();
+
         while(SDL_PollEvent(&event)) {
             updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             if (event.type == SDL_QUIT) {
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
+            if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     mode = MAIN_MENU;
                 }
             }
 
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    mode = QUIT;
+                }
+                if (event.key.keysym.sym == SDLK_KP_ENTER || 
+                    event.key.keysym.sym == SDLK_SPACE)
+                {
+                    mode = MAIN_MENU;
+                }
+            }
         }
+
         frameCap(fps, startingTick);
 
         window.clearRender();
@@ -49,7 +66,7 @@ void runTitleScreen(void) {
 
 static void imagesInit(void) {
     updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
-    titleScreen.init(window.renderer, "images/Images/title_images/Start Menu.jpg", window.w, window.h);
+    titleScreen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 
 static void destroyImages(void) {
