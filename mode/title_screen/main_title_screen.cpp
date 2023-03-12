@@ -1,5 +1,5 @@
 #include "../../main.h"
-#include "title_screen_main.h"
+#include "main_title_screen.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

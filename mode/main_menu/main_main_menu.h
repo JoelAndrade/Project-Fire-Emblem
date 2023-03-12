@@ -1,5 +1,5 @@
-#ifndef MAIN_MAIN_MENU
-#define MAIN_MAIN_MENU
+#ifndef MAIN_MAIN_MENU_H
+#define MAIN_MAIN_MENU_H
 
 void main_main_menu(void);
 

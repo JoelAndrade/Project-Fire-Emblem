@@ -251,8 +251,8 @@ class textureImage {
         SDL_Rect newRect;
 
         textureImage() {}
-        textureImage(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 1, int yPos = 1) {
-            SDL_Surface* imageSurface = IMG_Load(file);
+        textureImage(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 1, int yPos = 1) {
+            SDL_Surface* imageSurface = IMG_Load(path);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
             originalRect.x = 0;
@@ -268,8 +268,8 @@ class textureImage {
                         
             SDL_FreeSurface(imageSurface);
         }
-        textureImage(SDL_Renderer* renderer, const char* file, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
-            SDL_Surface* imageSurface = IMG_Load(file);
+        textureImage(SDL_Renderer* renderer, const char* path, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
+            SDL_Surface* imageSurface = IMG_Load(path);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
             originalRect.x = 0;
@@ -286,8 +286,8 @@ class textureImage {
             SDL_FreeSurface(imageSurface);
         }
 
-        void init(SDL_Renderer* renderer, const char* file, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
-            SDL_Surface* imageSurface = IMG_Load(file);
+        void init(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
+            SDL_Surface* imageSurface = IMG_Load(path);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
             originalRect.x = 0;
@@ -303,8 +303,8 @@ class textureImage {
                         
             SDL_FreeSurface(imageSurface);
         }
-        void init(SDL_Renderer* renderer, const char* file, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
-            SDL_Surface* imageSurface = IMG_Load(file);
+        void init(SDL_Renderer* renderer, const char* path, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
+            SDL_Surface* imageSurface = IMG_Load(path);
             texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
 
             originalRect.x = 0;
@@ -365,15 +365,15 @@ class textureText {
         SDL_Rect rect;
         SDL_Color color = {0, 0, 0, 0xFF};
         int fontSize = 10;
-        const char* fontFile = NULL;
+        const char* path = NULL;
         std::string text = "";
 
         textureText() {}
-        textureText(SDL_Renderer* renderer, const char* fontFileVal, const char* textInput, int fontSizeVal, int xPos = 0, int yPos = 0) {
+        textureText(SDL_Renderer* renderer, const char* pathInput, const char* textInput, int fontSizeVal, int xPos = 0, int yPos = 0) {
             text = textInput;
             fontSize = fontSizeVal;
-            fontFile = fontFileVal;
-            font = TTF_OpenFont(fontFile, fontSize);                
+            path = pathInput;
+            font = TTF_OpenFont(path, fontSize);                
             SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
             texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
@@ -388,11 +388,11 @@ class textureText {
             SDL_FreeSurface(textSurface);
         }
 
-        void init(SDL_Renderer* renderer, const char* fontFileVal, const char* textInput, int fontSizeVal, int xPos = 0, int yPos = 0) {
+        void init(SDL_Renderer* renderer, const char* pathInput, const char* textInput, int fontSizeVal, int xPos = 0, int yPos = 0) {
             text = textInput;
             fontSize = fontSizeVal;
-            fontFile = fontFileVal;
-            font = TTF_OpenFont(fontFile, fontSize);
+            path = pathInput;
+            font = TTF_OpenFont(path, fontSize);
             SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
             texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
@@ -410,7 +410,7 @@ class textureText {
         void reSize(int fontSizeVal) {
             if (font != NULL) {
                 fontSize = fontSizeVal;
-                font = TTF_OpenFont(fontFile, fontSize);
+                font = TTF_OpenFont(path, fontSize);
                 SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
                 
                 if (text != "") {
@@ -435,7 +435,7 @@ class textureText {
         void changePosAndSize(int fontSizeVal, int xPos, int yPos) {
             if (font != NULL) {
                 fontSize = fontSizeVal;
-                font = TTF_OpenFont(fontFile, fontSize);
+                font = TTF_OpenFont(path, fontSize);
                 SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), color);
                 
                 rect.x = xPos;
@@ -483,10 +483,10 @@ class textureText {
             color.a = colorVal->a;
         }
 
-        void changeFont(const char* fontFileVal) {
+        void changeFont(const char* pathVal) {
             font = NULL;
-            fontFile = fontFileVal;
-            font = TTF_OpenFont(fontFile, fontSize);
+            path = pathVal;
+            font = TTF_OpenFont(path, fontSize);
         }
 
         void destroy(void) {

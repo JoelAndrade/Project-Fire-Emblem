@@ -4,7 +4,7 @@ all:
 	g++ \
 	main.cpp \
 	utilities/file/*.cpp utilities/SDL2/*.cpp \
-	mode/title_screen/*.cpp mode/main_menu/*.cpp \
+	mode/title_screen/*.cpp mode/main_menu/*.cpp mode/level_1/*.cpp \
 	save/*.cpp \
 	-g \
 	-I src/include -I utilities/SDL2 -I utilities/file \
@@ -15,7 +15,7 @@ all:
 	g++ \
 	-mwindows -static-libgcc -static-libstdc++ \
 	main.cpp \
-	utilities/file/*.cpp utilities/SDL2/*.cpp \
+	utilities/file/*.cpp utilities/SDL2/*.cpp mode/level_1/*.cpp \
 	mode/title_screen/*.cpp mode/main_menu/*.cpp \
 	save/*.cpp \
 	-I src/include -I utilities/SDL2 -I utilities/file \

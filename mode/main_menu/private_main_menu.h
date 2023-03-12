@@ -1,5 +1,5 @@
-#ifndef PRIVATE_MAIN_MENU
-#define PRIVATE_MAIN_MENU
+#ifndef PRIVATE_MAIN_MENU_H
+#define PRIVATE_MAIN_MENU_H
 
 #include <SDL2/SDL.h>
 #include <SDL_CLasses.h>
@@ -53,7 +53,7 @@ void menuEvent(SDL_Rect rect, int event);
 void settings_main_menu(void);
 void video_settings_main_menu(void);
 
-void imagesInit(void);
-void destroyImages(void);
+void imagesInit_mainMenu(void);
+void destroyImages_mainMenu(void);
 
 #endif // PRIVATE_MAIN_MENU
