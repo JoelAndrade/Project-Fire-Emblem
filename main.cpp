@@ -61,5 +61,3 @@ static double scale(double scaleNumber) {
 // Make audio settings
 
 // TODO: Implement sound
-
-// TODO: Implement transparcy effect
