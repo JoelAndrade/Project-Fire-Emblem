@@ -5,9 +5,8 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Sun Mar 12 16:02:53 2023
+# Make data base, printed on Sun Mar 12 21:59:02 2023
 
 # Variables
 
@@ -28,7 +27,8 @@ LOCALAPPDATA = C:\Users\Joel\AppData\Local
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
 # environment
-VSCODE_CWD = C:\Users\Joel\AppData\Local\Programs\Microsoft VS Code
+VSCODE_CWD = C:\Users\Joel\App 
+Data\Local\Programs\Microsoft VS Code
 # environment
 CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
 # environment
@@ -44,7 +44,7 @@ MAKE_COMMAND := C:/ProgramData/chocolatey/lib/make/tools/install/bin/make.exe
 # automatic
 @D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\LOCAL\crashpad_13680_TXSXCUXLWKPHTHLR
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\LOCAL\crashpad_7676_WBXFYIDYMEEPDMTV
 # environment
 ONEDRIVECOMMERCIAL = D:\Joel\OneDrive - csulb
 # environment
@@ -84,8 +84,7 @@ VSCODE_L10N_BUNDLE_LOCATION =
 # environment
 PROGRAMFILES = C:\Program Files (x86)
 # environment
-MFLAG 
-S = -pqrR
+MFLAGS = -pqrR
 # default
 .SHELLFLAGS := -c
 # environment
@@ -97,7 +96,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 13680
+VSCODE_PID = 7676
 # automatic
 ?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
 # environment
@@ -174,8 +173,6 @@ USERDOMAIN = DESKTOP-CC2GQSO
 GNUMAKEFLAGS := 
 # environment
 OS = Windows_NT
-# environment
-__COMPAT_LAYER = DetectorsAppHealth
 # makefile
 .DEFAULT_GOAL := all
 # default
@@ -227,7 +224,7 @@ PROCESSOR_REVISION = 5e03
 # environment
 PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 94 Stepping 3, GenuineIntel
 # variable set hash-table stats:
-# Load=107/1024=10%, Rehash=0, Collisions=9/137=7%
+# Load=106/1024=10%, Rehash=0, Collisions=9/136=7%
 
 # Pattern-specific Variable Values
 
@@ -288,7 +285,8 @@ all:
 	g++ \
 	main.cpp \
 	utilities/file/*.cpp utilities/SDL2/*.cpp \
-	mode/title_screen/*.cpp mode/main_menu/*.cpp mode/level_1/*.cpp \
+	mode/title_scree 
+n/*.cpp mode/main_menu/*.cpp mode/level_1/*.cpp \
 	save/*.cpp \
 	-g \
 	-I src/include -I utilities/SDL2 -I utilities/file \
@@ -326,6 +324,6 @@ all:
 # strcache performance: lookups = 36 / hit rate = 19%
 # hash-table stats:
 # Load=29/8192=0%, Rehash=0, Collisions=0/36=0%
-# Finished Make data base on Sun Mar 12 16:02:53 2023
+# Finished Make data base on Sun Mar 12 21:59:02 2023
 
  

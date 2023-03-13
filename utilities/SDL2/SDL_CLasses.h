@@ -353,6 +353,14 @@ class textureImage {
             SDL_RenderCopyEx(renderer, texture, &originalRect, &newRect, 0.0, NULL, flip);
         }
 
+        void setAlpha(Uint8 alpha) {
+            SDL_SetTextureAlphaMod(texture, alpha);
+        }
+
+        void blend(SDL_BlendMode blendMode) {
+            SDL_SetTextureBlendMode(texture, blendMode);
+        }
+
         void destroy(void) {
             SDL_DestroyTexture(texture);
         }
