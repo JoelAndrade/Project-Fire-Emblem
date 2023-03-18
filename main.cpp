@@ -7,6 +7,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
@@ -16,8 +17,6 @@ textureImage mouseCursor;
 int mode = TITLE_SCREEN;
 int xMousePos;
 int yMousePos;
-
-static double scale(double scaleNumber);
 
 int main(int argc, char* args[]) {
     //Init SDL Stuff
@@ -30,7 +29,9 @@ int main(int argc, char* args[]) {
 
     window.init(settings.widowWidth, settings.windowHeight, "Loading...");
     mouseCursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
-    
+
+    Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048);
+
     while (mode != QUIT) {
         if (mode == TITLE_SCREEN) {
             main_titleScreen();
@@ -47,17 +48,20 @@ int main(int argc, char* args[]) {
     writeSave(&settings, sizeof(settings), "./setting.bin");
     SDL_DestroyWindow(window.window); //This closed the window
     SDL_DestroyRenderer(window.renderer);
-    window.window = NULL;
     SDL_Quit(); //Closed the SDL program
     IMG_Quit();
+    Mix_Quit();
     return 0;
-}
-
-static double scale(double scaleNumber) {
-     return scaleNumber * (window.h/720.0);
 }
 
 // TODO: Make main menu
 // Make audio settings
 
 // TODO: Implement sound
+// Smooth the transitions of the music
+
+// TODO: Make basic board
+// - Add sprite
+// - Add movement
+// - Add highlight movement
+// - ADD highlight attack range

@@ -2,15 +2,19 @@
 #include "main_title_screen.h"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
 static textureImage titleScreen;
 
+static Mix_Music* music = NULL;
+
 static void runTitleScreen(void);
 static void imagesInit(void);
+static void soundInit(void);
 static void destroyImages(void);
+static void destroySound(void);
 
 void main_titleScreen(void) {
     runTitleScreen();
@@ -22,6 +26,8 @@ static void runTitleScreen(void) {
     Uint32 startingTick;
 
     SDL_SetWindowTitle(window.window, "Title");
+
+    soundInit();
     imagesInit();
 
     while(mode == TITLE_SCREEN) {
@@ -62,6 +68,7 @@ static void runTitleScreen(void) {
     }
 
     destroyImages();
+    destroySound();
 }
 
 static void imagesInit(void) {
@@ -71,4 +78,14 @@ static void imagesInit(void) {
 
 static void destroyImages(void) {
     titleScreen.destroy();
+}
+
+static void soundInit(void) {
+    music = Mix_LoadMUS("sound/music/15. Understanding What We've Grown To Be.mp3");
+    Mix_PlayMusic(music, -1);
+    Mix_VolumeMusic(10);
+}
+
+static void destroySound(void) {
+    Mix_FreeMusic(music);
 }

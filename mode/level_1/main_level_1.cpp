@@ -9,9 +9,11 @@
 #define blockLength (80)
 
 textureImage tile;
+textureImage highlight;
 
 void main_level_1(void);
 
+static void highlightGrid(void);
 static void imagesInit_level_1(void);
 static void destroyImages_level_1(void);
 
@@ -34,7 +36,6 @@ static void runLevel_1(void) {
     int fps = 60;
     Uint32 startingTick;
 
-
     while (mode == LEVEL_1) {
         startingTick = SDL_GetTicks();
 
@@ -45,6 +46,7 @@ static void runLevel_1(void) {
 
             if (event.motion.type) {
                 updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
+
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -91,17 +93,27 @@ static void renderScreen(void) {
         }
     }
 
+    highlightGrid();
     mouseCursor.render(window.renderer);
 
     SDL_RenderPresent(window.renderer);
+}
+
+static void highlightGrid(void) {
+    highlight.newRect.x = (xMousePos/blockLength) * blockLength;
+    highlight.newRect.y = (yMousePos/blockLength) * blockLength;
+    highlight.render(window.renderer);
 }
 
 void imagesInit_level_1(void) {
     updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
 
     tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", blockLength, blockLength, 0, 0);
+    highlight.init(window.renderer, blue, blockLength, blockLength);
+    highlight.setAlpha(100);
 }
 
 void destroyImages_level_1(void) {
     tile.destroy();
+    highlight.destroy();
 }

@@ -57,6 +57,8 @@ class win {
             SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
             SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, r, g, b, a));
             SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            
+            SDL_FreeSurface(surface);
             return texture;
         }
         
@@ -285,6 +287,25 @@ class textureImage {
 
             SDL_FreeSurface(imageSurface);
         }
+        textureImage(SDL_Renderer* renderer, SDL_Color color, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
+            SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
+            SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            blend(SDL_BLENDMODE_BLEND);
+
+            originalRect.x = 0;
+            originalRect.y = 0;
+            originalRect.w = surface->w;
+            originalRect.h = surface->h;
+            originalRect.makeDimensions();
+            newRect.x = xPos;
+            newRect.y = yPos;
+            newRect.w = widthVal;
+            newRect.h = heightVal;
+            newRect.makeDimensions();
+            
+            SDL_FreeSurface(surface);
+        }
 
         void init(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
             SDL_Surface* imageSurface = IMG_Load(path);
@@ -319,6 +340,25 @@ class textureImage {
             newRect.makeDimensions();
 
             SDL_FreeSurface(imageSurface);
+        }
+        void init(SDL_Renderer* renderer, SDL_Color color, int widthVal, int heightVal, int xPos = 0, int yPos = 0) {
+            SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
+            SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            blend(SDL_BLENDMODE_BLEND);
+
+            originalRect.x = 0;
+            originalRect.y = 0;
+            originalRect.w = surface->w;
+            originalRect.h = surface->h;
+            originalRect.makeDimensions();
+            newRect.x = xPos;
+            newRect.y = yPos;
+            newRect.w = widthVal;
+            newRect.h = heightVal;
+            newRect.makeDimensions();
+            
+            SDL_FreeSurface(surface);
         }
 
         void reSize(int wVal, int hVal) {

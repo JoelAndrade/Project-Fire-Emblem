@@ -3,6 +3,7 @@
 #include "private_main_menu.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
@@ -51,6 +52,8 @@ textureImage arrow_flat;
 textureImage arrow_light;
 textureImage arrow_click;
 
+static Mix_Music* music = NULL;
+
 void menuEvent(SDL_Rect rect, int event);
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click, SDL_RendererFlip);
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click);
@@ -60,6 +63,8 @@ void destroyImages_mainMenu(void);
 
 static void runMainMenu(void);
 static void renderScreen(void);
+static void soundInit(void);
+static void destroySound(void);
 
 void menuEvent(SDL_Rect rect, int event) {
     point = {
@@ -96,6 +101,7 @@ void renderBox(textureImage box_flat, textureImage box_light, textureImage box_c
 }
 
 void main_main_menu(void) {
+    soundInit();
     imagesInit_mainMenu();
     mainMenuMode = MAIN_MENU_MAIN;
 
@@ -114,6 +120,7 @@ void main_main_menu(void) {
     }
 
     destroyImages_mainMenu();
+    destroySound();
 }
 
 static void runMainMenu(void) {
@@ -294,4 +301,14 @@ void destroyImages_mainMenu(void) {
     arrow_flat.destroy();
     arrow_light.destroy();
     arrow_click.destroy();
+}
+
+static void soundInit(void) {
+    music = Mix_LoadMUS("sound/music/Fire Emblem Theme.mp3");
+    Mix_PlayMusic(music, -1);
+    Mix_VolumeMusic(10);
+}
+
+static void destroySound(void) {
+    Mix_FreeMusic(music);
 }

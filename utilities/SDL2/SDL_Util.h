@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 
+#define expandColor(color) color.r, color.g, color.b
+
 //RGB
 extern SDL_Color violet;
 extern SDL_Color green;
