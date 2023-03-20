@@ -71,10 +71,6 @@ static void runVideoSettings(void) {
                 mode = QUIT;
             }
 
-            if (event.motion.type) {
-                updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
-            }
-
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
@@ -101,10 +97,10 @@ static void runVideoSettings(void) {
                 }
             }
         }
-        
-        frameCap(fps, startingTick);
 
         renderScreen();
+        
+        frameCap(fps, startingTick);
     }
 }
 
@@ -114,7 +110,9 @@ static void renderScreen(void) {
         .y = yMousePos,
     };
 
-
+    checkMouse();
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    
     window.clearRender();
 
     background.render(window.renderer);

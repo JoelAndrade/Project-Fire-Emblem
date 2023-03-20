@@ -24,4 +24,6 @@ extern int mode;
 extern int xMousePos;
 extern int yMousePos;
 
+void checkMouse(void);
+
 #endif // MAIN_H 

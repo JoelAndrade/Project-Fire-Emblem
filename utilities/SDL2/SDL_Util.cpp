@@ -18,8 +18,7 @@ void frameCap(int fps, Uint32 startingTick) {
     }
 }
 
-void updateCursorPos(SDL_Rect* rect, int* xPos, int* yPos) {
-    SDL_GetMouseState(xPos, yPos);
-    rect->x = *xPos;
-    rect->y = *yPos;
+void updateCursorPos(SDL_Rect* rect, int xPos, int yPos) {
+    rect->x = xPos;
+    rect->y = yPos;
 }

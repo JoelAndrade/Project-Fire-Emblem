@@ -44,11 +44,6 @@ static void runLevel_1(void) {
                 mode = QUIT;
             }
 
-            if (event.motion.type) {
-                updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
-
-            }
-
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
 
@@ -74,13 +69,16 @@ static void runLevel_1(void) {
             }
         }
 
-        frameCap(fps, startingTick);
-
         renderScreen();
+
+        frameCap(fps, startingTick);
     }
 }
 
 static void renderScreen(void) {
+    checkMouse();
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    
     window.clearRender();
 
     for (int i = 0; i < row; ++i) {
@@ -106,7 +104,7 @@ static void highlightGrid(void) {
 }
 
 void imagesInit_level_1(void) {
-    updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
 
     tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", blockLength, blockLength, 0, 0);
     highlight.init(window.renderer, blue, blockLength, blockLength);

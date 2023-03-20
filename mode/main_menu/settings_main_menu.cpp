@@ -30,7 +30,6 @@ static void runSettings(void) {
     int fps = 60;
     Uint32 startingTick;
 
-
     while (mainMenuMode == SETTINGS) {
         startingTick = SDL_GetTicks();
 
@@ -38,10 +37,6 @@ static void runSettings(void) {
             if (event.type == SDL_QUIT) {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
-            }
-
-            if (event.motion.type) {
-                updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -69,10 +64,10 @@ static void runSettings(void) {
                 }
             }
         }
+        
+        renderScreen();
 
         frameCap(fps, startingTick);
-
-        renderScreen();
     }
 }
 
@@ -82,6 +77,9 @@ static void renderScreen(void) {
         .y = yMousePos,
     };
 
+    checkMouse();
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    
     window.clearRender();
 
     background.render(window.renderer);

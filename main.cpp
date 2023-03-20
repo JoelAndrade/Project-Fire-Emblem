@@ -18,6 +18,16 @@ int mode = TITLE_SCREEN;
 int xMousePos;
 int yMousePos;
 
+void checkMouse(void) {
+    if(window.mouseInWindow()) {
+        SDL_GetMouseState(&xMousePos, &yMousePos);
+    }
+    else {
+        xMousePos = window.w;
+        yMousePos = window.h;
+    }
+}
+
 int main(int argc, char* args[]) {
     //Init SDL Stuff
     SDL_Init(SDL_INIT_EVERYTHING);

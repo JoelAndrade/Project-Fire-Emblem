@@ -128,7 +128,6 @@ static void runMainMenu(void) {
     int fps = 60;
     Uint32 startingTick;
 
-
     while (mainMenuMode == MAIN_MENU_MAIN) {
         startingTick = SDL_GetTicks();
 
@@ -136,10 +135,6 @@ static void runMainMenu(void) {
             if (event.type == SDL_QUIT) {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
-            }
-
-            if (event.motion.type) {
-                updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
@@ -171,9 +166,9 @@ static void runMainMenu(void) {
             }
         }
 
-        frameCap(fps, startingTick);
-
         renderScreen();
+
+        frameCap(fps, startingTick);
     }
 }
 
@@ -183,6 +178,9 @@ static void renderScreen(void) {
         .y = yMousePos,
     };
 
+    checkMouse();
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    
     window.clearRender();
 
     background.render(window.renderer);
@@ -197,7 +195,7 @@ static void renderScreen(void) {
 }
 
 void imagesInit_mainMenu(void) {
-    updateCursorPos(&mouseCursor.newRect, &xMousePos, &yMousePos);
+    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
 
     background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
 

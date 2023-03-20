@@ -53,6 +53,26 @@ class win {
             SDL_SetWindowPosition(window, x, y);
         }
 
+        bool mouseInWindow(void) {
+            int xGlobalMousePos;
+            int yGlobalMousePos;
+            int xWindowPos;
+            int yWindowPos;
+
+            SDL_GetGlobalMouseState(&xGlobalMousePos, &yGlobalMousePos);
+            SDL_GetWindowPosition(window, &xWindowPos, &yWindowPos);
+
+            int xRelative = xGlobalMousePos - xWindowPos;
+            int yRelative = yGlobalMousePos - yWindowPos;
+
+            if ((-1 < xRelative && xRelative < w) && 
+                (-1 < yRelative && yRelative < h)) 
+            {
+                return true;
+            }
+            return false;
+        }
+
         SDL_Texture* createSurfaceTexture(int widthVal, int heightVal, int r = 255, int g = 255, int b = 255, int a = 0xFF) {
             SDL_Surface* surface = SDL_CreateRGBSurface(0, widthVal, heightVal, 32, 0, 0, 0, 0);
             SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, r, g, b, a));
