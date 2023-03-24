@@ -5,11 +5,14 @@
 #include <SDL2/SDL.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
+#include <Character.h>
 
 #define blockLength (80)
 
 textureImage tile;
 textureImage highlight;
+
+character sprite;
 
 void main_level_1(void);
 
@@ -107,6 +110,9 @@ void imagesInit_level_1(void) {
     updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
 
     tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", blockLength, blockLength, 0, 0);
+
+    // add sprite here
+
     highlight.init(window.renderer, blue, blockLength, blockLength);
     highlight.setAlpha(100);
 }
