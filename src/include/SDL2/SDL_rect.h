@@ -110,8 +110,8 @@ typedef struct SDL_Rect
         rightY = y + h/2;
     } 
 
-    void shiftX() {
-        int shift = topX - x;
+    void shiftX(int multiplier = 1) {
+        int shift = (topX - x) * multiplier ;
         x -= shift;
         tlX -= shift;
         trX -=  shift;
@@ -124,8 +124,8 @@ typedef struct SDL_Rect
         rightX -= shift;
     }
 
-    void shiftY() {
-        int shift = leftY - y;
+    void shiftY(int multiplier = 1) {
+        int shift = (leftY - y) * multiplier ;
         y -= shift;
         tlY -= shift;
         trY -=  shift;
@@ -138,9 +138,9 @@ typedef struct SDL_Rect
         rightY -= shift;
     }
 
-    void shiftXY() {
-        int xShift = topX - x;
-        int yShift = leftY - y;
+    void shiftXY(int multiplier_x = 1, int multiplier_y = 1) {
+        int xShift = (topX - x) * multiplier_x;
+        int yShift = (leftY - y) * multiplier_y;
 
         x -= xShift;
         tlX -= xShift;

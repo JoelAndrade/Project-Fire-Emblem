@@ -15,16 +15,16 @@ win window;
 textureImage mouseCursor;
 
 int mode = TITLE_SCREEN;
-int xMousePos;
-int yMousePos;
+bool hold = false;
+SDL_Point mousePos;
 
 void checkMouse(void) {
     if(window.mouseInWindow()) {
-        SDL_GetMouseState(&xMousePos, &yMousePos);
+        SDL_GetMouseState(&mousePos.x, &mousePos.y);
     }
     else {
-        xMousePos = window.w;
-        yMousePos = window.h;
+        mousePos.x = window.w;
+        mousePos.y = window.h;
     }
 }
 

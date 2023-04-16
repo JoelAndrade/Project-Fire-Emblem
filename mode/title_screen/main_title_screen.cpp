@@ -58,7 +58,7 @@ static void runTitleScreen(void) {
         }
 
         checkMouse();
-        updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+        updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
         renderScreen();
 
@@ -79,7 +79,7 @@ static void renderScreen(void) {
 }
 
 static void imagesInit(void) {
-    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     titleScreen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 

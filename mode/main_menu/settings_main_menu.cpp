@@ -72,13 +72,8 @@ static void runSettings(void) {
 }
 
 static void renderScreen(void) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
     checkMouse();
-    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
     window.clearRender();
 

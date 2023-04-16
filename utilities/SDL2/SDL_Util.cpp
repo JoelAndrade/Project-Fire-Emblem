@@ -11,6 +11,7 @@ SDL_Color blue =   {  0,   0, 255};
 SDL_Color black =  {  0,   0,   0};
 SDL_Color white =  {255, 255, 255};
 SDL_Color orange = {255, 100,   0};
+SDL_Color yellow = {255, 255,   0};
 
 void frameCap(int fps, Uint32 startingTick) {
     if (1000/fps > SDL_GetTicks() - startingTick) {

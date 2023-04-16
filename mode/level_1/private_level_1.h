@@ -4,10 +4,12 @@
 #define row (9)
 #define col (16)
 
-typedef enum options_e {
+typedef enum levelMode_e {
+    standby,
+    options,
     move,
     stats,
-} options_t;
+} levelMode_t;
 
 typedef struct map_s {
     const char tiles[row][col] = 

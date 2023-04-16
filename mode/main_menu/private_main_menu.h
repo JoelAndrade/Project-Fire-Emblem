@@ -16,7 +16,6 @@ typedef enum Main_Menu_e {
 
 } Main_Menu_t;
 
-extern SDL_Point point;
 extern int mainMenuMode;
 extern bool hold;
 

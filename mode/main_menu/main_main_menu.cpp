@@ -8,12 +8,6 @@
 #include <SDL_Util.h>
 
 int mainMenuMode;
-bool hold;
-
-SDL_Point point = {
-    .x = xMousePos,
-    .y = yMousePos,
-};
 
 textureImage background;
 
@@ -67,21 +61,16 @@ static void soundInit(void);
 static void destroySound(void);
 
 void menuEvent(SDL_Rect rect, int event) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
-    if (SDL_PointInRect(&point, &rect)) {
+    if (SDL_PointInRect(&mousePos, &rect)) {
         mainMenuMode = event;
     }
 }
 
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click) {
-    if (SDL_PointInRect(&point, &box_flat.newRect) && hold) {
+    if (SDL_PointInRect(&mousePos, &box_flat.newRect) && hold) {
         box_click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&point, &box_flat.newRect)) {
+    else if (SDL_PointInRect(&mousePos, &box_flat.newRect)) {
         box_light.render(window.renderer);
     }
     else {
@@ -89,10 +78,10 @@ void renderBox(textureImage box_flat, textureImage box_light, textureImage box_c
     }
 }
 void renderBox(textureImage box_flat, textureImage box_light, textureImage box_click, SDL_RendererFlip) {
-    if (SDL_PointInRect(&point, &box_flat.newRect) && hold) {
+    if (SDL_PointInRect(&mousePos, &box_flat.newRect) && hold) {
         box_click.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
-    else if (SDL_PointInRect(&point, &box_flat.newRect)) {
+    else if (SDL_PointInRect(&mousePos, &box_flat.newRect)) {
         box_light.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
     else {
@@ -173,13 +162,8 @@ static void runMainMenu(void) {
 }
 
 static void renderScreen(void) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
     checkMouse();
-    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
     window.clearRender();
 
@@ -195,7 +179,7 @@ static void renderScreen(void) {
 }
 
 void imagesInit_mainMenu(void) {
-    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
     background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
 

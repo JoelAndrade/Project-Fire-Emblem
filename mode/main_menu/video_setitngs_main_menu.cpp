@@ -21,27 +21,10 @@ static void runVideoSettings(void);
 static void renderScreen(void);
 static void arrowEvent(apRatio_s* myBox, int numBoxes);
 static void applyEvent(SDL_Rect rect);
+static void positionArrows(void);
 
 void video_settings_main_menu(void) {
-    apRatioBox.box[0] = apRatio720_flat;
-    apRatioBox.box[1] = apRatio1080_flat;
-
-    apRatioBox.leftArrowRect = {
-        .x = window.w/5,
-        .y = window.h/2,
-        .w = arrow_flat.newRect.w,
-        .h = arrow_flat.newRect.h
-    };
-    apRatioBox.rightArrowRect = {
-        .x = 4*window.w/5,
-        .y = window.h/2,
-        .w = arrow_flat.newRect.w,
-        .h = arrow_flat.newRect.h
-    };
-    apRatioBox.leftArrowRect.makeDimensions();
-    apRatioBox.rightArrowRect.makeDimensions();
-    apRatioBox.leftArrowRect.shiftXY();
-    apRatioBox.rightArrowRect.shiftXY();
+    positionArrows();
 
     switch (settings.windowHeight)
     {
@@ -105,13 +88,8 @@ static void runVideoSettings(void) {
 }
 
 static void renderScreen(void) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
     checkMouse();
-    updateCursorPos(&mouseCursor.newRect, xMousePos, yMousePos);
+    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
     window.clearRender();
 
@@ -136,26 +114,16 @@ static void renderScreen(void) {
 }
 
 static void arrowEvent(apRatio_s* myBox, int numBoxes) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
-    if (SDL_PointInRect(&point, &myBox->leftArrowRect) && (myBox->i > 0)) {
+    if (SDL_PointInRect(&mousePos, &myBox->leftArrowRect) && (myBox->i > 0)) {
         --myBox->i;
     }
-    else if (SDL_PointInRect(&point, &myBox->rightArrowRect) && (myBox->i < numBoxes - 1)) {
+    else if (SDL_PointInRect(&mousePos, &myBox->rightArrowRect) && (myBox->i < numBoxes - 1)) {
         ++myBox->i;
     }
 }
 
 static void applyEvent(SDL_Rect rect) {
-    point = {
-        .x = xMousePos,
-        .y = yMousePos,
-    };
-
-    if (SDL_PointInRect(&point, &rect)) {
+    if (SDL_PointInRect(&mousePos, &rect)) {
         switch (apRatioBox.i)
         {
         case 0:
@@ -174,27 +142,31 @@ static void applyEvent(SDL_Rect rect) {
         destroyImages_mainMenu();
         imagesInit_mainMenu();
 
-        apRatioBox.box[0] = apRatio720_flat;
-        apRatioBox.box[1] = apRatio1080_flat;
-
-        apRatioBox.leftArrowRect = {
-            .x = window.w/5,
-            .y = window.h/2,
-            .w = arrow_flat.newRect.w,
-            .h = arrow_flat.newRect.h
-        };
-        apRatioBox.rightArrowRect = {
-            .x = 4*window.w/5,
-            .y = window.h/2,
-            .w = arrow_flat.newRect.w,
-            .h = arrow_flat.newRect.h
-        };
-        
-        apRatioBox.leftArrowRect.makeDimensions();
-        apRatioBox.rightArrowRect.makeDimensions();
-        apRatioBox.leftArrowRect.shiftXY();
-        apRatioBox.rightArrowRect.shiftXY();
+        positionArrows();
 
         window.setWindowPos();
     }
+}
+
+static void positionArrows(void) {
+    apRatioBox.box[0] = apRatio720_flat;
+    apRatioBox.box[1] = apRatio1080_flat;
+
+    apRatioBox.leftArrowRect = {
+        .x = window.w/5,
+        .y = window.h/2,
+        .w = arrow_flat.newRect.w,
+        .h = arrow_flat.newRect.h
+    };
+    apRatioBox.rightArrowRect = {
+        .x = 4*window.w/5,
+        .y = window.h/2,
+        .w = arrow_flat.newRect.w,
+        .h = arrow_flat.newRect.h
+    };
+
+    apRatioBox.leftArrowRect.makeDimensions();
+    apRatioBox.rightArrowRect.makeDimensions();
+    apRatioBox.leftArrowRect.shiftXY();
+    apRatioBox.rightArrowRect.shiftXY();
 }

@@ -21,8 +21,8 @@ extern win window;
 extern textureImage mouseCursor;
 
 extern int mode;
-extern int xMousePos;
-extern int yMousePos;
+extern bool hold;
+extern SDL_Point mousePos;
 
 void checkMouse(void);
 
