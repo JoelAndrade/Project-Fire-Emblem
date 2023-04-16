@@ -1,6 +1,6 @@
 #ifndef EXE_ICON_RC
 #define EXE_ICON_RC
 
-exe ICON "exe.ico"
+exe ICON "favicon.ico"
 
 #endif // EXE_ICON_RC
