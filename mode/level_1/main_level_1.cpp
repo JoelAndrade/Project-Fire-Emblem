@@ -7,18 +7,21 @@
 #include <SDL_Util.h>
 #include <Character.h>
 
-#define blockLength (80)
+#define BLOCK_LENGTH (80)
 
 SDL_Point leftClick;
 SDL_Point focus;
 
-levelMode_t levelMode = standby;
+levelMode_t levelMode;
 
 textureImage tile;
 
 textureImage game_flat_temp;
 textureImage game_light_temp;
 textureImage game_click_temp;
+textureImage settings_flat_temp;
+textureImage settings_light_temp;
+textureImage settings_click_temp;
 
 textureImage cursorHighlight;
 textureImage moveHighlight;
@@ -27,36 +30,37 @@ textureImage attackHighlight;
 textureImage textBox;
 
 Character sprite;
-map lvl1Map;
+Character* characterSelect;
+map_t lvl1Map;
 
 void main_level_1(void);
 
 static void renderOptions(textureImage box_flat, textureImage box_light, textureImage box_click);
-static void clickIndex(int* x, int* y);
+static void renderMoveHighlight(void);
+static void renderAttHighlight(void);
+static void renderCursorHighlightGrid(void);
 
 static void pieceSelectEvent(void);
+static bool outsideTextboxEvent(void);
+static void optionSelectEvent(SDL_Rect rect, int modeSelect);
 
-static void cursorHighlightGrid(void);
+static void clickIndex(int* x, int* y);
 
 static void imagesInit(void);
 static void destroyImages(void);
+static void spritesInit(void);
 
 static void runLevel_1(void);
 static void renderScreen(void);
 
-// void menuEvent(Character* character) {
-//     if (SDL_PointInRect(&leftClick, &character->image.newRect)) {
-//         character->selected = true;
-//     }
-//     SDL_PointInRect(&leftClick, &character->image.newRect) ? character->selected = true : character->selected = false;
-// }
-
 void main_level_1(void) {
     imagesInit();
-
+    spritesInit();
+    levelMode = DEFAULT;
+    sprite.i = 4;
+    sprite.j = 7;
     while (mode == LEVEL_1) {
         runLevel_1();
-
     }
 
     destroyImages();
@@ -93,27 +97,40 @@ static void runLevel_1(void) {
 
                     switch (levelMode)
                     {
-                    case standby:
+                    case DEFAULT:
                         pieceSelectEvent();
                         break;
                     
-                    case options:
-
+                    case OPTIONS:
+                        if (!outsideTextboxEvent()) {
+                            optionSelectEvent(game_flat_temp.newRect, SETTINGS);
+                        }
                         break;
                     
-                    case move:
+                    case PIECE_SELECT:
+                        if (!outsideTextboxEvent()) {
+                            optionSelectEvent(game_flat_temp.newRect, MOVE);
+                            optionSelectEvent(game_flat_temp.newRect, STATS);
+                            optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
+                        }
+                        break;
+                    
+                    case MOVE:
                         break;
 
-                    case stats:
+                    case STATS:
+                        break;
+
+                    case SETTINGS:
                         break;
 
                     default:
-                        levelMode = standby;
+                        levelMode = DEFAULT;
                         break;
                     }
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    levelMode = standby;
+                    levelMode = DEFAULT;
                 }
             }
 
@@ -131,11 +148,6 @@ static void runLevel_1(void) {
 }
 
 
-
-
-
-
-
 static void renderScreen(void) {
     checkMouse();
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
@@ -145,7 +157,7 @@ static void renderScreen(void) {
     // draw the grid
     for (int i = 0; i < row; ++i) {
         for (int j = 0; j < col; ++j) {
-            tile.changePos(j*blockLength, i*blockLength);
+            tile.changePos(j*BLOCK_LENGTH, i*BLOCK_LENGTH);
 
             if (lvl1Map.tiles[i][j] == 'n') {
                 tile.render(window.renderer);
@@ -156,23 +168,30 @@ static void renderScreen(void) {
 
     switch (levelMode)
     {
-    case standby:
-        cursorHighlightGrid();
+    case DEFAULT:
+        renderCursorHighlightGrid();
         break;
     
-    case options:
+    case OPTIONS:
         textBox.render(window.renderer);
-        renderOptions(game_flat_temp, game_light_temp, game_click_temp);
         break;
     
-    case move:
+    case PIECE_SELECT:
+        textBox.render(window.renderer);
+        renderMoveHighlight();
+        renderAttHighlight();
+        renderOptions(game_flat_temp, game_light_temp, game_click_temp);
+        renderOptions(settings_flat_temp, settings_light_temp, settings_click_temp);
         break;
 
-    case stats:
+    case MOVE:
+        break;
+
+    case STATS:
         break;
 
     default:
-        levelMode = standby;
+        levelMode = DEFAULT;
         break;
     }
 
@@ -181,11 +200,27 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-static void pieceSelectEvent(void) {
-    std::cout << leftClick.x << "      " << leftClick.y << std::endl;
-    if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
-        levelMode = options;
-        focus = leftClick;
+static void renderMoveHighlight(void) {
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            if ('0' < lvl1Map.moveAttSpaces[i][j] && lvl1Map.moveAttSpaces[i][j] < (characterSelect->moves + '0' + 1)) {
+                moveHighlight.newRect.x = j*BLOCK_LENGTH;
+                moveHighlight.newRect.y = i*BLOCK_LENGTH;
+                moveHighlight.render(window.renderer);
+            }
+        }
+    }
+}
+
+static void renderAttHighlight(void) {
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            if (lvl1Map.moveAttSpaces[i][j] == 'a') {
+                attackHighlight.newRect.x = j*BLOCK_LENGTH;
+                attackHighlight.newRect.y = i*BLOCK_LENGTH;
+                attackHighlight.render(window.renderer);
+            }
+        }
     }
 }
 
@@ -201,23 +236,55 @@ static void renderOptions(textureImage box_flat, textureImage box_light, texture
     }
 }
 
-
-static void cursorHighlightGrid(void) {
-    cursorHighlight.newRect.x = (mousePos.x/blockLength) * blockLength;
-    cursorHighlight.newRect.y = (mousePos.y/blockLength) * blockLength;
+static void renderCursorHighlightGrid(void) {
+    cursorHighlight.newRect.x = (mousePos.x/BLOCK_LENGTH) * BLOCK_LENGTH;
+    cursorHighlight.newRect.y = (mousePos.y/BLOCK_LENGTH) * BLOCK_LENGTH;
     cursorHighlight.render(window.renderer);
 }
 
+
+static bool outsideTextboxEvent(void) {
+    if (!SDL_PointInRect(&mousePos, &textBox.newRect)) {
+        levelMode = DEFAULT;
+        return true;
+    }
+    return false;
+}
+
+static void pieceSelectEvent(void) {
+    if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
+        characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
+        lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
+        for (int i = 0; i < row; ++i) {
+            for (int j = 0; j < col; ++j) {
+                std::cout << lvl1Map.moveAttSpaces[i][j];
+            }
+            std::cout << "\n";
+        }
+        levelMode = PIECE_SELECT;
+        // focus = leftClick;
+    }
+    else {
+        levelMode = OPTIONS;
+    }
+}
+
+static void optionSelectEvent(SDL_Rect rect, int modeSelect) {
+    if (SDL_PointInRect(&mousePos, &rect)) {
+        levelMode = (levelMode_t)modeSelect;
+    }
+}
+
 static void clickIndex(int* x, int* y) {
-    *x = (*x/blockLength);
-    *y = (*y/blockLength);
+    *x = (*x/BLOCK_LENGTH);
+    *y = (*y/BLOCK_LENGTH);
 }
 
 static void imagesInit(void) {
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
-    tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", blockLength, blockLength, 0, 0);
-    sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*blockLength, 4*blockLength);
+    tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
 
     textBox.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
 
@@ -225,9 +292,13 @@ static void imagesInit(void) {
     game_light_temp.init(window.renderer,  "images/Images/main_menu_images/GameH.png",  0.1*SCALE, window.w, 0);
     game_click_temp.init(window.renderer,  "images/Images/main_menu_images/GameHL.png", 0.1*SCALE, window.w, 0);
 
-    cursorHighlight.init(window.renderer, yellow, blockLength, blockLength);
-    moveHighlight.init(window.renderer, cyan, blockLength, blockLength);
-    attackHighlight.init(window.renderer, red, blockLength, blockLength);
+    settings_flat_temp.init(window.renderer,   "images/Images/main_menu_images/Settings.png",   0.1*SCALE, window.w, window.h/8);
+    settings_light_temp.init(window.renderer,  "images/Images/main_menu_images/SettingsH.png",  0.1*SCALE, window.w, window.h/8);
+    settings_click_temp.init(window.renderer,  "images/Images/main_menu_images/SettingsHL.png", 0.1*SCALE, window.w, window.h/8);
+
+    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
+    moveHighlight.init(window.renderer, cyan, BLOCK_LENGTH, BLOCK_LENGTH);
+    attackHighlight.init(window.renderer, red, BLOCK_LENGTH, BLOCK_LENGTH);
 
     textBox.newRect.shiftX(2);
 
@@ -235,10 +306,17 @@ static void imagesInit(void) {
     game_light_temp.newRect.shiftX(2);
     game_click_temp.newRect.shiftX(2);
 
+    settings_flat_temp.newRect.shiftX(2);
+    settings_light_temp.newRect.shiftX(2);
+    settings_click_temp.newRect.shiftX(2);
+
+    textBox.setAlpha(200);
+    game_flat_temp.setAlpha(200);
+    settings_flat_temp.setAlpha(200);
+
     cursorHighlight.setAlpha(50);
     moveHighlight.setAlpha(100);
     attackHighlight.setAlpha(100);
-
 }
 
 static void destroyImages(void) {
@@ -250,6 +328,23 @@ static void destroyImages(void) {
 
     game_flat_temp.destroy(); 
     game_light_temp.destroy(); 
-    game_click_temp.destroy(); 
+    game_click_temp.destroy();
 
+    settings_flat_temp.destroy(); 
+    settings_light_temp.destroy(); 
+    settings_click_temp.destroy(); 
+}
+
+static void spritesInit(void) {
+    sprite.initStatsAndPos("sprite", // name
+                            69,      // hp
+                            69,      // attack
+                            69,      // defence
+                            69,      // special attack
+                            69,      // special defence
+                            69,      // luck
+                            3,      // moves
+                            4,      // i
+                            7);     // j
+    lvl1Map.pieceLocations[sprite.i][sprite.j] = &sprite;
 }

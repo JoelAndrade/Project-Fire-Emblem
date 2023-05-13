@@ -71,7 +71,4 @@ int main(int argc, char* args[]) {
 // Smooth the transitions of the music
 
 // TODO: Make basic board
-// - Add sprite
 // - Add movement
-// - Add highlight movement
-// - ADD highlight attack range
