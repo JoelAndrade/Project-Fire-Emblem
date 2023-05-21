@@ -155,8 +155,8 @@ static void renderScreen(void) {
     window.clearRender();
 
     // draw the grid
-    for (int i = 0; i < row; ++i) {
-        for (int j = 0; j < col; ++j) {
+    for (int i = 0; i < ROW; ++i) {
+        for (int j = 0; j < COL; ++j) {
             tile.changePos(j*BLOCK_LENGTH, i*BLOCK_LENGTH);
 
             if (lvl1Map.tiles[i][j] == 'n') {
@@ -201,9 +201,9 @@ static void renderScreen(void) {
 }
 
 static void renderMoveHighlight(void) {
-    for (int i = 0; i < row; ++i) {
-        for (int j = 0; j < col; ++j) {
-            if ('0' < lvl1Map.moveAttSpaces[i][j] && lvl1Map.moveAttSpaces[i][j] < (characterSelect->moves + '0' + 1)) {
+    for (int i = 0; i < ROW; ++i) {
+        for (int j = 0; j < COL; ++j) {
+            if (LIMITS('1', lvl1Map.moveAttSpaces[i][j], characterSelect->moves + '0')) {
                 moveHighlight.newRect.x = j*BLOCK_LENGTH;
                 moveHighlight.newRect.y = i*BLOCK_LENGTH;
                 moveHighlight.render(window.renderer);
@@ -213,8 +213,8 @@ static void renderMoveHighlight(void) {
 }
 
 static void renderAttHighlight(void) {
-    for (int i = 0; i < row; ++i) {
-        for (int j = 0; j < col; ++j) {
+    for (int i = 0; i < ROW; ++i) {
+        for (int j = 0; j < COL; ++j) {
             if (lvl1Map.moveAttSpaces[i][j] == 'a') {
                 attackHighlight.newRect.x = j*BLOCK_LENGTH;
                 attackHighlight.newRect.y = i*BLOCK_LENGTH;
@@ -255,8 +255,8 @@ static void pieceSelectEvent(void) {
     if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
         characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
         lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
-        for (int i = 0; i < row; ++i) {
-            for (int j = 0; j < col; ++j) {
+        for (int i = 0; i < ROW; ++i) {
+            for (int j = 0; j < COL; ++j) {
                 std::cout << lvl1Map.moveAttSpaces[i][j];
             }
             std::cout << "\n";
@@ -343,7 +343,7 @@ static void spritesInit(void) {
                             69,      // special attack
                             69,      // special defence
                             69,      // luck
-                            3,      // moves
+                            4,      // moves
                             4,      // i
                             7);     // j
     lvl1Map.pieceLocations[sprite.i][sprite.j] = &sprite;
