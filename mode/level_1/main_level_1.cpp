@@ -43,6 +43,7 @@ static void renderCursorHighlightGrid(void);
 static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
 static void optionSelectEvent(SDL_Rect rect, int modeSelect);
+static void moveEvent(void);
 
 static void clickIndex(int* x, int* y);
 
@@ -103,19 +104,19 @@ static void runLevel_1(void) {
                     
                     case OPTIONS:
                         if (!outsideTextboxEvent()) {
-                            optionSelectEvent(game_flat_temp.newRect, SETTINGS);
+                            optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
                         }
                         break;
                     
                     case PIECE_SELECT:
                         if (!outsideTextboxEvent()) {
                             optionSelectEvent(game_flat_temp.newRect, MOVE);
-                            optionSelectEvent(game_flat_temp.newRect, STATS);
                             optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
                         }
                         break;
                     
                     case MOVE:
+                        moveEvent();
                         break;
 
                     case STATS:
@@ -174,6 +175,7 @@ static void renderScreen(void) {
     
     case OPTIONS:
         textBox.render(window.renderer);
+        renderOptions(settings_flat_temp, settings_light_temp, settings_click_temp);
         break;
     
     case PIECE_SELECT:
@@ -185,9 +187,16 @@ static void renderScreen(void) {
         break;
 
     case MOVE:
+        renderMoveHighlight();
+        renderAttHighlight();
+        renderCursorHighlightGrid();
         break;
 
     case STATS:
+        break;
+
+
+    case SETTINGS:
         break;
 
     default:
@@ -272,6 +281,25 @@ static void pieceSelectEvent(void) {
 static void optionSelectEvent(SDL_Rect rect, int modeSelect) {
     if (SDL_PointInRect(&mousePos, &rect)) {
         levelMode = (levelMode_t)modeSelect;
+    }
+}
+
+static void moveEvent(void) {
+    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves)) {
+        char tempChar = lvl1Map.collision[leftClick.y][leftClick.x];
+        lvl1Map.collision[leftClick.y][leftClick.x] = lvl1Map.collision[characterSelect->i][characterSelect->j];
+        lvl1Map.collision[characterSelect->i][characterSelect->j] = tempChar;
+
+        Character* tempCharacter = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
+        lvl1Map.pieceLocations[leftClick.y][leftClick.x] = lvl1Map.pieceLocations[characterSelect->i][characterSelect->j];
+        lvl1Map.pieceLocations[characterSelect->i][characterSelect->j] = tempCharacter;
+
+        characterSelect->i = leftClick.y;
+        characterSelect->j = leftClick.x;
+        characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH;
+        characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH;
+
+        levelMode = DEFAULT; // This is temporary; we want a option menu for move; ie: attack, wait, etc
     }
 }
 
