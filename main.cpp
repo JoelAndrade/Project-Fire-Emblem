@@ -71,4 +71,5 @@ int main(int argc, char* args[]) {
 // Smooth the transitions of the music
 
 // TODO: Make basic board
-// - Add movement
+// Add a villian on the board with vilain interactions
+// Might want to make the board a square to leave the side with menuing and camera

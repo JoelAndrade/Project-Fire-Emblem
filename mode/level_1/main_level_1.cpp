@@ -43,7 +43,7 @@ static void renderCursorHighlightGrid(void);
 static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
 static void optionSelectEvent(SDL_Rect rect, int modeSelect);
-static void moveEvent(void);
+static bool moveEvent(void);
 
 static void clickIndex(int* x, int* y);
 
@@ -109,7 +109,8 @@ static void runLevel_1(void) {
                         break;
                     
                     case PIECE_SELECT:
-                        if (!outsideTextboxEvent()) {
+                        if(moveEvent());
+                        else if (!outsideTextboxEvent()) {
                             optionSelectEvent(game_flat_temp.newRect, MOVE);
                             optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
                         }
@@ -184,6 +185,7 @@ static void renderScreen(void) {
         renderAttHighlight();
         renderOptions(game_flat_temp, game_light_temp, game_click_temp);
         renderOptions(settings_flat_temp, settings_light_temp, settings_click_temp);
+        renderCursorHighlightGrid();
         break;
 
     case MOVE:
@@ -284,7 +286,7 @@ static void optionSelectEvent(SDL_Rect rect, int modeSelect) {
     }
 }
 
-static void moveEvent(void) {
+static bool moveEvent(void) {
     if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves)) {
         char tempChar = lvl1Map.collision[leftClick.y][leftClick.x];
         lvl1Map.collision[leftClick.y][leftClick.x] = lvl1Map.collision[characterSelect->i][characterSelect->j];
@@ -300,7 +302,10 @@ static void moveEvent(void) {
         characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH;
 
         levelMode = DEFAULT; // This is temporary; we want a option menu for move; ie: attack, wait, etc
+        return true;
     }
+
+    return false;
 }
 
 static void clickIndex(int* x, int* y) {
@@ -371,8 +376,9 @@ static void spritesInit(void) {
                             69,      // special attack
                             69,      // special defence
                             69,      // luck
-                            4,      // moves
-                            4,      // i
-                            7);     // j
+                            4,       // moves
+                            HERO,    // allegiance
+                            4,       // i
+                            7);      // j
     lvl1Map.pieceLocations[sprite.i][sprite.j] = &sprite;
 }
