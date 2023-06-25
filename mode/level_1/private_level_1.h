@@ -5,8 +5,8 @@
 #include <SDL_Util.h>
 #include <stdint.h>
 
-#define ROW (9)
-#define COL (16)
+#define ROW (9) // normal gpa 10
+#define COL (16) // normal gpa 15
 
 typedef enum levelMode_e {
     DEFAULT,

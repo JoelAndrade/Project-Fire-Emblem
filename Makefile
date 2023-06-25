@@ -2,7 +2,7 @@ all:
 	windres -i images/icon/exe_icon.rc -O coff -o images/icon/exe_icon.res
 
 	g++ \
-	main.cpp \
+	main.cpp debug.cpp \
 	utilities/file/*.cpp utilities/SDL2/*.cpp \
 	mode/title_screen/*.cpp mode/main_menu/*.cpp mode/level_1/*.cpp \
 	save/*.cpp \
@@ -14,7 +14,7 @@ all:
 
 	g++ \
 	-mwindows -static-libgcc -static-libstdc++ \
-	main.cpp \
+	main.cpp debug.cpp \
 	utilities/file/*.cpp utilities/SDL2/*.cpp mode/level_1/*.cpp \
 	mode/title_screen/*.cpp mode/main_menu/*.cpp \
 	save/*.cpp \

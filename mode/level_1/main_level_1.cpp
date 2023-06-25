@@ -1,4 +1,5 @@
 #include "../../main.h"
+#include "../../debug.h"
 #include "main_level_1.h"
 #include "private_level_1.h"
 
@@ -8,6 +9,7 @@
 #include <Character.h>
 
 #define BLOCK_LENGTH (80)
+#define OPTION_BLOCK (0.075)
 
 SDL_Point leftClick;
 SDL_Point focus;
@@ -16,12 +18,24 @@ levelMode_t levelMode;
 
 textureImage tile;
 
-textureImage game_flat_temp;
-textureImage game_light_temp;
-textureImage game_click_temp;
-textureImage settings_flat_temp;
-textureImage settings_light_temp;
-textureImage settings_click_temp;
+textureImage attack_flat;
+textureImage attack_light;
+textureImage attack_click;
+textureImage items_flat;
+textureImage items_light;
+textureImage items_click;
+textureImage move_flat;
+textureImage move_light;
+textureImage move_click;
+textureImage stats_flat;
+textureImage stats_light;
+textureImage stats_click;
+textureImage wait_flat;
+textureImage wait_light;
+textureImage wait_click;
+textureImage settings_flat;
+textureImage settings_light;
+textureImage settings_click;
 
 textureImage cursorHighlight;
 textureImage moveHighlight;
@@ -104,15 +118,15 @@ static void runLevel_1(void) {
                     
                     case OPTIONS:
                         if (!outsideTextboxEvent()) {
-                            optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
+                            optionSelectEvent(settings_flat.newRect, SETTINGS);
                         }
                         break;
                     
                     case PIECE_SELECT:
                         if(moveEvent());
                         else if (!outsideTextboxEvent()) {
-                            optionSelectEvent(game_flat_temp.newRect, MOVE);
-                            optionSelectEvent(settings_flat_temp.newRect, SETTINGS);
+                            optionSelectEvent(move_flat.newRect, MOVE);
+                            optionSelectEvent(settings_flat.newRect, SETTINGS);
                         }
                         break;
                     
@@ -176,16 +190,19 @@ static void renderScreen(void) {
     
     case OPTIONS:
         textBox.render(window.renderer);
-        renderOptions(settings_flat_temp, settings_light_temp, settings_click_temp);
+        renderOptions(settings_flat, settings_light, settings_click);
         break;
     
     case PIECE_SELECT:
-        textBox.render(window.renderer);
         renderMoveHighlight();
         renderAttHighlight();
-        renderOptions(game_flat_temp, game_light_temp, game_click_temp);
-        renderOptions(settings_flat_temp, settings_light_temp, settings_click_temp);
         renderCursorHighlightGrid();
+
+        textBox.render(window.renderer);
+        renderOptions(move_flat, move_light, move_click);
+        renderOptions(items_flat, items_light, items_click);
+        renderOptions(stats_flat, stats_light, stats_click);
+        renderOptions(settings_flat, settings_light, settings_click);
         break;
 
     case MOVE:
@@ -266,14 +283,8 @@ static void pieceSelectEvent(void) {
     if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
         characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
         lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
-        for (int i = 0; i < ROW; ++i) {
-            for (int j = 0; j < COL; ++j) {
-                std::cout << lvl1Map.moveAttSpaces[i][j];
-            }
-            std::cout << "\n";
-        }
+        printField(lvl1Map.moveAttSpaces[0], ROW, COL);
         levelMode = PIECE_SELECT;
-        // focus = leftClick;
     }
     else {
         levelMode = OPTIONS;
@@ -320,32 +331,50 @@ static void imagesInit(void) {
     sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
 
     textBox.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
-
-    game_flat_temp.init(window.renderer,   "images/Images/main_menu_images/Game.png",   0.1*SCALE, window.w, 0);
-    game_light_temp.init(window.renderer,  "images/Images/main_menu_images/GameH.png",  0.1*SCALE, window.w, 0);
-    game_click_temp.init(window.renderer,  "images/Images/main_menu_images/GameHL.png", 0.1*SCALE, window.w, 0);
-
-    settings_flat_temp.init(window.renderer,   "images/Images/main_menu_images/Settings.png",   0.1*SCALE, window.w, window.h/8);
-    settings_light_temp.init(window.renderer,  "images/Images/main_menu_images/SettingsH.png",  0.1*SCALE, window.w, window.h/8);
-    settings_click_temp.init(window.renderer,  "images/Images/main_menu_images/SettingsHL.png", 0.1*SCALE, window.w, window.h/8);
-
-    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
-    moveHighlight.init(window.renderer, cyan, BLOCK_LENGTH, BLOCK_LENGTH);
-    attackHighlight.init(window.renderer, red, BLOCK_LENGTH, BLOCK_LENGTH);
-
     textBox.newRect.shiftX(2);
 
-    game_flat_temp.newRect.shiftX(2);
-    game_light_temp.newRect.shiftX(2);
-    game_click_temp.newRect.shiftX(2);
+    move_flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
 
-    settings_flat_temp.newRect.shiftX(2);
-    settings_light_temp.newRect.shiftX(2);
-    settings_click_temp.newRect.shiftX(2);
+    items_flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+
+    stats_flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+
+    settings_flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+
+    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
+    moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
+    attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
+
+
+    move_flat.newRect.shiftXY();
+    move_light.newRect.shiftXY();
+    move_click.newRect.shiftXY();
+
+    items_flat.newRect.shiftXY();
+    items_light.newRect.shiftXY();
+    items_click.newRect.shiftXY();
+
+    stats_flat.newRect.shiftXY();
+    stats_light.newRect.shiftXY();
+    stats_click.newRect.shiftXY();
+
+    settings_flat.newRect.shiftXY();
+    settings_light.newRect.shiftXY();
+    settings_click.newRect.shiftXY();
 
     textBox.setAlpha(200);
-    game_flat_temp.setAlpha(200);
-    settings_flat_temp.setAlpha(200);
+    move_flat.setAlpha(200);
+    items_flat.setAlpha(200);
+    stats_flat.setAlpha(200);
+    settings_flat.setAlpha(200);
 
     cursorHighlight.setAlpha(50);
     moveHighlight.setAlpha(100);
@@ -359,13 +388,21 @@ static void destroyImages(void) {
 
     textBox.destroy();
 
-    game_flat_temp.destroy(); 
-    game_light_temp.destroy(); 
-    game_click_temp.destroy();
+    move_flat.destroy(); 
+    move_light.destroy(); 
+    move_click.destroy();
 
-    settings_flat_temp.destroy(); 
-    settings_light_temp.destroy(); 
-    settings_click_temp.destroy(); 
+    items_flat.destroy(); 
+    items_light.destroy(); 
+    items_click.destroy();
+
+    stats_flat.destroy(); 
+    stats_light.destroy(); 
+    stats_click.destroy();
+
+    settings_flat.destroy(); 
+    settings_light.destroy(); 
+    settings_click.destroy(); 
 }
 
 static void spritesInit(void) {
