@@ -10,6 +10,7 @@
 
 #define BLOCK_LENGTH (80)
 #define OPTION_BLOCK (0.075)
+#define REVERT (true)
 
 SDL_Point leftClick;
 SDL_Point focus;
@@ -57,7 +58,7 @@ static void renderCursorHighlightGrid(void);
 static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
 static void optionSelectEvent(SDL_Rect rect, int modeSelect);
-static bool moveEvent(void);
+static bool moveEvent(bool revert = false);
 
 static void clickIndex(int* x, int* y);
 
@@ -123,7 +124,7 @@ static void runLevel_1(void) {
                         break;
                     
                     case PIECE_SELECT:
-                        if(moveEvent());
+                        if (moveEvent());
                         else if (!outsideTextboxEvent()) {
                             optionSelectEvent(move_flat.newRect, MOVE);
                             optionSelectEvent(settings_flat.newRect, SETTINGS);
@@ -132,6 +133,10 @@ static void runLevel_1(void) {
                     
                     case MOVE:
                         moveEvent();
+                        break;
+
+                    case POSTMOVE:
+                        optionSelectEvent(wait_flat.newRect, DEFAULT);
                         break;
 
                     case STATS:
@@ -146,7 +151,39 @@ static void runLevel_1(void) {
                     }
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
-                    levelMode = DEFAULT;
+                    switch (levelMode)
+                    {
+                    case DEFAULT:
+                        break;
+                    
+                    case OPTIONS:
+                        levelMode = DEFAULT;
+                        break;
+                    
+                    case PIECE_SELECT:
+                        levelMode = DEFAULT;
+                        break;
+                    
+                    case MOVE:
+                        levelMode = PIECE_SELECT;
+                        break;
+
+                    case POSTMOVE:
+                        moveEvent(REVERT);
+                        break;
+
+                    case STATS:
+                        levelMode = DEFAULT;
+                        break;
+
+                    case SETTINGS:
+                        levelMode = DEFAULT;
+                        break;
+
+                    default:
+                        levelMode = DEFAULT;
+                        break;
+                    }
                 }
             }
 
@@ -211,9 +248,16 @@ static void renderScreen(void) {
         renderCursorHighlightGrid();
         break;
 
-    case STATS:
+    case POSTMOVE:
+        renderCursorHighlightGrid();
+        
+        textBox.render(window.renderer);
+        renderOptions(wait_flat, wait_light, wait_click);
+        renderOptions(attack_flat, attack_light, attack_click);
         break;
 
+    case STATS:
+        break;
 
     case SETTINGS:
         break;
@@ -297,8 +341,19 @@ static void optionSelectEvent(SDL_Rect rect, int modeSelect) {
     }
 }
 
-static bool moveEvent(void) {
-    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves)) {
+static bool moveEvent(bool revert) {
+    static SDL_Point prevCharacterPos;
+
+    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves) || revert) {
+        if (!revert) {
+            prevCharacterPos.x = characterSelect->j;
+            prevCharacterPos.y = characterSelect->i;
+        }
+        else {
+            leftClick.x = prevCharacterPos.x;
+            leftClick.y = prevCharacterPos.y;
+        }
+
         char tempChar = lvl1Map.collision[leftClick.y][leftClick.x];
         lvl1Map.collision[leftClick.y][leftClick.x] = lvl1Map.collision[characterSelect->i][characterSelect->j];
         lvl1Map.collision[characterSelect->i][characterSelect->j] = tempChar;
@@ -312,7 +367,13 @@ static bool moveEvent(void) {
         characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH;
         characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH;
 
-        levelMode = DEFAULT; // This is temporary; we want a option menu for move; ie: attack, wait, etc
+        if (!revert) {
+            levelMode = POSTMOVE;
+        }
+        else {
+            levelMode = PIECE_SELECT;
+        }
+
         return true;
     }
 
@@ -349,6 +410,14 @@ static void imagesInit(void) {
     settings_light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
     settings_click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
 
+    wait_flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+
+    attack_flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+
     cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
     moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
     attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
@@ -369,6 +438,14 @@ static void imagesInit(void) {
     settings_flat.newRect.shiftXY();
     settings_light.newRect.shiftXY();
     settings_click.newRect.shiftXY();
+
+    wait_flat.newRect.shiftXY();
+    wait_light.newRect.shiftXY();
+    wait_click.newRect.shiftXY();
+
+    attack_flat.newRect.shiftXY();
+    attack_light.newRect.shiftXY();
+    attack_click.newRect.shiftXY();
 
     textBox.setAlpha(200);
     move_flat.setAlpha(200);

@@ -163,7 +163,7 @@ typedef struct SDL_Rect
         bottomY -= yShift;
         leftY -= yShift;
         rightY -= yShift;
-    }//Joel ended here
+    } // Joel ended here
 
 
 } SDL_Rect;
