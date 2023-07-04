@@ -13,6 +13,7 @@
 
 win window;
 textureImage mouseCursor;
+int fps = 60; // make this a macro if the fps is fixed
 
 int mode = TITLE_SCREEN;
 bool hold = false;
@@ -71,7 +72,7 @@ int main(int argc, char* args[]) {
 // Smooth the transitions of the music
 
 // TODO: Make basic board
-// Add proper movement options
+// Need to fix attck highlight after a post-move command - need to do this once a villain ia on the board
 // Add a villian on the board with vilain interactions
 // Might want to make the board a square to leave the side with menuing and camera
 

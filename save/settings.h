@@ -4,7 +4,6 @@
 typedef struct settings_s {
     int widowWidth;
     int windowHeight;
-
 } settings_t;
 
 extern settings_t settings;

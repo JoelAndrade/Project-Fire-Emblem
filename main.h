@@ -19,6 +19,7 @@ typedef enum Modes_e {
 
 extern win window;
 extern textureImage mouseCursor;
+extern int fps;
 
 extern int mode;
 extern bool hold;

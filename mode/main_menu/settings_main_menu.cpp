@@ -27,7 +27,6 @@ void settings_main_menu(void) {
 
 static void runSettings(void) {
     SDL_Event event;
-    int fps = 60;
     Uint32 startingTick;
 
     while (mainMenuMode == SETTINGS) {

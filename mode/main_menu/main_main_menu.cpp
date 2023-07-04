@@ -114,7 +114,6 @@ void main_main_menu(void) {
 
 static void runMainMenu(void) {
     SDL_Event event;
-    int fps = 60;
     Uint32 startingTick;
 
     while (mainMenuMode == MAIN_MENU_MAIN) {

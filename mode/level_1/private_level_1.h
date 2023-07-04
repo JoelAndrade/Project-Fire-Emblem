@@ -14,12 +14,13 @@ typedef enum levelMode_e {
     PIECE_SELECT,
     MOVE,
     POSTMOVE,
+    ATTACK,
     STATS,
     SETTINGS,
 } levelMode_t;
 
 typedef struct map_s {
-    const char tiles[ROW][COL] = 
+    const char tiles[ROW][COL] =
     {
         {'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n'},
         {'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n'},
@@ -41,7 +42,7 @@ typedef struct map_s {
     w - wall
     ==============
     */
-    const char terrain[ROW][COL] = 
+    const char terrain[ROW][COL] =
     {
         {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
         {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
@@ -63,10 +64,10 @@ typedef struct map_s {
     w - wall
     ==============
     */
-    char collision[ROW][COL] = 
+    char collision[ROW][COL] =
     {
         {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
-        {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
+        {'s', 's', 's', 's', ' ', ' ', ' ', 'p', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
         {'s', 's', 's', 's', ' ', ' ', 'w', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
         {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
         {'s', 's', 's', 's', ' ', ' ', ' ', 'p', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '},
@@ -76,7 +77,7 @@ typedef struct map_s {
         {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' '}
     };
 
-    char moveAttSpaces[ROW][COL] = 
+    char moveAttSpaces[ROW][COL] =
     {
         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -109,7 +110,6 @@ typedef struct map_s {
         moveAttSpaces[i_index][j_index] = '0';
 
         for (char move = '0'; move < '0' + numMoves; ++move) {
-
             for (int i = 0; i < ROW; ++i) {
                 for (int j = 0; j < COL; ++j) {
                     if (moveAttSpaces[i][j] == move) {
@@ -138,9 +138,9 @@ typedef struct map_s {
                 moveAttSpaces[i][j - 1] = numChar;                         // [x][o][ ]
             }                                                              // [ ][ ][ ]
 
-            if (LIMITS(0, j + 1, COL) && moveAttSpaces[i][j + 1] == ' ') { //[ ][ ][ ]
-                moveAttSpaces[i][j + 1] = numChar;                         //[ ][o][x]
-            }                                                              //[ ][ ][ ]
+            if (LIMITS(0, j + 1, COL) && moveAttSpaces[i][j + 1] == ' ') { // [ ][ ][ ]
+                moveAttSpaces[i][j + 1] = numChar;                         // [ ][o][x]
+            }                                                              // [ ][ ][ ]
 
             if (LIMITS(0, i + 1, ROW) && moveAttSpaces[i + 1][j] == ' ') { // [ ][ ][ ]
                 moveAttSpaces[i + 1][j] = numChar;                         // [ ][o][ ]
@@ -162,7 +162,7 @@ typedef struct map_s {
 
             if (LIMITS(0, i + 1, ROW) && !LIMITS('0', moveAttSpaces[i + 1][j], '0' + numMoves)) { // [ ][ ][ ]
                 moveAttSpaces[i + 1][j] = 'a';                                                    // [ ][o][ ]
-            }                                                                                     // [ ][ ][ ]
+            }                                                                                     // [ ][x][ ]
         }
 } map_t;
 

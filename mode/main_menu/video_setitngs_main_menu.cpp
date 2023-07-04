@@ -42,7 +42,6 @@ void video_settings_main_menu(void) {
 
 static void runVideoSettings(void) {
     SDL_Event event;
-    int fps = 60;
     Uint32 startingTick;
 
     while (mainMenuMode == VIDEO_SETTINGS) {

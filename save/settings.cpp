@@ -3,7 +3,7 @@
 #include <File_Util.h>
 
 settings_t settings = {
-    .widowWidth = 1280,
+    .widowWidth   = 1280,
     .windowHeight = 720
 };
 

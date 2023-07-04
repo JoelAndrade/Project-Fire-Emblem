@@ -44,7 +44,8 @@ textureImage attackHighlight;
 
 textureImage textBox;
 
-Character sprite;
+Character hero_sprite;
+Character villain_sprite;
 Character* characterSelect;
 map_t lvl1Map;
 
@@ -57,7 +58,7 @@ static void renderCursorHighlightGrid(void);
 
 static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
-static void optionSelectEvent(SDL_Rect rect, int modeSelect);
+static bool optionSelectEvent(SDL_Rect rect, int modeSelect);
 static bool moveEvent(bool revert = false);
 
 static void clickIndex(int* x, int* y);
@@ -73,8 +74,6 @@ void main_level_1(void) {
     imagesInit();
     spritesInit();
     levelMode = DEFAULT;
-    sprite.i = 4;
-    sprite.j = 7;
     while (mode == LEVEL_1) {
         runLevel_1();
     }
@@ -84,7 +83,6 @@ void main_level_1(void) {
 
 static void runLevel_1(void) {
     SDL_Event event;
-    int fps = 60;
     Uint32 startingTick;
 
     while (mode == LEVEL_1) {
@@ -124,10 +122,18 @@ static void runLevel_1(void) {
                         break;
                     
                     case PIECE_SELECT:
-                        if (moveEvent());
-                        else if (!outsideTextboxEvent()) {
-                            optionSelectEvent(move_flat.newRect, MOVE);
-                            optionSelectEvent(settings_flat.newRect, SETTINGS);
+                        if (characterSelect->allegiance == HERO) {
+                            if (moveEvent());
+                            else if (!outsideTextboxEvent()) {
+                                optionSelectEvent(move_flat.newRect, MOVE);
+                                optionSelectEvent(settings_flat.newRect, SETTINGS);
+                            }
+                        }
+                        else {
+                            if (!outsideTextboxEvent()) {
+                                optionSelectEvent(stats_flat.newRect, STATS);
+                                optionSelectEvent(settings_flat.newRect, SETTINGS);
+                            }
                         }
                         break;
                     
@@ -137,6 +143,10 @@ static void runLevel_1(void) {
 
                     case POSTMOVE:
                         optionSelectEvent(wait_flat.newRect, DEFAULT);
+                        optionSelectEvent(attack_flat.newRect, ATTACK);
+                        break;
+
+                    case ATTACK:
                         break;
 
                     case STATS:
@@ -170,6 +180,10 @@ static void runLevel_1(void) {
 
                     case POSTMOVE:
                         moveEvent(REVERT);
+                        break;
+
+                    case ATTACK:
+                        levelMode = POSTMOVE;
                         break;
 
                     case STATS:
@@ -217,7 +231,10 @@ static void renderScreen(void) {
             }
         }
     }
-    sprite.image.render(window.renderer); // draw the sprite
+
+    // draw the sprites
+    hero_sprite.image.render(window.renderer);
+    villain_sprite.image.render(window.renderer);
 
     switch (levelMode)
     {
@@ -236,10 +253,17 @@ static void renderScreen(void) {
         renderCursorHighlightGrid();
 
         textBox.render(window.renderer);
-        renderOptions(move_flat, move_light, move_click);
-        renderOptions(items_flat, items_light, items_click);
-        renderOptions(stats_flat, stats_light, stats_click);
-        renderOptions(settings_flat, settings_light, settings_click);
+        if (characterSelect->allegiance == HERO) {
+            renderOptions(move_flat, move_light, move_click);
+            renderOptions(items_flat, items_light, items_click);
+            renderOptions(stats_flat, stats_light, stats_click);
+            renderOptions(settings_flat, settings_light, settings_click);
+        }
+        else {
+            renderOptions(items_flat, items_light, items_click);
+            renderOptions(stats_flat, stats_light, stats_click);
+            renderOptions(settings_flat, settings_light, settings_click);
+        }
         break;
 
     case MOVE:
@@ -254,6 +278,10 @@ static void renderScreen(void) {
         textBox.render(window.renderer);
         renderOptions(wait_flat, wait_light, wait_click);
         renderOptions(attack_flat, attack_light, attack_click);
+        break;
+
+    case ATTACK:
+        renderCursorHighlightGrid();
         break;
 
     case STATS:
@@ -335,10 +363,13 @@ static void pieceSelectEvent(void) {
     }
 }
 
-static void optionSelectEvent(SDL_Rect rect, int modeSelect) {
+static bool optionSelectEvent(SDL_Rect rect, int modeSelect) {
     if (SDL_PointInRect(&mousePos, &rect)) {
         levelMode = (levelMode_t)modeSelect;
+        return true;
     }
+
+    return false;
 }
 
 static bool moveEvent(bool revert) {
@@ -389,10 +420,15 @@ static void imagesInit(void) {
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
     tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
+    hero_sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
+    villain_sprite.image.init(window.renderer, "images/Images/level_1_images/badGuySprite.png", 0.13, 7*BLOCK_LENGTH, 1*BLOCK_LENGTH);
 
     textBox.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
     textBox.newRect.shiftX(2);
+
+    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
+    moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
+    attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
 
     move_flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
     move_light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
@@ -417,11 +453,6 @@ static void imagesInit(void) {
     attack_flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
     attack_light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
     attack_click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-
-    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
-    moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
-    attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
-
 
     move_flat.newRect.shiftXY();
     move_light.newRect.shiftXY();
@@ -452,6 +483,8 @@ static void imagesInit(void) {
     items_flat.setAlpha(200);
     stats_flat.setAlpha(200);
     settings_flat.setAlpha(200);
+    wait_flat.setAlpha(200);
+    attack_flat.setAlpha(200);
 
     cursorHighlight.setAlpha(50);
     moveHighlight.setAlpha(100);
@@ -460,8 +493,11 @@ static void imagesInit(void) {
 
 static void destroyImages(void) {
     tile.destroy();
-    sprite.~Character();
+    hero_sprite.~Character();
+    villain_sprite.~Character();
     cursorHighlight.destroy();
+    moveHighlight.destroy();
+    attackHighlight.destroy();
 
     textBox.destroy();
 
@@ -480,10 +516,18 @@ static void destroyImages(void) {
     settings_flat.destroy(); 
     settings_light.destroy(); 
     settings_click.destroy(); 
+
+    wait_flat.destroy();
+    wait_light.destroy();
+    wait_click.destroy();
+
+    attack_flat.destroy();
+    attack_light.destroy();
+    attack_click.destroy();
 }
 
 static void spritesInit(void) {
-    sprite.initStatsAndPos("sprite", // name
+    hero_sprite.initStatsAndPos("sprite", // name
                             69,      // hp
                             69,      // attack
                             69,      // defence
@@ -494,5 +538,18 @@ static void spritesInit(void) {
                             HERO,    // allegiance
                             4,       // i
                             7);      // j
-    lvl1Map.pieceLocations[sprite.i][sprite.j] = &sprite;
+    lvl1Map.pieceLocations[hero_sprite.i][hero_sprite.j] = &hero_sprite;
+
+    villain_sprite.initStatsAndPos("badGuySprite", // name
+                            69,      // hp
+                            69,      // attack
+                            69,      // defence
+                            69,      // special attack
+                            69,      // special defence
+                            69,      // luck
+                            4,       // moves
+                            VILLAIN, // allegiance
+                            1,       // i
+                            7);      // j
+    lvl1Map.pieceLocations[villain_sprite.i][villain_sprite.j] = &villain_sprite;
 }
