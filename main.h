@@ -17,6 +17,12 @@ typedef enum Modes_e {
 
 } Modes_t;
 
+typedef struct option_box_s {
+    textureImage flat;
+    textureImage light;
+    textureImage click;
+} option_box_t;
+
 extern win window;
 extern textureImage mouseCursor;
 extern int fps;

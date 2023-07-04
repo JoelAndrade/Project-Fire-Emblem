@@ -19,24 +19,12 @@ levelMode_t levelMode;
 
 textureImage tile;
 
-textureImage attack_flat;
-textureImage attack_light;
-textureImage attack_click;
-textureImage items_flat;
-textureImage items_light;
-textureImage items_click;
-textureImage move_flat;
-textureImage move_light;
-textureImage move_click;
-textureImage stats_flat;
-textureImage stats_light;
-textureImage stats_click;
-textureImage wait_flat;
-textureImage wait_light;
-textureImage wait_click;
-textureImage settings_flat;
-textureImage settings_light;
-textureImage settings_click;
+option_box_t attack_box;
+option_box_t items_box;
+option_box_t move_box;
+option_box_t stats_box;
+option_box_t wait_box;
+option_box_t settings_box;
 
 textureImage cursorHighlight;
 textureImage moveHighlight;
@@ -51,7 +39,7 @@ map_t lvl1Map;
 
 void main_level_1(void);
 
-static void renderOptions(textureImage box_flat, textureImage box_light, textureImage box_click);
+static void renderOptions(option_box_t box);
 static void renderMoveHighlight(void);
 static void renderAttHighlight(void);
 static void renderCursorHighlightGrid(void);
@@ -117,7 +105,7 @@ static void runLevel_1(void) {
                     
                     case OPTIONS:
                         if (!outsideTextboxEvent()) {
-                            optionSelectEvent(settings_flat.newRect, SETTINGS);
+                            optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                         }
                         break;
                     
@@ -125,14 +113,14 @@ static void runLevel_1(void) {
                         if (characterSelect->allegiance == HERO) {
                             if (moveEvent());
                             else if (!outsideTextboxEvent()) {
-                                optionSelectEvent(move_flat.newRect, MOVE);
-                                optionSelectEvent(settings_flat.newRect, SETTINGS);
+                                optionSelectEvent(move_box.flat.newRect, MOVE);
+                                optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                             }
                         }
                         else {
                             if (!outsideTextboxEvent()) {
-                                optionSelectEvent(stats_flat.newRect, STATS);
-                                optionSelectEvent(settings_flat.newRect, SETTINGS);
+                                optionSelectEvent(stats_box.flat.newRect, STATS);
+                                optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                             }
                         }
                         break;
@@ -142,8 +130,8 @@ static void runLevel_1(void) {
                         break;
 
                     case POSTMOVE:
-                        optionSelectEvent(wait_flat.newRect, DEFAULT);
-                        optionSelectEvent(attack_flat.newRect, ATTACK);
+                        optionSelectEvent(wait_box.flat.newRect, DEFAULT);
+                        optionSelectEvent(attack_box.flat.newRect, ATTACK);
                         break;
 
                     case ATTACK:
@@ -244,7 +232,7 @@ static void renderScreen(void) {
     
     case OPTIONS:
         textBox.render(window.renderer);
-        renderOptions(settings_flat, settings_light, settings_click);
+        renderOptions(settings_box);
         break;
     
     case PIECE_SELECT:
@@ -254,15 +242,15 @@ static void renderScreen(void) {
 
         textBox.render(window.renderer);
         if (characterSelect->allegiance == HERO) {
-            renderOptions(move_flat, move_light, move_click);
-            renderOptions(items_flat, items_light, items_click);
-            renderOptions(stats_flat, stats_light, stats_click);
-            renderOptions(settings_flat, settings_light, settings_click);
+            renderOptions(move_box);
+            renderOptions(items_box);
+            renderOptions(stats_box);
+            renderOptions(settings_box);
         }
         else {
-            renderOptions(items_flat, items_light, items_click);
-            renderOptions(stats_flat, stats_light, stats_click);
-            renderOptions(settings_flat, settings_light, settings_click);
+            renderOptions(items_box);
+            renderOptions(stats_box);
+            renderOptions(settings_box);
         }
         break;
 
@@ -276,8 +264,8 @@ static void renderScreen(void) {
         renderCursorHighlightGrid();
         
         textBox.render(window.renderer);
-        renderOptions(wait_flat, wait_light, wait_click);
-        renderOptions(attack_flat, attack_light, attack_click);
+        renderOptions(wait_box);
+        renderOptions(attack_box);
         break;
 
     case ATTACK:
@@ -324,15 +312,15 @@ static void renderAttHighlight(void) {
     }
 }
 
-static void renderOptions(textureImage box_flat, textureImage box_light, textureImage box_click) {
-    if (SDL_PointInRect(&mousePos, &box_flat.newRect) && hold) {
-        box_click.render(window.renderer);
+static void renderOptions(option_box_t box) {
+    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold) {
+        box.click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mousePos, &box_flat.newRect)) {
-        box_light.render(window.renderer);
+    else if (SDL_PointInRect(&mousePos, &box.flat.newRect)) {
+        box.light.render(window.renderer);
     }
     else {
-        box_flat.render(window.renderer);
+        box.flat.render(window.renderer);
     }
 }
 
@@ -430,61 +418,61 @@ static void imagesInit(void) {
     moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
     attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
 
-    move_flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    move_light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    move_click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_box.flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_box.light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_box.click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
 
-    items_flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    items_light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    items_click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_box.flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_box.light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_box.click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
 
-    stats_flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
-    stats_light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
-    stats_click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_box.flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_box.light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_box.click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
 
-    settings_flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
-    settings_light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
-    settings_click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_box.flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_box.light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_box.click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
 
-    wait_flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    wait_light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    wait_click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_box.flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_box.light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_box.click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
 
-    attack_flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    attack_light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    attack_click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_box.flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_box.light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_box.click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
 
-    move_flat.newRect.shiftXY();
-    move_light.newRect.shiftXY();
-    move_click.newRect.shiftXY();
+    move_box.flat.newRect.shiftXY();
+    move_box.light.newRect.shiftXY();
+    move_box.click.newRect.shiftXY();
 
-    items_flat.newRect.shiftXY();
-    items_light.newRect.shiftXY();
-    items_click.newRect.shiftXY();
+    items_box.flat.newRect.shiftXY();
+    items_box.light.newRect.shiftXY();
+    items_box.click.newRect.shiftXY();
 
-    stats_flat.newRect.shiftXY();
-    stats_light.newRect.shiftXY();
-    stats_click.newRect.shiftXY();
+    stats_box.flat.newRect.shiftXY();
+    stats_box.light.newRect.shiftXY();
+    stats_box.click.newRect.shiftXY();
 
-    settings_flat.newRect.shiftXY();
-    settings_light.newRect.shiftXY();
-    settings_click.newRect.shiftXY();
+    settings_box.flat.newRect.shiftXY();
+    settings_box.light.newRect.shiftXY();
+    settings_box.click.newRect.shiftXY();
 
-    wait_flat.newRect.shiftXY();
-    wait_light.newRect.shiftXY();
-    wait_click.newRect.shiftXY();
+    wait_box.flat.newRect.shiftXY();
+    wait_box.light.newRect.shiftXY();
+    wait_box.click.newRect.shiftXY();
 
-    attack_flat.newRect.shiftXY();
-    attack_light.newRect.shiftXY();
-    attack_click.newRect.shiftXY();
+    attack_box.flat.newRect.shiftXY();
+    attack_box.light.newRect.shiftXY();
+    attack_box.click.newRect.shiftXY();
 
     textBox.setAlpha(200);
-    move_flat.setAlpha(200);
-    items_flat.setAlpha(200);
-    stats_flat.setAlpha(200);
-    settings_flat.setAlpha(200);
-    wait_flat.setAlpha(200);
-    attack_flat.setAlpha(200);
+    move_box.flat.setAlpha(200);
+    items_box.flat.setAlpha(200);
+    stats_box.flat.setAlpha(200);
+    settings_box.flat.setAlpha(200);
+    wait_box.flat.setAlpha(200);
+    attack_box.flat.setAlpha(200);
 
     cursorHighlight.setAlpha(50);
     moveHighlight.setAlpha(100);
@@ -501,29 +489,29 @@ static void destroyImages(void) {
 
     textBox.destroy();
 
-    move_flat.destroy(); 
-    move_light.destroy(); 
-    move_click.destroy();
+    move_box.flat.destroy(); 
+    move_box.light.destroy(); 
+    move_box.click.destroy();
 
-    items_flat.destroy(); 
-    items_light.destroy(); 
-    items_click.destroy();
+    items_box.flat.destroy(); 
+    items_box.light.destroy(); 
+    items_box.click.destroy();
 
-    stats_flat.destroy(); 
-    stats_light.destroy(); 
-    stats_click.destroy();
+    stats_box.flat.destroy(); 
+    stats_box.light.destroy(); 
+    stats_box.click.destroy();
 
-    settings_flat.destroy(); 
-    settings_light.destroy(); 
-    settings_click.destroy(); 
+    settings_box.flat.destroy(); 
+    settings_box.light.destroy(); 
+    settings_box.click.destroy(); 
 
-    wait_flat.destroy();
-    wait_light.destroy();
-    wait_click.destroy();
+    wait_box.flat.destroy();
+    wait_box.light.destroy();
+    wait_box.click.destroy();
 
-    attack_flat.destroy();
-    attack_light.destroy();
-    attack_click.destroy();
+    attack_box.flat.destroy();
+    attack_box.light.destroy();
+    attack_box.click.destroy();
 }
 
 static void spritesInit(void) {

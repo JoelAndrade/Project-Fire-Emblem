@@ -66,7 +66,7 @@ static void runVideoSettings(void) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
                     arrowEvent(&apRatioBox, sizeof(apRatioBox.box)/sizeof(apRatioBox.box[0]));
-                    applyEvent(apply_flat.newRect);
+                    applyEvent(apply_box.flat.newRect);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
                     mainMenuMode = SETTINGS;
@@ -95,17 +95,17 @@ static void renderScreen(void) {
     background.render(window.renderer);
 
     apRatioBox.render(window.renderer);
-    renderBox(apply_flat, apply_light, apply_click);
+    renderBox(apply_box);
 
-    arrow_flat.newRect  = apRatioBox.leftArrowRect;
-    arrow_light.newRect = apRatioBox.leftArrowRect;
-    arrow_click.newRect = apRatioBox.leftArrowRect;
-    renderBox(arrow_flat, arrow_light, arrow_click, SDL_FLIP_HORIZONTAL);
+    arrow_box.flat.newRect  = apRatioBox.leftArrowRect;
+    arrow_box.light.newRect = apRatioBox.leftArrowRect;
+    arrow_box.click.newRect = apRatioBox.leftArrowRect;
+    renderBox(arrow_box, SDL_FLIP_HORIZONTAL);
 
-    arrow_flat.newRect  = apRatioBox.rightArrowRect;
-    arrow_light.newRect = apRatioBox.rightArrowRect;
-    arrow_click.newRect = apRatioBox.rightArrowRect;
-    renderBox(arrow_flat, arrow_light, arrow_click);
+    arrow_box.flat.newRect  = apRatioBox.rightArrowRect;
+    arrow_box.light.newRect = apRatioBox.rightArrowRect;
+    arrow_box.click.newRect = apRatioBox.rightArrowRect;
+    renderBox(arrow_box);
 
     mouseCursor.render(window.renderer);
     
@@ -148,20 +148,20 @@ static void applyEvent(SDL_Rect rect) {
 }
 
 static void positionArrows(void) {
-    apRatioBox.box[0] = apRatio720_flat;
-    apRatioBox.box[1] = apRatio1080_flat;
+    apRatioBox.box[0] = apRatio720_box.flat;
+    apRatioBox.box[1] = apRatio1080_box.flat;
 
     apRatioBox.leftArrowRect = {
         .x = window.w/5,
         .y = window.h/2,
-        .w = arrow_flat.newRect.w,
-        .h = arrow_flat.newRect.h
+        .w = arrow_box.flat.newRect.w,
+        .h = arrow_box.flat.newRect.h
     };
     apRatioBox.rightArrowRect = {
         .x = 4*window.w/5,
         .y = window.h/2,
-        .w = arrow_flat.newRect.w,
-        .h = arrow_flat.newRect.h
+        .w = arrow_box.flat.newRect.w,
+        .h = arrow_box.flat.newRect.h
     };
 
     apRatioBox.leftArrowRect.makeDimensions();

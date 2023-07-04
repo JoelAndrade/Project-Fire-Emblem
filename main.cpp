@@ -75,5 +75,6 @@ int main(int argc, char* args[]) {
 // Need to fix attck highlight after a post-move command - need to do this once a villain ia on the board
 // Add a villian on the board with vilain interactions
 // Might want to make the board a square to leave the side with menuing and camera
+// Need to be able to handle animation 
 
 // Note: The size the blocks does not matter right row. There will be a camera anyway.

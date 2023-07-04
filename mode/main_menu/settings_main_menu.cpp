@@ -50,7 +50,7 @@ static void runSettings(void) {
             if (event.type == SDL_MOUSEBUTTONUP) {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     hold = event.button.state;
-                    menuEvent(video_flat.newRect, VIDEO_SETTINGS);
+                    menuEvent(video_box.flat.newRect, VIDEO_SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT) {
                     mainMenuMode = MAIN_MENU_MAIN;
@@ -78,9 +78,9 @@ static void renderScreen(void) {
 
     background.render(window.renderer);
 
-    renderBox(game_flat, game_light, game_click);
-    renderBox(video_flat, video_light, video_click);
-    renderBox(audio_flat, audio_light, audio_click);
+    renderBox(game_box);
+    renderBox(video_box);
+    renderBox(audio_box);
 
     mouseCursor.render(window.renderer);
     
