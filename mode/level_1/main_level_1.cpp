@@ -42,6 +42,7 @@ void main_level_1(void);
 static void renderOptions(option_box_t box);
 static void renderMoveHighlight(void);
 static void renderAttHighlight(void);
+static void renderPostMoveAttack(int i, int j);
 static void renderCursorHighlightGrid(void);
 
 static void pieceSelectEvent(void);
@@ -269,6 +270,7 @@ static void renderScreen(void) {
         break;
 
     case ATTACK:
+        renderPostMoveAttack(characterSelect->i, characterSelect->j);
         renderCursorHighlightGrid();
         break;
 
@@ -308,6 +310,40 @@ static void renderAttHighlight(void) {
                 attackHighlight.newRect.y = i*BLOCK_LENGTH;
                 attackHighlight.render(window.renderer);
             }
+        }
+    }
+}
+
+static void renderPostMoveAttack(int i, int j) {
+    if (lvl1Map.pieceLocations[i - 1][j] != NULL) {
+        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO) { // [ ][x][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH;       // [ ][o][ ]
+            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.render(window.renderer);
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i][j - 1] != NULL) {
+        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO) { // [ ][ ][ ]
+            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH;       // [x][o][ ]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.render(window.renderer);
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i][j + 1] != NULL) {
+        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO) { // [ ][ ][ ]
+            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH;       // [ ][o][x]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.render(window.renderer);
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i + 1][j] != NULL) {
+        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO) { // [ ][ ][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH;       // [ ][o][ ]
+            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH;       // [ ][x][ ]
+            attackHighlight.render(window.renderer);
         }
     }
 }

@@ -90,7 +90,7 @@ typedef struct map_s {
         {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
     };
 
-    Character* pieceLocations [ROW][COL] = {NULL};
+    Character* pieceLocations[ROW][COL] = {NULL};
 
     const char empty[ROW][COL] = 
     {
