@@ -67,14 +67,19 @@ int main(int argc, char* args[]) {
 
 // TODO: Make main menu
 // Make audio settings
+// Add transparentcy to game settings
 
 // TODO: Implement sound
 // Smooth the transitions of the music
 
 // TODO: Make basic board
-// Need to fix attck highlight after a post-move command - need to do this once a villain ia on the board
 // Add a villian on the board with vilain interactions
+// Need a functions that calculates the damage, crit, and misses
 // Might want to make the board a square to leave the side with menuing and camera
-// Need to be able to handle animation 
+// Need to be able to handle animation
+// Add keyboard shortcuts
+
+// TODO: Have the all the board meckanics all on one file. 
+// Have details about specific (size, characters, etc.) on a diffent file
 
 // Note: The size the blocks does not matter right row. There will be a camera anyway.

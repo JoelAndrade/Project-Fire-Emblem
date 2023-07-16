@@ -49,6 +49,7 @@ static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
 static bool optionSelectEvent(SDL_Rect rect, int modeSelect);
 static bool moveEvent(bool revert = false);
+static void attackEvent(void);
 
 static void clickIndex(int* x, int* y);
 
@@ -136,6 +137,7 @@ static void runLevel_1(void) {
                         break;
 
                     case ATTACK:
+                        attackEvent();
                         break;
 
                     case STATS:
@@ -379,7 +381,7 @@ static void pieceSelectEvent(void) {
     if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
         characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
         lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
-        printField(lvl1Map.moveAttSpaces[0], ROW, COL);
+        printField(lvl1Map.moveAttSpaces[0], ROW, COL); // TODO: remove this line
         levelMode = PIECE_SELECT;
     }
     else {
@@ -433,6 +435,18 @@ static bool moveEvent(bool revert) {
     }
 
     return false;
+}
+
+void attackEvent(void) {
+    if (lvl1Map.pieceLocations[leftClick.y][leftClick.x] != NULL) {
+        if (lvl1Map.pieceLocations[leftClick.y][leftClick.x]->allegiance == VILLAIN) {
+
+            // TODO: Need a functions that calculates the damage, crit, and misses
+            lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp -= characterSelect->attack;
+            std::cout << lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp << std::endl; // TODO: remove this line
+            levelMode = DEFAULT;
+        }
+    }
 }
 
 static void clickIndex(int* x, int* y) {
