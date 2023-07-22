@@ -8,57 +8,73 @@
 static void runSettings(void);
 static void renderScreen(void);
 
-void settings_main_menu(void) {
-
-    while (mainMenuMode == SETTINGS) {
+void settings_main_menu(void)
+{
+    while (mainMenuMode == SETTINGS)
+    {
         runSettings();
 
-        if (mainMenuMode == GAME_SETTINGS) {
+        if (mainMenuMode == GAME_SETTINGS)
+        {
 
         }
-        else if (mainMenuMode == VIDEO_SETTINGS) {
+        else if (mainMenuMode == VIDEO_SETTINGS)
+        {
             video_settings_main_menu();
         }
-        else if (mainMenuMode == AUDIO_SETTINGS) {
+        else if (mainMenuMode == AUDIO_SETTINGS)
+        {
 
         }
     }
 }
 
-static void runSettings(void) {
+static void runSettings(void)
+{
     SDL_Event event;
     Uint32 startingTick;
 
-    while (mainMenuMode == SETTINGS) {
+    while (mainMenuMode == SETTINGS)
+    {
         startingTick = SDL_GetTicks();
 
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
 
                 }
             }
 
-            if (event.type == SDL_MOUSEBUTTONUP) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                     menuEvent(video_box.flat.newRect, VIDEO_SETTINGS);
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
                     mainMenuMode = MAIN_MENU_MAIN;
                 }
             }
 
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
                     mainMenuMode = MAIN_MENU_MAIN;
                 }
             }
@@ -70,7 +86,8 @@ static void runSettings(void) {
     }
 }
 
-static void renderScreen(void) {
+static void renderScreen(void)
+{
     checkMouse();
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     

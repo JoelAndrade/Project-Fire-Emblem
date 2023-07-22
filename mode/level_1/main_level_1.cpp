@@ -63,42 +63,53 @@ static void spritesInit(void);
 static void runLevel_1(void);
 static void renderScreen(void);
 
-void main_level_1(void) {
+void main_level_1(void)
+{
     imagesInit();
     spritesInit();
     levelMode = DEFAULT;
     camera.x = 0;
     camera.y = 0;
-    while (mode == LEVEL_1) {
+    while (mode == LEVEL_1)
+    {
         runLevel_1();
     }
 
     destroyImages();
 }
 
-static void runLevel_1(void) {
+static void runLevel_1(void)
+{
     SDL_Event event;
     Uint32 startingTick;
 
-    while (mode == LEVEL_1) {
+    while (mode == LEVEL_1)
+    {
         startingTick = SDL_GetTicks();
 
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = true;
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
                     
                 }
             }
 
-            if (event.type == SDL_MOUSEBUTTONUP) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = false;
                     leftClick.x = event.button.x;
                     leftClick.y = event.button.y;
@@ -111,21 +122,26 @@ static void runLevel_1(void) {
                         break;
                     
                     case OPTIONS:
-                        if (!outsideTextboxEvent()) {
+                        if (!outsideTextboxEvent())
+                        {
                             optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                         }
                         break;
                     
                     case PIECE_SELECT:
-                        if (characterSelect->allegiance == HERO) {
+                        if (characterSelect->allegiance == HERO)
+                        {
                             if (moveEvent());
-                            else if (!outsideTextboxEvent()) {
+                            else if (!outsideTextboxEvent())
+                            {
                                 optionSelectEvent(move_box.flat.newRect, MOVE);
                                 optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                             }
                         }
-                        else {
-                            if (!outsideTextboxEvent()) {
+                        else
+                        {
+                            if (!outsideTextboxEvent())
+                            {
                                 optionSelectEvent(stats_box.flat.newRect, STATS);
                                 optionSelectEvent(settings_box.flat.newRect, SETTINGS);
                             }
@@ -156,7 +172,8 @@ static void runLevel_1(void) {
                         break;
                     }
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
                     switch (levelMode)
                     {
                     case DEFAULT:
@@ -197,30 +214,40 @@ static void runLevel_1(void) {
                 }
             }
 
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
                     mode = MAIN_MENU;
                 }
-                if (event.key.keysym.sym == SDLK_w) {
-                    if (camera.y > 0) {
+                if (event.key.keysym.sym == SDLK_w)
+                {
+                    if (camera.y > 0)
+                    {
                         camera.y -= CAMERA_CHANGE;
                         ajustSprites(0, -CAMERA_CHANGE);
                     }
                 }
-                if (event.key.keysym.sym == SDLK_a) {
-                    if (camera.x > 0) {
+                if (event.key.keysym.sym == SDLK_a)
+                {
+                    if (camera.x > 0)
+                    {
                         camera.x -= CAMERA_CHANGE;
                         ajustSprites(-CAMERA_CHANGE, 0);
                     }
                 }
-                if (event.key.keysym.sym == SDLK_s) {
-                    if (camera.y < window.h) {
+                if (event.key.keysym.sym == SDLK_s)
+                {
+                    if (camera.y < window.h)
+                    {
                         camera.y += CAMERA_CHANGE;
                         ajustSprites(0, CAMERA_CHANGE);
                     }
                 }
-                if (event.key.keysym.sym == SDLK_d) {
-                    if (camera.x < window.w) {
+                if (event.key.keysym.sym == SDLK_d)
+                {
+                    if (camera.x < window.w)
+                    {
                         camera.x += CAMERA_CHANGE;
                         ajustSprites(CAMERA_CHANGE, 0);
                     }
@@ -235,18 +262,22 @@ static void runLevel_1(void) {
 }
 
 
-static void renderScreen(void) {
+static void renderScreen(void)
+{
     checkMouse();
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
     window.clearRender();
 
     // draw the grid
-    for (int i = 0; i < ROW; ++i) {
-        for (int j = 0; j < COL; ++j) {
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
             tile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
 
-            if (lvl1Map.tiles[i][j] == 'n') {
+            if (lvl1Map.tiles[i][j] == 'n')
+            {
                 tile.render(window.renderer);
             }
         }
@@ -273,13 +304,15 @@ static void renderScreen(void) {
         renderCursorHighlightGrid();
 
         textBox.render(window.renderer);
-        if (characterSelect->allegiance == HERO) {
+        if (characterSelect->allegiance == HERO)
+        {
             renderOptions(move_box);
             renderOptions(items_box);
             renderOptions(stats_box);
             renderOptions(settings_box);
         }
-        else {
+        else
+        {
             renderOptions(items_box);
             renderOptions(stats_box);
             renderOptions(settings_box);
@@ -321,10 +354,14 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-static void renderMoveHighlight(void) {
-    for (int i = 0; i < ROW; ++i) {
-        for (int j = 0; j < COL; ++j) {
-            if (LIMITS('1', lvl1Map.moveAttSpaces[i][j], characterSelect->moves + '0')) {
+static void renderMoveHighlight(void)
+{
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            if (LIMITS('1', lvl1Map.moveAttSpaces[i][j], characterSelect->moves + '0'))
+            {
                 moveHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
                 moveHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
                 moveHighlight.render(window.renderer);
@@ -333,10 +370,14 @@ static void renderMoveHighlight(void) {
     }
 }
 
-static void renderAttHighlight(void) {
-    for (int i = 0; i < ROW; ++i) {
-        for (int j = 0; j < COL; ++j) {
-            if (lvl1Map.moveAttSpaces[i][j] == 'a') {
+static void renderAttHighlight(void)
+{
+    for (int i = 0; i < ROW; ++i)
+    {
+        for (int j = 0; j < COL; ++j)
+        {
+            if (lvl1Map.moveAttSpaces[i][j] == 'a')
+            {
                 attackHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
                 attackHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
                 attackHighlight.render(window.renderer);
@@ -345,81 +386,102 @@ static void renderAttHighlight(void) {
     }
 }
 
-static void renderPostMoveAttack(int i, int j) {
-    if (lvl1Map.pieceLocations[i - 1][j] != NULL) {
-        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO) { // [ ][x][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x;       // [ ][o][ ]
-            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
+static void renderPostMoveAttack(int i, int j)
+{
+    if (lvl1Map.pieceLocations[i - 1][j] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO)
+        {                                                                // [ ][x][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
+            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j - 1] != NULL) {
-        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH - camera.x;       // [x][o][ ]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
+    if (lvl1Map.pieceLocations[i][j - 1] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO)
+        {                                                                // [ ][ ][ ]
+            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH - camera.x; // [x][o][ ]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j + 1] != NULL) {
-        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH - camera.x;       // [ ][o][x]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
+    if (lvl1Map.pieceLocations[i][j + 1] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO)
+        {                                                                // [ ][ ][ ]
+            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH - camera.x; // [ ][o][x]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i + 1][j] != NULL) {
-        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x;       // [ ][o][ ]
-            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH - camera.y;       // [ ][x][ ]
+    if (lvl1Map.pieceLocations[i + 1][j] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO)
+        {                                                                // [ ][ ][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
+            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH - camera.y; // [ ][x][ ]
             attackHighlight.render(window.renderer);
         }
     }
 }
 
-static void renderOptions(option_box_t box) {
-    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold) {
+static void renderOptions(option_box_t box)
+{
+    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold)
+    {
         box.click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mousePos, &box.flat.newRect)) {
+    else if (SDL_PointInRect(&mousePos, &box.flat.newRect))
+    {
         box.light.render(window.renderer);
     }
-    else {
+    else
+    {
         box.flat.render(window.renderer);
     }
 }
 
-static void renderCursorHighlightGrid(void) {
+static void renderCursorHighlightGrid(void)
+{
     cursorHighlight.newRect.x = ((mousePos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
     cursorHighlight.newRect.y = ((mousePos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
     cursorHighlight.render(window.renderer);
 }
 
 
-static bool outsideTextboxEvent(void) {
-    if (!SDL_PointInRect(&mousePos, &textBox.newRect)) {
+static bool outsideTextboxEvent(void)
+{
+    if (!SDL_PointInRect(&mousePos, &textBox.newRect))
+    {
         levelMode = DEFAULT;
         return true;
     }
     return false;
 }
 
-static void pieceSelectEvent(void) {
-    if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p') {
+static void pieceSelectEvent(void)
+{
+    if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p')
+    {
         characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
         lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
         printField(lvl1Map.moveAttSpaces[0], ROW, COL); // TODO: remove this line
         levelMode = PIECE_SELECT;
     }
-    else {
+    else
+    {
         levelMode = OPTIONS;
     }
 }
 
-static bool optionSelectEvent(SDL_Rect rect, int modeSelect) {
-    if (SDL_PointInRect(&mousePos, &rect)) {
+static bool optionSelectEvent(SDL_Rect rect, int modeSelect)
+{
+    if (SDL_PointInRect(&mousePos, &rect))
+    {
         levelMode = (levelMode_t)modeSelect;
         return true;
     }
@@ -427,15 +489,19 @@ static bool optionSelectEvent(SDL_Rect rect, int modeSelect) {
     return false;
 }
 
-static bool moveEvent(bool revert) {
+static bool moveEvent(bool revert)
+{
     static SDL_Point prevCharacterPos;
 
-    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves) || revert) {
-        if (!revert) {
+    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves) || revert)
+    {
+        if (!revert)
+        {
             prevCharacterPos.x = characterSelect->j;
             prevCharacterPos.y = characterSelect->i;
         }
-        else {
+        else
+        {
             leftClick.x = prevCharacterPos.x;
             leftClick.y = prevCharacterPos.y;
         }
@@ -453,10 +519,12 @@ static bool moveEvent(bool revert) {
         characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH - camera.x;
         characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH - camera.y;
 
-        if (!revert) {
+        if (!revert)
+        {
             levelMode = POSTMOVE;
         }
-        else {
+        else
+        {
             levelMode = PIECE_SELECT;
         }
 
@@ -466,10 +534,12 @@ static bool moveEvent(bool revert) {
     return false;
 }
 
-void attackEvent(void) {
-    if (lvl1Map.pieceLocations[leftClick.y][leftClick.x] != NULL) {
-        if (lvl1Map.pieceLocations[leftClick.y][leftClick.x]->allegiance == VILLAIN) {
-
+void attackEvent(void)
+{
+    if (lvl1Map.pieceLocations[leftClick.y][leftClick.x] != NULL)
+    {
+        if (lvl1Map.pieceLocations[leftClick.y][leftClick.x]->allegiance == VILLAIN)
+        {
             // TODO: Need a functions that calculates the damage, crit, and misses
             lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp -= characterSelect->attack;
             std::cout << lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp << std::endl; // TODO: remove this line
@@ -478,12 +548,14 @@ void attackEvent(void) {
     }
 }
 
-static void clickIndex(int* x, int* y) {
+static void clickIndex(int* x, int* y)
+{
     *x = ((*x + camera.x)/BLOCK_LENGTH);
     *y = ((*y + camera.y)/BLOCK_LENGTH);
 }
 
-static void ajustSprites(int xAjust, int yAjust) {
+static void ajustSprites(int xAjust, int yAjust)
+{
     hero_sprite.image.newRect.x -= xAjust;
     hero_sprite.image.newRect.y -= yAjust;
     hero_sprite.image.newRect.makeDimensions();
@@ -493,7 +565,8 @@ static void ajustSprites(int xAjust, int yAjust) {
     villain_sprite.image.newRect.makeDimensions();
 }
 
-static void imagesInit(void) {
+static void imagesInit(void)
+{
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
     tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
@@ -568,7 +641,8 @@ static void imagesInit(void) {
     attackHighlight.setAlpha(100);
 }
 
-static void destroyImages(void) {
+static void destroyImages(void)
+{
     tile.destroy();
     hero_sprite.~Character();
     villain_sprite.~Character();
@@ -603,7 +677,8 @@ static void destroyImages(void) {
     attack_box.click.destroy();
 }
 
-static void spritesInit(void) {
+static void spritesInit(void)
+{
     hero_sprite.initStatsAndPos("sprite", // name
                             69,      // hp
                             69,      // attack

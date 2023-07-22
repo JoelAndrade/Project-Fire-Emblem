@@ -17,11 +17,13 @@ static void soundInit(void);
 static void destroyImages(void);
 static void destroySound(void);
 
-void main_titleScreen(void) {
+void main_titleScreen(void)
+{
     runTitleScreen();
 }
 
-static void runTitleScreen(void) {
+static void runTitleScreen(void)
+{
     SDL_Event event;
     int fps = 60;
     Uint32 startingTick;
@@ -31,22 +33,29 @@ static void runTitleScreen(void) {
     soundInit();
     imagesInit();
 
-    while(mode == TITLE_SCREEN) {
+    while(mode == TITLE_SCREEN)
+    {
         startingTick = SDL_GetTicks();
 
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONUP) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     mode = MAIN_MENU;
                 }
             }
 
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
                     mode = QUIT;
                 }
                 if (event.key.keysym.sym == SDLK_KP_ENTER || 
@@ -69,7 +78,8 @@ static void runTitleScreen(void) {
     destroySound();
 }
 
-static void renderScreen(void) {
+static void renderScreen(void)
+{
     window.clearRender();
 
     titleScreen.render(window.renderer);
@@ -78,21 +88,25 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-static void imagesInit(void) {
+static void imagesInit(void)
+{
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     titleScreen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 
-static void destroyImages(void) {
+static void destroyImages(void)
+{
     titleScreen.destroy();
 }
 
-static void soundInit(void) {
+static void soundInit(void)
+{
     music = Mix_LoadMUS("sound/music/15. Understanding What We've Grown To Be.mp3");
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(0);
 }
 
-static void destroySound(void) {
+static void destroySound(void)
+{
     Mix_FreeMusic(music);
 }

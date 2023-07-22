@@ -89,7 +89,8 @@ typedef struct SDL_Rect
     int leftX, leftY;
     int rightX, rightY;
 
-    void makeDimensions() {
+    void makeDimensions()
+    {
         tlX = x;
         tlY = y;
         trX =  x + w;
@@ -110,7 +111,8 @@ typedef struct SDL_Rect
         rightY = y + h/2;
     } 
 
-    void shiftX(int multiplier = 1) {
+    void shiftX(int multiplier = 1)
+    {
         int shift = (topX - x) * multiplier ;
         x -= shift;
         tlX -= shift;
@@ -124,7 +126,8 @@ typedef struct SDL_Rect
         rightX -= shift;
     }
 
-    void shiftY(int multiplier = 1) {
+    void shiftY(int multiplier = 1)
+    {
         int shift = (leftY - y) * multiplier ;
         y -= shift;
         tlY -= shift;
@@ -138,7 +141,8 @@ typedef struct SDL_Rect
         rightY -= shift;
     }
 
-    void shiftXY(int multiplier_x = 1, int multiplier_y = 1) {
+    void shiftXY(int multiplier_x = 1, int multiplier_y = 1)
+    {
         int xShift = (topX - x) * multiplier_x;
         int yShift = (leftY - y) * multiplier_y;
 
@@ -164,7 +168,6 @@ typedef struct SDL_Rect
         leftY -= yShift;
         rightY -= yShift;
     } // Joel ended here
-
 
 } SDL_Rect;
 

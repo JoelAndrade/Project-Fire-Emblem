@@ -19,11 +19,14 @@ int mode = TITLE_SCREEN;
 bool hold = false;
 SDL_Point mousePos;
 
-void checkMouse(void) {
-    if(window.mouseInWindow()) {
+void checkMouse(void)
+{
+    if(window.mouseInWindow())
+    {
         SDL_GetMouseState(&mousePos.x, &mousePos.y);
     }
-    else {
+    else
+    {
         mousePos.x = window.w;
         mousePos.y = window.h;
     }
@@ -43,14 +46,18 @@ int main(int argc, char* args[]) {
 
     Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048);
 
-    while (mode != QUIT) {
-        if (mode == TITLE_SCREEN) {
+    while (mode != QUIT)
+    {
+        if (mode == TITLE_SCREEN)
+        {
             main_titleScreen();
         }
-        if (mode == MAIN_MENU) {
+        if (mode == MAIN_MENU)
+        {
             main_main_menu();
         }
-        if (mode == LEVEL_1) {
+        if (mode == LEVEL_1)
+        {
             main_level_1();
         }
     }

@@ -10,7 +10,8 @@ typedef enum allegiance_e {
     NEUTRAL
 } allegiance_t;
 
-class Character {
+class Character
+{
     public:
         const char* name;
         int hp;
@@ -26,7 +27,8 @@ class Character {
         bool selected;
         textureImage image;
         
-        Character() {
+        Character()
+        {
             selected = false;
         }
         Character(const char* name,
@@ -88,11 +90,13 @@ class Character {
             this->j = j;
         }
 
-        void initImage(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 0, int yPos = 0) {
+        void initImage(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 0, int yPos = 0)
+        {
             image.init(renderer, path, scaleImage, xPos, yPos);
         }
 
-        ~Character() {
+        ~Character()
+        {
             image.destroy();
         }
 

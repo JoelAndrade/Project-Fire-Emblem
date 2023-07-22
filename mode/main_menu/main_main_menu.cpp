@@ -37,50 +37,65 @@ static void renderScreen(void);
 static void soundInit(void);
 static void destroySound(void);
 
-void menuEvent(SDL_Rect rect, int event) {
-    if (SDL_PointInRect(&mousePos, &rect)) {
+void menuEvent(SDL_Rect rect, int event)
+{
+    if (SDL_PointInRect(&mousePos, &rect))
+    {
         mainMenuMode = event;
     }
 }
 
-void renderBox(option_box_t box) {
-    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold) {
+void renderBox(option_box_t box)
+{
+    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold)
+    {
         box.click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mousePos, &box.flat.newRect)) {
+    else if (SDL_PointInRect(&mousePos, &box.flat.newRect))
+    {
         box.light.render(window.renderer);
     }
-    else {
+    else
+    {
         box.flat.render(window.renderer);
     }
 }
-void renderBox(option_box_t box, SDL_RendererFlip) {
-    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold) {
+void renderBox(option_box_t box, SDL_RendererFlip)
+{
+    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold)
+    {
         box.click.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
-    else if (SDL_PointInRect(&mousePos, &box.flat.newRect)) {
+    else if (SDL_PointInRect(&mousePos, &box.flat.newRect))
+    {
         box.light.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
-    else {
+    else
+    {
         box.flat.renderFlip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
 }
 
-void main_main_menu(void) {
+void main_main_menu(void)
+{
     soundInit();
     imagesInit_mainMenu();
     mainMenuMode = MAIN_MENU_MAIN;
 
-    while (mode == MAIN_MENU) {
+    while (mode == MAIN_MENU)
+    {
         runMainMenu();
 
-        if (mainMenuMode == NEWGAME) {
+        if (mainMenuMode == NEWGAME)
+        {
             mode = LEVEL_1;
         }
-        else if (mainMenuMode == COUNTINUE) {
+        else if (mainMenuMode == COUNTINUE)
+        {
 
         }
-        else if (mainMenuMode == SETTINGS) {
+        else if (mainMenuMode == SETTINGS)
+        {
             settings_main_menu();
         }
     }
@@ -93,38 +108,49 @@ static void runMainMenu(void) {
     SDL_Event event;
     Uint32 startingTick;
 
-    while (mainMenuMode == MAIN_MENU_MAIN) {
+    while (mainMenuMode == MAIN_MENU_MAIN)
+    {
         startingTick = SDL_GetTicks();
 
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
-                    
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
+
                 }
             }
 
-            if (event.type == SDL_MOUSEBUTTONUP) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                     menuEvent(newGame_box.flat.newRect, NEWGAME);
                     menuEvent(settings_box.flat.newRect, SETTINGS);
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
                     mainMenuMode = QUIT_MAIN_MENU;
                     mode = TITLE_SCREEN;
                 }
             }
 
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
                     mainMenuMode = QUIT_MAIN_MENU;
                     mode = TITLE_SCREEN;
                 }
@@ -137,7 +163,8 @@ static void runMainMenu(void) {
     }
 }
 
-static void renderScreen(void) {
+static void renderScreen(void)
+{
     checkMouse();
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
@@ -154,7 +181,8 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-void imagesInit_mainMenu(void) {
+void imagesInit_mainMenu(void)
+{
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
     background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
@@ -222,7 +250,8 @@ void imagesInit_mainMenu(void) {
     arrow_box.click.newRect.shiftXY();
 }
 
-void destroyImages_mainMenu(void) {
+void destroyImages_mainMenu(void)
+{
     background.destroy();
 
     newGame_box.flat.destroy();
@@ -257,12 +286,14 @@ void destroyImages_mainMenu(void) {
     arrow_box.click.destroy();
 }
 
-static void soundInit(void) {
+static void soundInit(void)
+{
     music = Mix_LoadMUS("sound/music/Fire Emblem Theme.mp3");
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(10);
 }
 
-static void destroySound(void) {
+static void destroySound(void)
+{
     Mix_FreeMusic(music);
 }

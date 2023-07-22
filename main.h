@@ -14,7 +14,6 @@ typedef enum Modes_e {
     TITLE_SCREEN,
     MAIN_MENU,
     LEVEL_1,
-
 } Modes_t;
 
 typedef struct option_box_s {

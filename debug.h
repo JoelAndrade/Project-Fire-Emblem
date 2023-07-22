@@ -5,6 +5,4 @@
 
 void printField(char* field, int row, int col);
 
-
-
 #endif // DEBUG_H 

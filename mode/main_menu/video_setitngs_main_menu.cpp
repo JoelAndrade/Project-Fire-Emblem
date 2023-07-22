@@ -11,7 +11,8 @@ static struct apRatio_s {
     unsigned int i;
     textureImage box[2];
 
-    void render(SDL_Renderer* renderer) {
+    void render(SDL_Renderer* renderer)
+    {
         box[i].render(renderer);
     }
 
@@ -23,7 +24,8 @@ static void arrowEvent(apRatio_s* myBox, int numBoxes);
 static void applyEvent(SDL_Rect rect);
 static void positionArrows(void);
 
-void video_settings_main_menu(void) {
+void video_settings_main_menu(void)
+{
     positionArrows();
 
     switch (settings.windowHeight)
@@ -40,41 +42,53 @@ void video_settings_main_menu(void) {
     runVideoSettings();
 }
 
-static void runVideoSettings(void) {
+static void runVideoSettings(void)
+{
     SDL_Event event;
     Uint32 startingTick;
 
-    while (mainMenuMode == VIDEO_SETTINGS) {
+    while (mainMenuMode == VIDEO_SETTINGS)
+    {
         startingTick = SDL_GetTicks();
 
-        while(SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while(SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 mainMenuMode = QUIT_MAIN_MENU;
                 mode = QUIT;
             }
 
-            if (event.type == SDL_MOUSEBUTTONDOWN) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
 
                 }
             }
 
-            if (event.type == SDL_MOUSEBUTTONUP) {
-                if (event.button.button == SDL_BUTTON_LEFT) {
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
                     hold = event.button.state;
                     arrowEvent(&apRatioBox, sizeof(apRatioBox.box)/sizeof(apRatioBox.box[0]));
                     applyEvent(apply_box.flat.newRect);
                 }
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
                     mainMenuMode = SETTINGS;
                 }
             }
 
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
                     mainMenuMode = SETTINGS;
                 }
             }
@@ -86,7 +100,8 @@ static void runVideoSettings(void) {
     }
 }
 
-static void renderScreen(void) {
+static void renderScreen(void)
+{
     checkMouse();
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
     
@@ -112,17 +127,22 @@ static void renderScreen(void) {
     SDL_RenderPresent(window.renderer);
 }
 
-static void arrowEvent(apRatio_s* myBox, int numBoxes) {
-    if (SDL_PointInRect(&mousePos, &myBox->leftArrowRect) && (myBox->i > 0)) {
+static void arrowEvent(apRatio_s* myBox, int numBoxes)
+{
+    if (SDL_PointInRect(&mousePos, &myBox->leftArrowRect) && (myBox->i > 0))
+    {
         --myBox->i;
     }
-    else if (SDL_PointInRect(&mousePos, &myBox->rightArrowRect) && (myBox->i < numBoxes - 1)) {
+    else if (SDL_PointInRect(&mousePos, &myBox->rightArrowRect) && (myBox->i < numBoxes - 1))
+    {
         ++myBox->i;
     }
 }
 
-static void applyEvent(SDL_Rect rect) {
-    if (SDL_PointInRect(&mousePos, &rect)) {
+static void applyEvent(SDL_Rect rect)
+{
+    if (SDL_PointInRect(&mousePos, &rect))
+    {
         switch (apRatioBox.i)
         {
         case 0:
@@ -147,7 +167,8 @@ static void applyEvent(SDL_Rect rect) {
     }
 }
 
-static void positionArrows(void) {
+static void positionArrows(void)
+{
     apRatioBox.box[0] = apRatio720_box.flat;
     apRatioBox.box[1] = apRatio1080_box.flat;
 
