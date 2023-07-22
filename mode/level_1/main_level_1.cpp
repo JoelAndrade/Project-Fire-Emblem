@@ -8,12 +8,14 @@
 #include <SDL_Util.h>
 #include <Character.h>
 
-#define BLOCK_LENGTH (80)
-#define OPTION_BLOCK (0.075)
-#define REVERT (true)
+#define BLOCK_LENGTH     80
+#define OPTION_BLOCK  0.075
+#define CAMERA_CHANGE    10
+#define REVERT true
 
 SDL_Point leftClick;
 SDL_Point focus;
+SDL_Point camera;
 
 levelMode_t levelMode;
 
@@ -52,6 +54,7 @@ static bool moveEvent(bool revert = false);
 static void attackEvent(void);
 
 static void clickIndex(int* x, int* y);
+static void ajustSprites(int xAjust, int yAjust);
 
 static void imagesInit(void);
 static void destroyImages(void);
@@ -64,6 +67,8 @@ void main_level_1(void) {
     imagesInit();
     spritesInit();
     levelMode = DEFAULT;
+    camera.x = 0;
+    camera.y = 0;
     while (mode == LEVEL_1) {
         runLevel_1();
     }
@@ -196,6 +201,30 @@ static void runLevel_1(void) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     mode = MAIN_MENU;
                 }
+                if (event.key.keysym.sym == SDLK_w) {
+                    if (camera.y > 0) {
+                        camera.y -= CAMERA_CHANGE;
+                        ajustSprites(0, -CAMERA_CHANGE);
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_a) {
+                    if (camera.x > 0) {
+                        camera.x -= CAMERA_CHANGE;
+                        ajustSprites(-CAMERA_CHANGE, 0);
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                    if (camera.y < window.h) {
+                        camera.y += CAMERA_CHANGE;
+                        ajustSprites(0, CAMERA_CHANGE);
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_d) {
+                    if (camera.x < window.w) {
+                        camera.x += CAMERA_CHANGE;
+                        ajustSprites(CAMERA_CHANGE, 0);
+                    }
+                }
             }
         }
 
@@ -215,7 +244,7 @@ static void renderScreen(void) {
     // draw the grid
     for (int i = 0; i < ROW; ++i) {
         for (int j = 0; j < COL; ++j) {
-            tile.changePos(j*BLOCK_LENGTH, i*BLOCK_LENGTH);
+            tile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
 
             if (lvl1Map.tiles[i][j] == 'n') {
                 tile.render(window.renderer);
@@ -296,8 +325,8 @@ static void renderMoveHighlight(void) {
     for (int i = 0; i < ROW; ++i) {
         for (int j = 0; j < COL; ++j) {
             if (LIMITS('1', lvl1Map.moveAttSpaces[i][j], characterSelect->moves + '0')) {
-                moveHighlight.newRect.x = j*BLOCK_LENGTH;
-                moveHighlight.newRect.y = i*BLOCK_LENGTH;
+                moveHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
+                moveHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
                 moveHighlight.render(window.renderer);
             }
         }
@@ -308,8 +337,8 @@ static void renderAttHighlight(void) {
     for (int i = 0; i < ROW; ++i) {
         for (int j = 0; j < COL; ++j) {
             if (lvl1Map.moveAttSpaces[i][j] == 'a') {
-                attackHighlight.newRect.x = j*BLOCK_LENGTH;
-                attackHighlight.newRect.y = i*BLOCK_LENGTH;
+                attackHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
+                attackHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
                 attackHighlight.render(window.renderer);
             }
         }
@@ -319,32 +348,32 @@ static void renderAttHighlight(void) {
 static void renderPostMoveAttack(int i, int j) {
     if (lvl1Map.pieceLocations[i - 1][j] != NULL) {
         if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO) { // [ ][x][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH;       // [ ][o][ ]
-            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x;       // [ ][o][ ]
+            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
     if (lvl1Map.pieceLocations[i][j - 1] != NULL) {
         if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH;       // [x][o][ ]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH - camera.x;       // [x][o][ ]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
     if (lvl1Map.pieceLocations[i][j + 1] != NULL) {
         if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH;       // [ ][o][x]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH;       // [ ][ ][ ]
+            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH - camera.x;       // [ ][o][x]
+            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y;       // [ ][ ][ ]
             attackHighlight.render(window.renderer);
         }
     }
 
     if (lvl1Map.pieceLocations[i + 1][j] != NULL) {
         if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO) { // [ ][ ][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH;       // [ ][o][ ]
-            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH;       // [ ][x][ ]
+            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x;       // [ ][o][ ]
+            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH - camera.y;       // [ ][x][ ]
             attackHighlight.render(window.renderer);
         }
     }
@@ -363,8 +392,8 @@ static void renderOptions(option_box_t box) {
 }
 
 static void renderCursorHighlightGrid(void) {
-    cursorHighlight.newRect.x = (mousePos.x/BLOCK_LENGTH) * BLOCK_LENGTH;
-    cursorHighlight.newRect.y = (mousePos.y/BLOCK_LENGTH) * BLOCK_LENGTH;
+    cursorHighlight.newRect.x = ((mousePos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
+    cursorHighlight.newRect.y = ((mousePos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
     cursorHighlight.render(window.renderer);
 }
 
@@ -421,8 +450,8 @@ static bool moveEvent(bool revert) {
 
         characterSelect->i = leftClick.y;
         characterSelect->j = leftClick.x;
-        characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH;
-        characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH;
+        characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH - camera.x;
+        characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH - camera.y;
 
         if (!revert) {
             levelMode = POSTMOVE;
@@ -450,8 +479,18 @@ void attackEvent(void) {
 }
 
 static void clickIndex(int* x, int* y) {
-    *x = (*x/BLOCK_LENGTH);
-    *y = (*y/BLOCK_LENGTH);
+    *x = ((*x + camera.x)/BLOCK_LENGTH);
+    *y = ((*y + camera.y)/BLOCK_LENGTH);
+}
+
+static void ajustSprites(int xAjust, int yAjust) {
+    hero_sprite.image.newRect.x -= xAjust;
+    hero_sprite.image.newRect.y -= yAjust;
+    hero_sprite.image.newRect.makeDimensions();
+
+    villain_sprite.image.newRect.x -= xAjust;
+    villain_sprite.image.newRect.y -= yAjust;
+    villain_sprite.image.newRect.makeDimensions();
 }
 
 static void imagesInit(void) {

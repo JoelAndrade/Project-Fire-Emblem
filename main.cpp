@@ -78,6 +78,7 @@ int main(int argc, char* args[]) {
 // Might want to make the board a square to leave the side with menuing and camera
 // Need to be able to handle animation
 // Add keyboard shortcuts
+// Might want add double click chort cuts
 
 // TODO: Have the all the board meckanics all on one file. 
 // Have details about specific (size, characters, etc.) on a diffent file
