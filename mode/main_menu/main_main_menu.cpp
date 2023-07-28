@@ -27,11 +27,6 @@ option_box_t arrow_box;
 
 static Mix_Music* music = NULL;
 
-void menuEvent(SDL_Rect rect, int event);
-
-void imagesInit_mainMenu(void);
-void destroyImages_mainMenu(void);
-
 static void runMainMenu(void);
 static void renderScreen(void);
 static void soundInit(void);

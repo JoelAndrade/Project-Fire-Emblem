@@ -20,6 +20,12 @@ SDL_Point camera;
 levelMode_t levelMode;
 
 textureImage tile;
+textureImage dirttile;
+textureImage grasstile;
+textureImage housetile;
+textureImage stonetile;
+textureImage treetile;
+textureImage watertile;
 
 option_box_t attack_box;
 option_box_t items_box;
@@ -37,9 +43,7 @@ textureImage textBox;
 Character hero_sprite;
 Character villain_sprite;
 Character* characterSelect;
-map_t lvl1Map;
-
-void main_level_1(void);
+map lvl1Map;
 
 static void renderOptions(option_box_t box);
 static void renderMoveHighlight(void);
@@ -274,11 +278,45 @@ static void renderScreen(void)
     {
         for (int j = 0; j < COL; ++j)
         {
-            tile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-
-            if (lvl1Map.tiles[i][j] == 'n')
+            switch (lvl1Map.tiles[i][j])
             {
+            case 'n':
+                tile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
                 tile.render(window.renderer);
+                break;
+            
+            case 'd':
+                dirttile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                dirttile.render(window.renderer);
+                break;
+
+            case 'g':
+                grasstile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                grasstile.render(window.renderer);
+                break;
+
+            case 'h':
+                housetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                housetile.render(window.renderer);
+                break;
+
+            case 's':
+                stonetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                stonetile.render(window.renderer);
+                break;
+
+            case 't':
+                treetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                treetile.render(window.renderer);
+                break;
+
+            case 'w':
+                watertile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                watertile.render(window.renderer);
+                break;
+
+            default:
+                break;
             }
         }
     }
@@ -550,8 +588,8 @@ void attackEvent(void)
 
 static void clickIndex(int* x, int* y)
 {
-    *x = ((*x + camera.x)/BLOCK_LENGTH);
-    *y = ((*y + camera.y)/BLOCK_LENGTH);
+    *x = (*x + camera.x)/BLOCK_LENGTH;
+    *y = (*y + camera.y)/BLOCK_LENGTH;
 }
 
 static void ajustSprites(int xAjust, int yAjust)
@@ -569,12 +607,19 @@ static void imagesInit(void)
 {
     updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
 
-    tile.init(window.renderer, "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    hero_sprite.image.init(window.renderer, "images/Images/level_1_images/sprite.png", 0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
+    tile.init(window.renderer,      "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    dirttile.init(window.renderer,  "images/Images/level_1_images/dirttile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    grasstile.init(window.renderer, "images/Images/level_1_images/grasstile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    housetile.init(window.renderer, "images/Images/level_1_images/housetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    stonetile.init(window.renderer, "images/Images/level_1_images/stonetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    treetile.init(window.renderer,  "images/Images/level_1_images/treetile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    watertile.init(window.renderer, "images/Images/level_1_images/watertile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+
+    hero_sprite.image.init(window.renderer,    "images/Images/level_1_images/sprite.png",        0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
     villain_sprite.image.init(window.renderer, "images/Images/level_1_images/badGuySprite.png", 0.13, 7*BLOCK_LENGTH, 1*BLOCK_LENGTH);
 
     textBox.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
-    textBox.newRect.shiftX(2);
+    textBox.newRect.shiftX(2); // This is here to fix all the other boxes
 
     cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
     moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
@@ -644,8 +689,16 @@ static void imagesInit(void)
 static void destroyImages(void)
 {
     tile.destroy();
+    dirttile.destroy();
+    grasstile.destroy();
+    housetile.destroy();
+    stonetile.destroy();
+    treetile.destroy();
+    watertile.destroy();
+
     hero_sprite.~Character();
     villain_sprite.~Character();
+
     cursorHighlight.destroy();
     moveHighlight.destroy();
     attackHighlight.destroy();

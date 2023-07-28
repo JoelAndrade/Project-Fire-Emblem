@@ -87,7 +87,7 @@ int main(int argc, char* args[]) {
 // Add keyboard shortcuts
 // Might want add double click chort cuts
 
-// TODO: Have the all the board meckanics all on one file. 
+// TODO: Have all the board meckanics all on one file. 
 // Have details about specific (size, characters, etc.) on a diffent file
 
 // Note: The size the blocks does not matter right row. There will be a camera anyway.
