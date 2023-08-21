@@ -90,4 +90,6 @@ int main(int argc, char* args[]) {
 // TODO: Have all the board meckanics all on one file. 
 // Have details about specific (size, characters, etc.) on a diffent file
 
+// TODO: Remove the picture tiles and hava the map on one big image
+
 // Note: The size the blocks does not matter right row. There will be a camera anyway.

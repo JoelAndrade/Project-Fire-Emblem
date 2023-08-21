@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
-#include <Character.h>
+#include <character.h>
 
 #define BLOCK_LENGTH     80
 #define OPTION_BLOCK  0.075
@@ -53,7 +53,7 @@ static void renderCursorHighlightGrid(void);
 
 static void pieceSelectEvent(void);
 static bool outsideTextboxEvent(void);
-static bool optionSelectEvent(SDL_Rect rect, int modeSelect);
+static bool optionSelectEvent(SDL_Rect rect, levelMode_t modeSelect);
 static bool moveEvent(bool revert = false);
 static void attackEvent(void);
 
@@ -516,11 +516,11 @@ static void pieceSelectEvent(void)
     }
 }
 
-static bool optionSelectEvent(SDL_Rect rect, int modeSelect)
+static bool optionSelectEvent(SDL_Rect rect, levelMode_t modeSelect)
 {
     if (SDL_PointInRect(&mousePos, &rect))
     {
-        levelMode = (levelMode_t)modeSelect;
+        levelMode = modeSelect;
         return true;
     }
 
