@@ -7,29 +7,29 @@
 #include <SDL_CLasses.h>
 #include <File_Util.h>
 
-#define SCALE (settings.windowHeight/720)
+#define SCALE (settings.window_height/720)
 
-typedef enum Modes_e {
+typedef enum modes_e {
     QUIT,
     TITLE_SCREEN,
     MAIN_MENU,
     LEVEL_1,
-} Modes_t;
+} modes_t;
 
 typedef struct option_box_s {
-    textureImage flat;
-    textureImage light;
-    textureImage click;
+    texture_image flat;
+    texture_image light;
+    texture_image click;
 } option_box_t;
 
 extern win window;
-extern textureImage mouseCursor;
+extern texture_image mouse_cursor;
 extern int fps;
 
 extern int mode;
 extern bool hold;
-extern SDL_Point mousePos;
+extern SDL_Point mouse_pos;
 
-void checkMouse(void);
+void check_mouse(void);
 
 #endif // MAIN_H 

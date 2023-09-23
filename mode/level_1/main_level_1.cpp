@@ -13,19 +13,19 @@
 #define CAMERA_CHANGE    (10)
 #define REVERT (true)
 
-SDL_Point leftClick;
+SDL_Point left_click;
 SDL_Point focus;
 SDL_Point camera;
 
-levelMode_t levelMode;
+levelMode_t level_mode;
 
-textureImage tile;
-textureImage dirttile;
-textureImage grasstile;
-textureImage housetile;
-textureImage stonetile;
-textureImage treetile;
-textureImage watertile;
+texture_image tile;
+texture_image dirt_tile;
+texture_image grass_tile;
+texture_image house_tile;
+texture_image stone_tile;
+texture_image tree_tile;
+texture_image water_tile;
 
 option_box_t attack_box;
 option_box_t items_box;
@@ -34,64 +34,64 @@ option_box_t stats_box;
 option_box_t wait_box;
 option_box_t settings_box;
 
-textureImage cursorHighlight;
-textureImage moveHighlight;
-textureImage attackHighlight;
+texture_image cursor_highlight;
+texture_image move_highlight;
+texture_image attack_highlight;
 
-textureImage textBox;
+texture_image text_box;
 
 Character hero_sprite;
 Character villain_sprite;
-Character* characterSelect;
-map lvl1Map;
+Character* character_select;
+map lvl1_map;
 
-static void renderOptions(option_box_t box);
-static void renderMoveHighlight(void);
-static void renderAttHighlight(void);
-static bool renderAttackBox(int i, int j);
-static void renderPostMoveAttack(int i, int j);
-static void renderCursorHighlightGrid(void);
+static void render_options(option_box_t box);
+static void render_move_highlight(void);
+static void render_attck_highlight(void);
+static bool render_attack_box(int i, int j);
+static void render_post_move_attack(int i, int j);
+static void render_cursor_highlight_grid(void);
 
-static void pieceSelectEvent(void);
-static bool outsideTextboxEvent(void);
-static bool optionSelectEvent(SDL_Rect rect, levelMode_t modeSelect);
-static bool moveEvent(bool revert = false);
-static void attackEvent(void);
+static void piece_select_event(void);
+static bool outside_textbox_event(void);
+static bool option_select_event(SDL_Rect rect, levelMode_t modeSelect);
+static bool move_event(bool revert = false);
+static void attack_event(void);
 
-static void clickIndex(int* x, int* y);
-static void ajustSprites(int xAjust, int yAjust);
-static void arrageText(int numBoxes, ...);
+static void click_index(int* x, int* y);
+static void ajust_sprites(int xAjust, int yAjust);
+static void arrage_text(int numBoxes, ...);
 
-static void imagesInit(void);
-static void destroyImages(void);
-static void spritesInit(void);
+static void images_init(void);
+static void destroy_images(void);
+static void sprites_init(void);
 
-static void runLevel_1(void);
-static void renderScreen(void);
+static void run_level_1(void);
+static void render_screen(void);
 
 void main_level_1(void)
 {
-    imagesInit();
-    spritesInit();
-    levelMode = DEFAULT;
+    images_init();
+    sprites_init();
+    level_mode = DEFAULT;
     camera.x = 0;
     camera.y = 0;
     while (mode == LEVEL_1)
     {
-        runLevel_1();
+        run_level_1();
     }
 
-    destroyImages();
+    destroy_images();
 }
 
-static void runLevel_1(void)
+static void run_level_1(void)
 {
     SDL_Event event;
-    Uint32 startingTick;
+    Uint32 starting_tick;
 
     while (mode == LEVEL_1)
     {
-        startingTick = SDL_GetTicks();
+        starting_tick = SDL_GetTicks();
 
         while(SDL_PollEvent(&event))
         {
@@ -117,57 +117,57 @@ static void runLevel_1(void)
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     hold = false;
-                    leftClick.x = event.button.x;
-                    leftClick.y = event.button.y;
-                    clickIndex(&leftClick.x, &leftClick.y);
+                    left_click.x = event.button.x;
+                    left_click.y = event.button.y;
+                    click_index(&left_click.x, &left_click.y);
 
-                    switch (levelMode)
+                    switch (level_mode)
                     {
                     case DEFAULT:
-                        pieceSelectEvent();
+                        piece_select_event();
                         break;
                     
                     case OPTIONS:
-                        if (!outsideTextboxEvent())
+                        if (!outside_textbox_event())
                         {
-                            optionSelectEvent(settings_box.flat.newRect, SETTINGS);
+                            option_select_event(settings_box.flat.new_rect, SETTINGS);
                         }
                         break;
                     
                     case PIECE_SELECT:
-                        if (characterSelect->allegiance == HERO)
+                        if (character_select->allegiance == HERO)
                         {
-                            if (moveEvent());
-                            else if (!outsideTextboxEvent())
+                            if (move_event());
+                            else if (!outside_textbox_event())
                             {
-                                optionSelectEvent(move_box.flat.newRect, MOVE);
-                                optionSelectEvent(settings_box.flat.newRect, SETTINGS);
+                                option_select_event(move_box.flat.new_rect, MOVE);
+                                option_select_event(settings_box.flat.new_rect, SETTINGS);
                             }
                         }
                         else
                         {
-                            if (!outsideTextboxEvent())
+                            if (!outside_textbox_event())
                             {
-                                optionSelectEvent(stats_box.flat.newRect, STATS);
-                                optionSelectEvent(settings_box.flat.newRect, SETTINGS);
+                                option_select_event(stats_box.flat.new_rect, STATS);
+                                option_select_event(settings_box.flat.new_rect, SETTINGS);
                             }
                         }
                         break;
                     
                     case MOVE:
-                        moveEvent();
+                        move_event();
                         break;
 
                     case POSTMOVE:
-                        optionSelectEvent(wait_box.flat.newRect, DEFAULT);
-                        if (renderAttackBox(characterSelect->i, characterSelect->j))
+                        option_select_event(wait_box.flat.new_rect, DEFAULT);
+                        if (render_attack_box(character_select->i, character_select->j))
                         {
-                            optionSelectEvent(attack_box.flat.newRect, ATTACK);
+                            option_select_event(attack_box.flat.new_rect, ATTACK);
                         }
                         break;
 
                     case ATTACK:
-                        attackEvent();
+                        attack_event();
                         break;
 
                     case STATS:
@@ -177,47 +177,47 @@ static void runLevel_1(void)
                         break;
 
                     default:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
                     }
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
-                    switch (levelMode)
+                    switch (level_mode)
                     {
                     case DEFAULT:
                         break;
                     
                     case OPTIONS:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
                     
                     case PIECE_SELECT:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
                     
                     case MOVE:
-                        levelMode = PIECE_SELECT;
+                        level_mode = PIECE_SELECT;
                         break;
 
                     case POSTMOVE:
-                        moveEvent(REVERT);
+                        move_event(REVERT);
                         break;
 
                     case ATTACK:
-                        levelMode = POSTMOVE;
+                        level_mode = POSTMOVE;
                         break;
 
                     case STATS:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
 
                     case SETTINGS:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
 
                     default:
-                        levelMode = DEFAULT;
+                        level_mode = DEFAULT;
                         break;
                     }
                 }
@@ -234,7 +234,7 @@ static void runLevel_1(void)
                     if (camera.y > 0)
                     {
                         camera.y -= CAMERA_CHANGE;
-                        ajustSprites(0, -CAMERA_CHANGE);
+                        ajust_sprites(0, -CAMERA_CHANGE);
                     }
                 }
                 if (event.key.keysym.sym == SDLK_a)
@@ -242,7 +242,7 @@ static void runLevel_1(void)
                     if (camera.x > 0)
                     {
                         camera.x -= CAMERA_CHANGE;
-                        ajustSprites(-CAMERA_CHANGE, 0);
+                        ajust_sprites(-CAMERA_CHANGE, 0);
                     }
                 }
                 if (event.key.keysym.sym == SDLK_s)
@@ -250,7 +250,7 @@ static void runLevel_1(void)
                     if (camera.y < window.h)
                     {
                         camera.y += CAMERA_CHANGE;
-                        ajustSprites(0, CAMERA_CHANGE);
+                        ajust_sprites(0, CAMERA_CHANGE);
                     }
                 }
                 if (event.key.keysym.sym == SDLK_d)
@@ -258,23 +258,23 @@ static void runLevel_1(void)
                     if (camera.x < window.w)
                     {
                         camera.x += CAMERA_CHANGE;
-                        ajustSprites(CAMERA_CHANGE, 0);
+                        ajust_sprites(CAMERA_CHANGE, 0);
                     }
                 }
             }
         }
 
-        renderScreen();
+        render_screen();
 
-        frameCap(fps, startingTick);
+        frame_cap(fps, starting_tick);
     }
 }
 
 
-static void renderScreen(void)
+static void render_screen(void)
 {
-    checkMouse();
-    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
+    check_mouse();
+    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
 
     window.clearRender();
 
@@ -283,41 +283,41 @@ static void renderScreen(void)
     {
         for (int j = 0; j < COL; ++j)
         {
-            switch (lvl1Map.tiles[i][j])
+            switch (lvl1_map.tiles[i][j])
             {
             case 'n':
-                tile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
                 tile.render(window.renderer);
                 break;
             
             case 'd':
-                dirttile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                dirttile.render(window.renderer);
+                dirt_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                dirt_tile.render(window.renderer);
                 break;
 
             case 'g':
-                grasstile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                grasstile.render(window.renderer);
+                grass_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                grass_tile.render(window.renderer);
                 break;
 
             case 'h':
-                housetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                housetile.render(window.renderer);
+                house_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                house_tile.render(window.renderer);
                 break;
 
             case 's':
-                stonetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                stonetile.render(window.renderer);
+                stone_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                stone_tile.render(window.renderer);
                 break;
 
             case 't':
-                treetile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                treetile.render(window.renderer);
+                tree_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                tree_tile.render(window.renderer);
                 break;
 
             case 'w':
-                watertile.changePos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
-                watertile.render(window.renderer);
+                water_tile.change_pos(j*BLOCK_LENGTH - camera.x, i*BLOCK_LENGTH - camera.y);
+                water_tile.render(window.renderer);
                 break;
 
             default:
@@ -330,58 +330,58 @@ static void renderScreen(void)
     hero_sprite.image.render(window.renderer);
     villain_sprite.image.render(window.renderer);
 
-    switch (levelMode)
+    switch (level_mode)
     {
     case DEFAULT:
-        renderCursorHighlightGrid();
+        render_cursor_highlight_grid();
         break;
     
     case OPTIONS:
-        textBox.render(window.renderer);
-        renderOptions(settings_box);
+        text_box.render(window.renderer);
+        render_options(settings_box);
         break;
     
     case PIECE_SELECT:
-        renderMoveHighlight();
-        renderAttHighlight();
-        renderCursorHighlightGrid();
+        render_move_highlight();
+        render_attck_highlight();
+        render_cursor_highlight_grid();
 
-        textBox.render(window.renderer);
-        if (characterSelect->allegiance == HERO)
+        text_box.render(window.renderer);
+        if (character_select->allegiance == HERO)
         {
-            renderOptions(move_box);
-            renderOptions(items_box);
-            renderOptions(stats_box);
-            renderOptions(settings_box);
+            render_options(move_box);
+            render_options(items_box);
+            render_options(stats_box);
+            render_options(settings_box);
         }
         else
         {
-            renderOptions(items_box);
-            renderOptions(stats_box);
-            renderOptions(settings_box);
+            render_options(items_box);
+            render_options(stats_box);
+            render_options(settings_box);
         }
         break;
 
     case MOVE:
-        renderMoveHighlight();
-        renderAttHighlight();
-        renderCursorHighlightGrid();
+        render_move_highlight();
+        render_attck_highlight();
+        render_cursor_highlight_grid();
         break;
 
     case POSTMOVE:
-        renderCursorHighlightGrid();
+        render_cursor_highlight_grid();
         
-        textBox.render(window.renderer);
-        renderOptions(wait_box);
-        if (renderAttackBox(characterSelect->i, characterSelect->j))
+        text_box.render(window.renderer);
+        render_options(wait_box);
+        if (render_attack_box(character_select->i, character_select->j))
         {
-            renderOptions(attack_box);
+            render_options(attack_box);
         }
         break;
 
     case ATTACK:
-        renderPostMoveAttack(characterSelect->i, characterSelect->j);
-        renderCursorHighlightGrid();
+        render_post_move_attack(character_select->i, character_select->j);
+        render_cursor_highlight_grid();
         break;
 
     case STATS:
@@ -391,119 +391,119 @@ static void renderScreen(void)
         break;
 
     default:
-        levelMode = DEFAULT;
+        level_mode = DEFAULT;
         break;
     }
 
-    mouseCursor.render(window.renderer);
+    mouse_cursor.render(window.renderer);
 
     SDL_RenderPresent(window.renderer);
 }
 
-static void renderMoveHighlight(void)
+static void render_move_highlight(void)
 {
     for (int i = 0; i < ROW; ++i)
     {
         for (int j = 0; j < COL; ++j)
         {
-            if (LIMITS('1', lvl1Map.moveAttSpaces[i][j], characterSelect->moves + '0'))
+            if (LIMITS('1', lvl1_map.move_attack_spaces[i][j], character_select->moves + '0'))
             {
-                moveHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
-                moveHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
-                moveHighlight.render(window.renderer);
+                move_highlight.new_rect.x = j*BLOCK_LENGTH - camera.x;
+                move_highlight.new_rect.y = i*BLOCK_LENGTH - camera.y;
+                move_highlight.render(window.renderer);
             }
         }
     }
 }
 
-static void renderAttHighlight(void)
+static void render_attck_highlight(void)
 {
     for (int i = 0; i < ROW; ++i)
     {
         for (int j = 0; j < COL; ++j)
         {
-            if (lvl1Map.moveAttSpaces[i][j] == 'a')
+            if (lvl1_map.move_attack_spaces[i][j] == 'a')
             {
-                attackHighlight.newRect.x = j*BLOCK_LENGTH - camera.x;
-                attackHighlight.newRect.y = i*BLOCK_LENGTH - camera.y;
-                attackHighlight.render(window.renderer);
+                attack_highlight.new_rect.x = j*BLOCK_LENGTH - camera.x;
+                attack_highlight.new_rect.y = i*BLOCK_LENGTH - camera.y;
+                attack_highlight.render(window.renderer);
             }
         }
     }
 }
 
-static void renderPostMoveAttack(int i, int j)
+static void render_post_move_attack(int i, int j)
 {
-    if (lvl1Map.pieceLocations[i - 1][j] != NULL)
+    if (lvl1_map.piece_locations[i - 1][j] != NULL)
     {
-        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO)
-        {                                                                // [ ][x][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
-            attackHighlight.newRect.y = (i - 1)*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
-            attackHighlight.render(window.renderer);
+        if (lvl1_map.piece_locations[i - 1][j]->allegiance != HERO)
+        {                                                                 // [ ][x][ ]
+            attack_highlight.new_rect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
+            attack_highlight.new_rect.y = (i - 1)*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
+            attack_highlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j - 1] != NULL)
+    if (lvl1_map.piece_locations[i][j - 1] != NULL)
     {
-        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO)
-        {                                                                // [ ][ ][ ]
-            attackHighlight.newRect.x = (j - 1)*BLOCK_LENGTH - camera.x; // [x][o][ ]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
-            attackHighlight.render(window.renderer);
+        if (lvl1_map.piece_locations[i][j - 1]->allegiance != HERO)
+        {                                                                 // [ ][ ][ ]
+            attack_highlight.new_rect.x = (j - 1)*BLOCK_LENGTH - camera.x; // [x][o][ ]
+            attack_highlight.new_rect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
+            attack_highlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j + 1] != NULL)
+    if (lvl1_map.piece_locations[i][j + 1] != NULL)
     {
-        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO)
-        {                                                                // [ ][ ][ ]
-            attackHighlight.newRect.x = (j + 1)*BLOCK_LENGTH - camera.x; // [ ][o][x]
-            attackHighlight.newRect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
-            attackHighlight.render(window.renderer);
+        if (lvl1_map.piece_locations[i][j + 1]->allegiance != HERO)
+        {                                                                 // [ ][ ][ ]
+            attack_highlight.new_rect.x = (j + 1)*BLOCK_LENGTH - camera.x; // [ ][o][x]
+            attack_highlight.new_rect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
+            attack_highlight.render(window.renderer);
         }
     }
 
-    if (lvl1Map.pieceLocations[i + 1][j] != NULL)
+    if (lvl1_map.piece_locations[i + 1][j] != NULL)
     {
-        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO)
-        {                                                                // [ ][ ][ ]
-            attackHighlight.newRect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
-            attackHighlight.newRect.y = (i + 1)*BLOCK_LENGTH - camera.y; // [ ][x][ ]
-            attackHighlight.render(window.renderer);
+        if (lvl1_map.piece_locations[i + 1][j]->allegiance != HERO)
+        {                                                                 // [ ][ ][ ]
+            attack_highlight.new_rect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
+            attack_highlight.new_rect.y = (i + 1)*BLOCK_LENGTH - camera.y; // [ ][x][ ]
+            attack_highlight.render(window.renderer);
         }
     }
 }
 
-static bool renderAttackBox(int i, int j)
+static bool render_attack_box(int i, int j)
 {
-    if (lvl1Map.pieceLocations[i - 1][j] != NULL)
+    if (lvl1_map.piece_locations[i - 1][j] != NULL)
     {
-        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO)
+        if (lvl1_map.piece_locations[i - 1][j]->allegiance != HERO)
         {
             return true;
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j - 1] != NULL)
+    if (lvl1_map.piece_locations[i][j - 1] != NULL)
     {
-        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO)
+        if (lvl1_map.piece_locations[i][j - 1]->allegiance != HERO)
         {
             return true;
         }
     }
 
-    if (lvl1Map.pieceLocations[i][j + 1] != NULL)
+    if (lvl1_map.piece_locations[i][j + 1] != NULL)
     {
-        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO)
+        if (lvl1_map.piece_locations[i][j + 1]->allegiance != HERO)
         {
             return true;
         }
     }
 
-    if (lvl1Map.pieceLocations[i + 1][j] != NULL)
+    if (lvl1_map.piece_locations[i + 1][j] != NULL)
     {
-        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO)
+        if (lvl1_map.piece_locations[i + 1][j]->allegiance != HERO)
         {
             return true;
         }
@@ -512,13 +512,13 @@ static bool renderAttackBox(int i, int j)
     return false;
 }
 
-static void renderOptions(option_box_t box)
+static void render_options(option_box_t box)
 {
-    if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold)
+    if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect) && hold)
     {
         box.click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mousePos, &box.flat.newRect))
+    else if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect))
     {
         box.light.render(window.renderer);
     }
@@ -528,106 +528,106 @@ static void renderOptions(option_box_t box)
     }
 }
 
-static void renderCursorHighlightGrid(void)
+static void render_cursor_highlight_grid(void)
 {
-    cursorHighlight.newRect.x = ((mousePos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
-    cursorHighlight.newRect.y = ((mousePos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
-    cursorHighlight.render(window.renderer);
+    cursor_highlight.new_rect.x = ((mouse_pos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
+    cursor_highlight.new_rect.y = ((mouse_pos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
+    cursor_highlight.render(window.renderer);
 }
 
 
-static bool outsideTextboxEvent(void)
+static bool outside_textbox_event(void)
 {
-    if (!SDL_PointInRect(&mousePos, &textBox.newRect))
+    if (!SDL_PointInRect(&mouse_pos, &text_box.new_rect))
     {
-        levelMode = DEFAULT;
+        level_mode = DEFAULT;
         return true;
     }
     return false;
 }
 
-static void pieceSelectEvent(void)
+static void piece_select_event(void)
 {
-    if (lvl1Map.collision[leftClick.y][leftClick.x] == 'p')
+    if (lvl1_map.collision[left_click.y][left_click.x] == 'p')
     {
-        characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
-        lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
-        // printField(lvl1Map.moveAttSpaces[0], ROW, COL); // TODO: remove this line
-        levelMode = PIECE_SELECT;
+        character_select = lvl1_map.piece_locations[left_click.y][left_click.x];
+        lvl1_map.fill_move_attack_spaces(character_select->i, character_select->j, character_select->moves);
+        // print_field(lvl1_map.move_attack_spaces[0], ROW, COL); // TODO: remove this line
+        level_mode = PIECE_SELECT;
 
-        if (characterSelect->allegiance == HERO)
+        if (character_select->allegiance == HERO)
         {
-            arrageText(4, &move_box, &items_box, &stats_box, &settings_box);
+            arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
         }
         else
         {
-            arrageText(3, &items_box, &stats_box, &settings_box);
+            arrage_text(3, &items_box, &stats_box, &settings_box);
         }
     }
     else
     {
-        levelMode = OPTIONS;
-        arrageText(1, &settings_box);
+        level_mode = OPTIONS;
+        arrage_text(1, &settings_box);
     }
 }
 
-static bool optionSelectEvent(SDL_Rect rect, levelMode_t modeSelect)
+static bool option_select_event(SDL_Rect rect, levelMode_t modeSelect)
 {
-    if (SDL_PointInRect(&mousePos, &rect))
+    if (SDL_PointInRect(&mouse_pos, &rect))
     {
-        levelMode = modeSelect;
+        level_mode = modeSelect;
         return true;
     }
 
     return false;
 }
 
-static bool moveEvent(bool revert)
+static bool move_event(bool revert)
 {
     static SDL_Point prevCharacterPos;
 
-    if (LIMITS('0', lvl1Map.moveAttSpaces[leftClick.y][leftClick.x], '0' + characterSelect->moves) || revert)
+    if (LIMITS('0', lvl1_map.move_attack_spaces[left_click.y][left_click.x], '0' + character_select->moves) || revert)
     {
         if (!revert)
         {
-            prevCharacterPos.x = characterSelect->j;
-            prevCharacterPos.y = characterSelect->i;
+            prevCharacterPos.x = character_select->j;
+            prevCharacterPos.y = character_select->i;
         }
         else
         {
-            leftClick.x = prevCharacterPos.x;
-            leftClick.y = prevCharacterPos.y;
+            left_click.x = prevCharacterPos.x;
+            left_click.y = prevCharacterPos.y;
         }
 
-        char tempChar = lvl1Map.collision[leftClick.y][leftClick.x];
-        lvl1Map.collision[leftClick.y][leftClick.x] = lvl1Map.collision[characterSelect->i][characterSelect->j];
-        lvl1Map.collision[characterSelect->i][characterSelect->j] = tempChar;
+        char tempChar = lvl1_map.collision[left_click.y][left_click.x];
+        lvl1_map.collision[left_click.y][left_click.x] = lvl1_map.collision[character_select->i][character_select->j];
+        lvl1_map.collision[character_select->i][character_select->j] = tempChar;
 
-        Character* tempCharacter = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
-        lvl1Map.pieceLocations[leftClick.y][leftClick.x] = lvl1Map.pieceLocations[characterSelect->i][characterSelect->j];
-        lvl1Map.pieceLocations[characterSelect->i][characterSelect->j] = tempCharacter;
+        Character* tempCharacter = lvl1_map.piece_locations[left_click.y][left_click.x];
+        lvl1_map.piece_locations[left_click.y][left_click.x] = lvl1_map.piece_locations[character_select->i][character_select->j];
+        lvl1_map.piece_locations[character_select->i][character_select->j] = tempCharacter;
 
-        characterSelect->i = leftClick.y;
-        characterSelect->j = leftClick.x;
-        characterSelect->image.newRect.x = characterSelect->j*BLOCK_LENGTH - camera.x;
-        characterSelect->image.newRect.y = characterSelect->i*BLOCK_LENGTH - camera.y;
+        character_select->i = left_click.y;
+        character_select->j = left_click.x;
+        character_select->image.new_rect.x = character_select->j*BLOCK_LENGTH - camera.x;
+        character_select->image.new_rect.y = character_select->i*BLOCK_LENGTH - camera.y;
 
         if (!revert)
         {
-            levelMode = POSTMOVE;
-            if (renderAttackBox(characterSelect->i, characterSelect->j))
+            level_mode = POSTMOVE;
+            if (render_attack_box(character_select->i, character_select->j))
             {
-                arrageText(2, &wait_box, &attack_box);
+                arrage_text(2, &wait_box, &attack_box);
             }
             else
             {
-                arrageText(1, &wait_box);
+                arrage_text(1, &wait_box);
             }
         }
         else
         {
-            levelMode = PIECE_SELECT;
-            arrageText(4, &move_box, &items_box, &stats_box, &settings_box);
+            level_mode = PIECE_SELECT;
+            arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
         }
 
         return true;
@@ -636,24 +636,24 @@ static bool moveEvent(bool revert)
     return false;
 }
 
-void attackEvent(void)
+void attack_event(void)
 {
-    if (lvl1Map.pieceLocations[leftClick.y][leftClick.x] != NULL)
+    if (lvl1_map.piece_locations[left_click.y][left_click.x] != NULL)
     {
-        if (lvl1Map.pieceLocations[leftClick.y][leftClick.x]->allegiance == VILLAIN)
+        if (lvl1_map.piece_locations[left_click.y][left_click.x]->allegiance == VILLAIN)
         {
             // TODO: Need a functions that calculates the damage, crit, and misses
-            lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp -= characterSelect->attack;
-            std::cout << lvl1Map.pieceLocations[leftClick.y][leftClick.x]->hp << std::endl; // TODO: remove this line
-            levelMode = DEFAULT;
+            lvl1_map.piece_locations[left_click.y][left_click.x]->hp -= character_select->attack;
+            std::cout << lvl1_map.piece_locations[left_click.y][left_click.x]->hp << std::endl; // TODO: remove this line
+            level_mode = DEFAULT;
         }
     }
 }
 
-static void arrageText(int numBoxes, ...)
+static void arrage_text(int numBoxes, ...)
 {
-    textBox.newRect.h = numBoxes*85*SCALE;
-    textBox.newRect.makeDimensions();
+    text_box.new_rect.h = numBoxes*85*SCALE;
+    text_box.new_rect.makeDimensions();
 
     va_list args;
     va_start(args, numBoxes);
@@ -661,139 +661,139 @@ static void arrageText(int numBoxes, ...)
     {
         option_box_t* box = va_arg(args, option_box_t*);
 
-        box->flat.newRect.y  = (i*textBox.newRect.h)/(2*numBoxes);
-        box->light.newRect.y = (i*textBox.newRect.h)/(2*numBoxes);
-        box->click.newRect.y = (i*textBox.newRect.h)/(2*numBoxes);
+        box->flat.new_rect.y  = (i*text_box.new_rect.h)/(2*numBoxes);
+        box->light.new_rect.y = (i*text_box.new_rect.h)/(2*numBoxes);
+        box->click.new_rect.y = (i*text_box.new_rect.h)/(2*numBoxes);
 
-        box->flat.newRect.makeDimensions();
-        box->light.newRect.makeDimensions();
-        box->click.newRect.makeDimensions();
+        box->flat.new_rect.makeDimensions();
+        box->light.new_rect.makeDimensions();
+        box->click.new_rect.makeDimensions();
 
-        box->flat.newRect.shiftY();
-        box->light.newRect.shiftY();
-        box->click.newRect.shiftY();
+        box->flat.new_rect.shiftY();
+        box->light.new_rect.shiftY();
+        box->click.new_rect.shiftY();
     }
     va_end(args);
 }
 
-static void clickIndex(int* x, int* y)
+static void click_index(int* x, int* y)
 {
     *x = (*x + camera.x)/BLOCK_LENGTH;
     *y = (*y + camera.y)/BLOCK_LENGTH;
 }
 
-static void ajustSprites(int xAjust, int yAjust)
+static void ajust_sprites(int xAjust, int yAjust)
 {
-    hero_sprite.image.newRect.x -= xAjust;
-    hero_sprite.image.newRect.y -= yAjust;
-    hero_sprite.image.newRect.makeDimensions();
+    hero_sprite.image.new_rect.x -= xAjust;
+    hero_sprite.image.new_rect.y -= yAjust;
+    hero_sprite.image.new_rect.makeDimensions();
 
-    villain_sprite.image.newRect.x -= xAjust;
-    villain_sprite.image.newRect.y -= yAjust;
-    villain_sprite.image.newRect.makeDimensions();
+    villain_sprite.image.new_rect.x -= xAjust;
+    villain_sprite.image.new_rect.y -= yAjust;
+    villain_sprite.image.new_rect.makeDimensions();
 }
 
-static void imagesInit(void)
+static void images_init(void)
 {
-    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
+    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
 
     tile.init(window.renderer,      "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    dirttile.init(window.renderer,  "images/Images/level_1_images/dirttile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    grasstile.init(window.renderer, "images/Images/level_1_images/grasstile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    housetile.init(window.renderer, "images/Images/level_1_images/housetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    stonetile.init(window.renderer, "images/Images/level_1_images/stonetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    treetile.init(window.renderer,  "images/Images/level_1_images/treetile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
-    watertile.init(window.renderer, "images/Images/level_1_images/watertile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    dirt_tile.init(window.renderer,  "images/Images/level_1_images/dirttile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    grass_tile.init(window.renderer, "images/Images/level_1_images/grasstile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    house_tile.init(window.renderer, "images/Images/level_1_images/housetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    stone_tile.init(window.renderer, "images/Images/level_1_images/stonetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    tree_tile.init(window.renderer,  "images/Images/level_1_images/treetile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    water_tile.init(window.renderer, "images/Images/level_1_images/watertile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
 
     hero_sprite.image.init(window.renderer,    "images/Images/level_1_images/sprite.png",        0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
     villain_sprite.image.init(window.renderer, "images/Images/level_1_images/badGuySprite.png", 0.13, 7*BLOCK_LENGTH, 1*BLOCK_LENGTH);
 
-    textBox.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
-    textBox.newRect.shiftX(2); // This is here to fix all the other boxes
+    text_box.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
+    text_box.new_rect.shiftX(2); // This is here to fix all the other boxes
 
-    cursorHighlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
-    moveHighlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
-    attackHighlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
+    cursor_highlight.init(window.renderer, yellow, BLOCK_LENGTH, BLOCK_LENGTH);
+    move_highlight.init(window.renderer,   cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
+    attack_highlight.init(window.renderer, red,    BLOCK_LENGTH, BLOCK_LENGTH);
 
-    move_box.flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    move_box.light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    move_box.click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    move_box.flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
+    move_box.light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
+    move_box.click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
 
-    items_box.flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    items_box.light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    items_box.click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    items_box.flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
+    items_box.light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
+    items_box.click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
 
-    stats_box.flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
-    stats_box.light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
-    stats_box.click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 5*textBox.newRect.h/8);
+    stats_box.flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
+    stats_box.light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
+    stats_box.click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
 
-    settings_box.flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
-    settings_box.light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
-    settings_box.click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 7*textBox.newRect.h/8);
+    settings_box.flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
+    settings_box.light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
+    settings_box.click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
 
-    wait_box.flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    wait_box.light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
-    wait_box.click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, textBox.newRect.h/8);
+    wait_box.flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
+    wait_box.light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
+    wait_box.click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, text_box.new_rect.h/8);
 
-    attack_box.flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    attack_box.light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
-    attack_box.click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, textBox.newRect.topX, 3*textBox.newRect.h/8);
+    attack_box.flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
+    attack_box.light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
+    attack_box.click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK*SCALE, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
 
-    move_box.flat.newRect.shiftXY();
-    move_box.light.newRect.shiftXY();
-    move_box.click.newRect.shiftXY();
+    move_box.flat.new_rect.shiftXY();
+    move_box.light.new_rect.shiftXY();
+    move_box.click.new_rect.shiftXY();
 
-    items_box.flat.newRect.shiftXY();
-    items_box.light.newRect.shiftXY();
-    items_box.click.newRect.shiftXY();
+    items_box.flat.new_rect.shiftXY();
+    items_box.light.new_rect.shiftXY();
+    items_box.click.new_rect.shiftXY();
 
-    stats_box.flat.newRect.shiftXY();
-    stats_box.light.newRect.shiftXY();
-    stats_box.click.newRect.shiftXY();
+    stats_box.flat.new_rect.shiftXY();
+    stats_box.light.new_rect.shiftXY();
+    stats_box.click.new_rect.shiftXY();
 
-    settings_box.flat.newRect.shiftXY();
-    settings_box.light.newRect.shiftXY();
-    settings_box.click.newRect.shiftXY();
+    settings_box.flat.new_rect.shiftXY();
+    settings_box.light.new_rect.shiftXY();
+    settings_box.click.new_rect.shiftXY();
 
-    wait_box.flat.newRect.shiftXY();
-    wait_box.light.newRect.shiftXY();
-    wait_box.click.newRect.shiftXY();
+    wait_box.flat.new_rect.shiftXY();
+    wait_box.light.new_rect.shiftXY();
+    wait_box.click.new_rect.shiftXY();
 
-    attack_box.flat.newRect.shiftXY();
-    attack_box.light.newRect.shiftXY();
-    attack_box.click.newRect.shiftXY();
+    attack_box.flat.new_rect.shiftXY();
+    attack_box.light.new_rect.shiftXY();
+    attack_box.click.new_rect.shiftXY();
 
-    textBox.setAlpha(200);
-    move_box.flat.setAlpha(200);
-    items_box.flat.setAlpha(200);
-    stats_box.flat.setAlpha(200);
-    settings_box.flat.setAlpha(200);
-    wait_box.flat.setAlpha(200);
-    attack_box.flat.setAlpha(200);
+    text_box.set_alpha(200);
+    move_box.flat.set_alpha(200);
+    items_box.flat.set_alpha(200);
+    stats_box.flat.set_alpha(200);
+    settings_box.flat.set_alpha(200);
+    wait_box.flat.set_alpha(200);
+    attack_box.flat.set_alpha(200);
 
-    cursorHighlight.setAlpha(50);
-    moveHighlight.setAlpha(100);
-    attackHighlight.setAlpha(100);
+    cursor_highlight.set_alpha(50);
+    move_highlight.set_alpha(100);
+    attack_highlight.set_alpha(100);
 }
 
-static void destroyImages(void)
+static void destroy_images(void)
 {
     tile.destroy();
-    dirttile.destroy();
-    grasstile.destroy();
-    housetile.destroy();
-    stonetile.destroy();
-    treetile.destroy();
-    watertile.destroy();
+    dirt_tile.destroy();
+    grass_tile.destroy();
+    house_tile.destroy();
+    stone_tile.destroy();
+    tree_tile.destroy();
+    water_tile.destroy();
 
     hero_sprite.~Character();
     villain_sprite.~Character();
 
-    cursorHighlight.destroy();
-    moveHighlight.destroy();
-    attackHighlight.destroy();
+    cursor_highlight.destroy();
+    move_highlight.destroy();
+    attack_highlight.destroy();
 
-    textBox.destroy();
+    text_box.destroy();
 
     move_box.flat.destroy(); 
     move_box.light.destroy(); 
@@ -820,7 +820,7 @@ static void destroyImages(void)
     attack_box.click.destroy();
 }
 
-static void spritesInit(void)
+static void sprites_init(void)
 {
     hero_sprite.initStatsAndPos("sprite", // name
                             69,      // hp
@@ -833,7 +833,7 @@ static void spritesInit(void)
                             HERO,    // allegiance
                             4,       // i
                             7);      // j
-    lvl1Map.pieceLocations[hero_sprite.i][hero_sprite.j] = &hero_sprite;
+    lvl1_map.piece_locations[hero_sprite.i][hero_sprite.j] = &hero_sprite;
 
     villain_sprite.initStatsAndPos("badGuySprite", // name
                             69,      // hp
@@ -846,5 +846,5 @@ static void spritesInit(void)
                             VILLAIN, // allegiance
                             1,       // i
                             7);      // j
-    lvl1Map.pieceLocations[villain_sprite.i][villain_sprite.j] = &villain_sprite;
+    lvl1_map.piece_locations[villain_sprite.i][villain_sprite.j] = &villain_sprite;
 }

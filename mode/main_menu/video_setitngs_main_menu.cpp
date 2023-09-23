@@ -5,49 +5,49 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static struct apRatio_s {
-    SDL_Rect leftArrowRect;
-    SDL_Rect rightArrowRect;
+static struct ap_ratio_s {
+    SDL_Rect left_arrow_rect;
+    SDL_Rect right_arrow_rect;
     unsigned int i;
-    textureImage box[2];
+    texture_image box[2];
 
     void render(SDL_Renderer* renderer)
     {
         box[i].render(renderer);
     }
 
-} apRatioBox;
+} ap_ratio_box;
 
-static void runVideoSettings(void);
-static void renderScreen(void);
-static void arrowEvent(apRatio_s* myBox, int numBoxes);
-static void applyEvent(SDL_Rect rect);
-static void positionArrows(void);
+static void run_video_settings(void);
+static void render_screen(void);
+static void arrow_event(ap_ratio_s* myBox, int numBoxes);
+static void apply_event(SDL_Rect rect);
+static void position_arrows(void);
 
 void video_settings_main_menu(void)
 {
-    positionArrows();
+    position_arrows();
 
-    switch (settings.windowHeight)
+    switch (settings.window_height)
     {
     case 720:
-        apRatioBox.i = 0;
+        ap_ratio_box.i = 0;
         break;
     
     default:
-        apRatioBox.i = 1;
+        ap_ratio_box.i = 1;
         break;
     }
 
-    runVideoSettings();
+    run_video_settings();
 }
 
-static void runVideoSettings(void)
+static void run_video_settings(void)
 {
     SDL_Event event;
     Uint32 startingTick;
 
-    while (mainMenuMode == VIDEO_SETTINGS)
+    while (main_menu_mode == VIDEO_SETTINGS)
     {
         startingTick = SDL_GetTicks();
 
@@ -55,7 +55,7 @@ static void runVideoSettings(void)
         {
             if (event.type == SDL_QUIT)
             {
-                mainMenuMode = QUIT_MAIN_MENU;
+                main_menu_mode = QUIT_MAIN_MENU;
                 mode = QUIT;
             }
 
@@ -76,12 +76,12 @@ static void runVideoSettings(void)
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     hold = event.button.state;
-                    arrowEvent(&apRatioBox, sizeof(apRatioBox.box)/sizeof(apRatioBox.box[0]));
-                    applyEvent(apply_box.flat.newRect);
+                    arrow_event(&ap_ratio_box, sizeof(ap_ratio_box.box)/sizeof(ap_ratio_box.box[0]));
+                    apply_event(apply_box.flat.new_rect);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
-                    mainMenuMode = SETTINGS;
+                    main_menu_mode = SETTINGS;
                 }
             }
 
@@ -89,104 +89,104 @@ static void runVideoSettings(void)
             {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                 {
-                    mainMenuMode = SETTINGS;
+                    main_menu_mode = SETTINGS;
                 }
             }
         }
 
-        renderScreen();
+        render_screen();
         
-        frameCap(fps, startingTick);
+        frame_cap(fps, startingTick);
     }
 }
 
-static void renderScreen(void)
+static void render_screen(void)
 {
-    checkMouse();
-    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
+    check_mouse();
+    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
     window.clearRender();
 
     background.render(window.renderer);
 
-    apRatioBox.render(window.renderer);
-    renderBox(apply_box);
+    ap_ratio_box.render(window.renderer);
+    render_box(apply_box);
 
-    arrow_box.flat.newRect  = apRatioBox.leftArrowRect;
-    arrow_box.light.newRect = apRatioBox.leftArrowRect;
-    arrow_box.click.newRect = apRatioBox.leftArrowRect;
-    renderBox(arrow_box, SDL_FLIP_HORIZONTAL);
+    arrow_box.flat.new_rect  = ap_ratio_box.left_arrow_rect;
+    arrow_box.light.new_rect = ap_ratio_box.left_arrow_rect;
+    arrow_box.click.new_rect = ap_ratio_box.left_arrow_rect;
+    render_box(arrow_box, SDL_FLIP_HORIZONTAL);
 
-    arrow_box.flat.newRect  = apRatioBox.rightArrowRect;
-    arrow_box.light.newRect = apRatioBox.rightArrowRect;
-    arrow_box.click.newRect = apRatioBox.rightArrowRect;
-    renderBox(arrow_box);
+    arrow_box.flat.new_rect  = ap_ratio_box.right_arrow_rect;
+    arrow_box.light.new_rect = ap_ratio_box.right_arrow_rect;
+    arrow_box.click.new_rect = ap_ratio_box.right_arrow_rect;
+    render_box(arrow_box);
 
-    mouseCursor.render(window.renderer);
+    mouse_cursor.render(window.renderer);
     
     SDL_RenderPresent(window.renderer);
 }
 
-static void arrowEvent(apRatio_s* myBox, int numBoxes)
+static void arrow_event(ap_ratio_s* myBox, int numBoxes)
 {
-    if (SDL_PointInRect(&mousePos, &myBox->leftArrowRect) && (myBox->i > 0))
+    if (SDL_PointInRect(&mouse_pos, &myBox->left_arrow_rect) && (myBox->i > 0))
     {
         --myBox->i;
     }
-    else if (SDL_PointInRect(&mousePos, &myBox->rightArrowRect) && (myBox->i < numBoxes - 1))
+    else if (SDL_PointInRect(&mouse_pos, &myBox->right_arrow_rect) && (myBox->i < numBoxes - 1))
     {
         ++myBox->i;
     }
 }
 
-static void applyEvent(SDL_Rect rect)
+static void apply_event(SDL_Rect rect)
 {
-    if (SDL_PointInRect(&mousePos, &rect))
+    if (SDL_PointInRect(&mouse_pos, &rect))
     {
-        switch (apRatioBox.i)
+        switch (ap_ratio_box.i)
         {
         case 0:
-            settings.widowWidth = 1280;
-            settings.windowHeight = 720;
-            window.setWindowSize(1280, 720);
+            settings.widow_width = 1280;
+            settings.window_height = 720;
+            window.set_window_size(1280, 720);
             break;
         
         default:
-            settings.widowWidth = 1920;
-            settings.windowHeight = 1080;
-            window.setWindowSize(1920, 1080);
+            settings.widow_width = 1920;
+            settings.window_height = 1080;
+            window.set_window_size(1920, 1080);
             break;
         }
 
-        destroyImages_mainMenu();
-        imagesInit_mainMenu();
+        destroy_images_main_menu();
+        images_init_main_menu();
 
-        positionArrows();
+        position_arrows();
 
-        window.setWindowPos();
+        window.set_window_pos();
     }
 }
 
-static void positionArrows(void)
+static void position_arrows(void)
 {
-    apRatioBox.box[0] = apRatio720_box.flat;
-    apRatioBox.box[1] = apRatio1080_box.flat;
+    ap_ratio_box.box[0] = ap_ratio_720_box.flat;
+    ap_ratio_box.box[1] = ap_ratio_1080_box.flat;
 
-    apRatioBox.leftArrowRect = {
+    ap_ratio_box.left_arrow_rect = {
         .x = window.w/5,
         .y = window.h/2,
-        .w = arrow_box.flat.newRect.w,
-        .h = arrow_box.flat.newRect.h
+        .w = arrow_box.flat.new_rect.w,
+        .h = arrow_box.flat.new_rect.h
     };
-    apRatioBox.rightArrowRect = {
+    ap_ratio_box.right_arrow_rect = {
         .x = 4*window.w/5,
         .y = window.h/2,
-        .w = arrow_box.flat.newRect.w,
-        .h = arrow_box.flat.newRect.h
+        .w = arrow_box.flat.new_rect.w,
+        .h = arrow_box.flat.new_rect.h
     };
 
-    apRatioBox.leftArrowRect.makeDimensions();
-    apRatioBox.rightArrowRect.makeDimensions();
-    apRatioBox.leftArrowRect.shiftXY();
-    apRatioBox.rightArrowRect.shiftXY();
+    ap_ratio_box.left_arrow_rect.makeDimensions();
+    ap_ratio_box.right_arrow_rect.makeDimensions();
+    ap_ratio_box.left_arrow_rect.shiftXY();
+    ap_ratio_box.right_arrow_rect.shiftXY();
 }

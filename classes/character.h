@@ -37,7 +37,7 @@ public:
     int j;
     bool selected;
     item_list_t items;
-    textureImage image;
+    texture_image image;
     
     Character();
     Character(const char* name,
@@ -53,7 +53,7 @@ public:
               const char* path,
               int i = 0,
               int j = 0,
-              double scaleImage = 1.0,
+              double scale_image = 1.0,
               int xPos = 0,
               int yPos = 0);
 
@@ -69,7 +69,7 @@ public:
                          int i,
                          int j);
 
-    void initImage(SDL_Renderer* renderer, const char* path, double scaleImage = 1.0, int xPos = 0, int yPos = 0);
+    void initImage(SDL_Renderer* renderer, const char* path, double scale_image = 1.0, int xPos = 0, int yPos = 0);
 
     ~Character();
 };

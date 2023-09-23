@@ -12,23 +12,23 @@
 #include <SDL_Util.h>
 
 win window;
-textureImage mouseCursor;
+texture_image mouse_cursor;
 int fps = 60; // make this a macro if the fps is fixed
 
 int mode = TITLE_SCREEN;
 bool hold = false;
-SDL_Point mousePos;
+SDL_Point mouse_pos;
 
-void checkMouse(void)
+void check_mouse(void)
 {
-    if(window.mouseInWindow())
+    if(window.mouse_in_window())
     {
-        SDL_GetMouseState(&mousePos.x, &mousePos.y);
+        SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
     }
     else
     {
-        mousePos.x = window.w;
-        mousePos.y = window.h;
+        mouse_pos.x = window.w;
+        mouse_pos.y = window.h;
     }
 }
 
@@ -39,10 +39,10 @@ int main(int argc, char* args[]) {
     IMG_Init(IMG_INIT_JPG);
     TTF_Init();
     SDL_ShowCursor(SDL_DISABLE);
-    loadSettingsFile();
+    load_settings_file();
 
-    window.init(settings.widowWidth, settings.windowHeight, "Loading...");
-    mouseCursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
+    window.init(settings.widow_width, settings.window_height, "Loading...");
+    mouse_cursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
 
     Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048);
 
@@ -50,7 +50,7 @@ int main(int argc, char* args[]) {
     {
         if (mode == TITLE_SCREEN)
         {
-            main_titleScreen();
+            main_title_screen();
         }
         if (mode == MAIN_MENU)
         {
@@ -63,7 +63,7 @@ int main(int argc, char* args[]) {
     }
 
     // Save and clean everything
-    writeSave(&settings, sizeof(settings), "./setting.bin");
+    write_save(&settings, sizeof(settings), "./setting.bin");
     SDL_DestroyWindow(window.window); //This closed the window
     SDL_DestroyRenderer(window.renderer);
     SDL_Quit(); //Closed the SDL program

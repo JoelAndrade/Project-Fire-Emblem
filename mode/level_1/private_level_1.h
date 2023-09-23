@@ -117,7 +117,7 @@ public:
     /*17*/ {'s', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 's', 's', 's', 's', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'r', ' ', ' ', ' ', ' ', },
     };
 
-    char moveAttSpaces[ROW][COL] =
+    char move_attack_spaces[ROW][COL] =
     {     // 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
     /*0*/  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
     /*1*/  {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -139,7 +139,7 @@ public:
     /*17*/ {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '}
     };
 
-    Character* pieceLocations[ROW][COL] = {NULL};
+    Character* piece_locations[ROW][COL] = {NULL};
 
     const char empty[ROW][COL] = 
     {     // 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31
@@ -163,20 +163,20 @@ public:
     /*17*/ {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
     };
 
-    void fillMoveAttSpaces(int i_index, int j_index, int numMoves)
+    void fill_move_attack_spaces(int i_index, int j_index, int num_moves)
     {
-        memcpy(&moveAttSpaces, &collision, sizeof(collision));
-        moveAttSpaces[i_index][j_index] = '0';
+        memcpy(&move_attack_spaces, &collision, sizeof(collision));
+        move_attack_spaces[i_index][j_index] = '0';
 
-        for (char move = '0'; move < '0' + numMoves; ++move)
+        for (char move = '0'; move < '0' + num_moves; ++move)
         {
             for (int i = 0; i < ROW; ++i)
             {
                 for (int j = 0; j < COL; ++j)
                 {
-                    if (moveAttSpaces[i][j] == move)
+                    if (move_attack_spaces[i][j] == move)
                     {
-                        fillMoveArray(i, j, move + 1);
+                        fill_move_array(i, j, move + 1);
                     }
                 }
             }
@@ -186,57 +186,57 @@ public:
         {
             for (int j = 0; j < COL; ++j)
             {
-                if (LIMITS('0', moveAttSpaces[i][j], '0' + numMoves))
+                if (LIMITS('0', move_attack_spaces[i][j], '0' + num_moves))
                 {
-                    fillAttackArray(i, j, numMoves);
+                    fill_attack_array(i, j, num_moves);
                 }
             }
         }
     }
 
     private:
-        void fillMoveArray(int i, int j, char numChar) {
-            if (LIMITS(0, i - 1, ROW) && moveAttSpaces[i - 1][j] == ' ')
+        void fill_move_array(int i, int j, char num_Char) {
+            if (LIMITS(0, i - 1, ROW) && move_attack_spaces[i - 1][j] == ' ')
             {                                                              // [ ][x][ ]
-                moveAttSpaces[i - 1][j] = numChar;                         // [ ][o][ ]
+                move_attack_spaces[i - 1][j] = num_Char;                    // [ ][o][ ]
             }                                                              // [ ][ ][ ]
 
-            if (LIMITS(0, j - 1, COL) && moveAttSpaces[i][j - 1] == ' ')
+            if (LIMITS(0, j - 1, COL) && move_attack_spaces[i][j - 1] == ' ')
             {                                                              // [ ][ ][ ]
-                moveAttSpaces[i][j - 1] = numChar;                         // [x][o][ ]
+                move_attack_spaces[i][j - 1] = num_Char;                    // [x][o][ ]
             }                                                              // [ ][ ][ ]
 
-            if (LIMITS(0, j + 1, COL) && moveAttSpaces[i][j + 1] == ' ')
+            if (LIMITS(0, j + 1, COL) && move_attack_spaces[i][j + 1] == ' ')
             {                                                              // [ ][ ][ ]
-                moveAttSpaces[i][j + 1] = numChar;                         // [ ][o][x]
+                move_attack_spaces[i][j + 1] = num_Char;                    // [ ][o][x]
             }                                                              // [ ][ ][ ]
 
-            if (LIMITS(0, i + 1, ROW) && moveAttSpaces[i + 1][j] == ' ')
+            if (LIMITS(0, i + 1, ROW) && move_attack_spaces[i + 1][j] == ' ')
             {                                                              // [ ][ ][ ]
-                moveAttSpaces[i + 1][j] = numChar;                         // [ ][o][ ]
+                move_attack_spaces[i + 1][j] = num_Char;                    // [ ][o][ ]
             }                                                              // [ ][x][ ]
         }
 
-        void fillAttackArray(int i, int j, int numMoves) {
-            if (LIMITS(0, i - 1, ROW) && !LIMITS('0', moveAttSpaces[i - 1][j], '0' + numMoves))
-            {                                                                                     // [ ][x][ ]
-                moveAttSpaces[i - 1][j] = 'a';                                                    // [ ][o][ ]
-            }                                                                                     // [ ][ ][ ]
+        void fill_attack_array(int i, int j, int num_moves) {
+            if (LIMITS(0, i - 1, ROW) && !LIMITS('0', move_attack_spaces[i - 1][j], '0' + num_moves))
+            {                                                                                        // [ ][x][ ]
+                move_attack_spaces[i - 1][j] = 'a';                                                  // [ ][o][ ]
+            }                                                                                        // [ ][ ][ ]
 
-            if (LIMITS(0, j - 1, COL) && !LIMITS('0', moveAttSpaces[i][j - 1], '0' + numMoves))
-            {                                                                                     // [ ][ ][ ]
-                moveAttSpaces[i][j - 1] = 'a';                                                    // [x][o][ ]
-            }                                                                                     // [ ][ ][ ]
+            if (LIMITS(0, j - 1, COL) && !LIMITS('0', move_attack_spaces[i][j - 1], '0' + num_moves))
+            {                                                                                        // [ ][ ][ ]
+                move_attack_spaces[i][j - 1] = 'a';                                                  // [x][o][ ]
+            }                                                                                        // [ ][ ][ ]
 
-            if (LIMITS(0, j + 1, COL) && !LIMITS('0', moveAttSpaces[i][j + 1], '0' + numMoves))
-            {                                                                                     // [ ][ ][ ]
-                moveAttSpaces[i][j + 1] = 'a';                                                    // [ ][o][x]
-            }                                                                                     // [ ][ ][ ]
+            if (LIMITS(0, j + 1, COL) && !LIMITS('0', move_attack_spaces[i][j + 1], '0' + num_moves))
+            {                                                                                        // [ ][ ][ ]
+                move_attack_spaces[i][j + 1] = 'a';                                                  // [ ][o][x]
+            }                                                                                        // [ ][ ][ ]
 
-            if (LIMITS(0, i + 1, ROW) && !LIMITS('0', moveAttSpaces[i + 1][j], '0' + numMoves))
-            {                                                                                     // [ ][ ][ ]
-                moveAttSpaces[i + 1][j] = 'a';                                                    // [ ][o][ ]
-            }                                                                                     // [ ][x][ ]
+            if (LIMITS(0, i + 1, ROW) && !LIMITS('0', move_attack_spaces[i + 1][j], '0' + num_moves))
+            {                                                                                        // [ ][ ][ ]
+                move_attack_spaces[i + 1][j] = 'a';                                                  // [ ][o][ ]
+            }                                                                                        // [ ][x][ ]
         }
 };
 

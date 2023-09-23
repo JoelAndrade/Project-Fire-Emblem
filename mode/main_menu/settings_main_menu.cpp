@@ -5,44 +5,44 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static void runSettings(void);
-static void renderScreen(void);
+static void run_settings(void);
+static void render_screen(void);
 
 void settings_main_menu(void)
 {
-    while (mainMenuMode == SETTINGS)
+    while (main_menu_mode == SETTINGS)
     {
-        runSettings();
+        run_settings();
 
-        if (mainMenuMode == GAME_SETTINGS)
+        if (main_menu_mode == GAME_SETTINGS)
         {
 
         }
-        else if (mainMenuMode == VIDEO_SETTINGS)
+        else if (main_menu_mode == VIDEO_SETTINGS)
         {
             video_settings_main_menu();
         }
-        else if (mainMenuMode == AUDIO_SETTINGS)
+        else if (main_menu_mode == AUDIO_SETTINGS)
         {
 
         }
     }
 }
 
-static void runSettings(void)
+static void run_settings(void)
 {
     SDL_Event event;
-    Uint32 startingTick;
+    Uint32 starting_tick;
 
-    while (mainMenuMode == SETTINGS)
+    while (main_menu_mode == SETTINGS)
     {
-        startingTick = SDL_GetTicks();
+        starting_tick = SDL_GetTicks();
 
         while(SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
             {
-                mainMenuMode = QUIT_MAIN_MENU;
+                main_menu_mode = QUIT_MAIN_MENU;
                 mode = QUIT;
             }
 
@@ -63,11 +63,11 @@ static void runSettings(void)
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     hold = event.button.state;
-                    menuEvent(video_box.flat.newRect, VIDEO_SETTINGS);
+                    menu_event(video_box.flat.new_rect, VIDEO_SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
-                    mainMenuMode = MAIN_MENU_MAIN;
+                    main_menu_mode = MAIN_MENU_MAIN;
                 }
             }
 
@@ -75,31 +75,31 @@ static void runSettings(void)
             {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                 {
-                    mainMenuMode = MAIN_MENU_MAIN;
+                    main_menu_mode = MAIN_MENU_MAIN;
                 }
             }
         }
         
-        renderScreen();
+        render_screen();
 
-        frameCap(fps, startingTick);
+        frame_cap(fps, starting_tick);
     }
 }
 
-static void renderScreen(void)
+static void render_screen(void)
 {
-    checkMouse();
-    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
+    check_mouse();
+    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
     window.clearRender();
 
     background.render(window.renderer);
 
-    renderBox(game_box);
-    renderBox(video_box);
-    renderBox(audio_box);
+    render_box(game_box);
+    render_box(video_box);
+    render_box(audio_box);
 
-    mouseCursor.render(window.renderer);
+    mouse_cursor.render(window.renderer);
     
     SDL_RenderPresent(window.renderer);
 }

@@ -2,12 +2,12 @@
 #define SETTINGS_H
 
 typedef struct settings_s {
-    int widowWidth;
-    int windowHeight;
+    int widow_width;
+    int window_height;
 } settings_t;
 
 extern settings_t settings;
 
-void loadSettingsFile(void);
+void load_settings_file(void);
 
 #endif //SETTINGS_H

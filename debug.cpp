@@ -1,6 +1,6 @@
 #include "debug.h"
 
-void printField(char* field, int row, int col) // Input array like this array[0]
+void print_field(char* field, int row, int col) // Input array like this array[0]
 {
     for (int j = 0; j < row; ++j)
     {

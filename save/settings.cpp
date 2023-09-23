@@ -4,13 +4,13 @@
 
 // Defalult settings
 settings_t settings = {
-    .widowWidth   = 1280,
-    .windowHeight = 720
+    .widow_width   = 1280,
+    .window_height = 720
 };
 
-void loadSettingsFile(void) 
+void load_settings_file(void) 
 {
-    if (!readSave(&settings, sizeof(settings), "./setting.bin")) {
-        writeSave(&settings, sizeof(settings), "./setting.bin");
+    if (!read_save(&settings, sizeof(settings), "./setting.bin")) {
+        write_save(&settings, sizeof(settings), "./setting.bin");
     }
 }

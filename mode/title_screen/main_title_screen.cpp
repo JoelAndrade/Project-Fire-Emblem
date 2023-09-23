@@ -6,36 +6,36 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static textureImage titleScreen;
+static texture_image title_screen;
 
 static Mix_Music* music = NULL;
 
-static void runTitleScreen(void);
-static void renderScreen(void);
-static void imagesInit(void);
-static void soundInit(void);
-static void destroyImages(void);
-static void destroySound(void);
+static void run_title_screen(void);
+static void render_screen(void);
+static void images_init(void);
+static void sound_init(void);
+static void destroy_images(void);
+static void destroy_sound(void);
 
-void main_titleScreen(void)
+void main_title_screen(void)
 {
-    runTitleScreen();
+    run_title_screen();
 }
 
-static void runTitleScreen(void)
+static void run_title_screen(void)
 {
     SDL_Event event;
     int fps = 60;
-    Uint32 startingTick;
+    Uint32 starting_tick;
     
     SDL_SetWindowTitle(window.window, "Title");
 
-    soundInit();
-    imagesInit();
+    sound_init();
+    images_init();
 
     while(mode == TITLE_SCREEN)
     {
-        startingTick = SDL_GetTicks();
+        starting_tick = SDL_GetTicks();
 
         while(SDL_PollEvent(&event))
         {
@@ -66,47 +66,47 @@ static void runTitleScreen(void)
             }
         }
 
-        checkMouse();
-        updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
+        check_mouse();
+        update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
-        renderScreen();
+        render_screen();
 
-        frameCap(fps, startingTick);
+        frame_cap(fps, starting_tick);
     }
 
-    destroyImages();
-    destroySound();
+    destroy_images();
+    destroy_sound();
 }
 
-static void renderScreen(void)
+static void render_screen(void)
 {
     window.clearRender();
 
-    titleScreen.render(window.renderer);
-    mouseCursor.render(window.renderer);
+    title_screen.render(window.renderer);
+    mouse_cursor.render(window.renderer);
     
     SDL_RenderPresent(window.renderer);
 }
 
-static void imagesInit(void)
+static void images_init(void)
 {
-    updateCursorPos(&mouseCursor.newRect, mousePos.x, mousePos.y);
-    titleScreen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
+    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    title_screen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 
-static void destroyImages(void)
+static void destroy_images(void)
 {
-    titleScreen.destroy();
+    title_screen.destroy();
 }
 
-static void soundInit(void)
+static void sound_init(void)
 {
     music = Mix_LoadMUS("sound/music/15. Understanding What We've Grown To Be.mp3");
     Mix_PlayMusic(music, -1);
     Mix_VolumeMusic(0);
 }
 
-static void destroySound(void)
+static void destroy_sound(void)
 {
     Mix_FreeMusic(music);
 }

@@ -18,7 +18,7 @@ Character::Character(const char* name,
                      const char* path,
                      int i,
                      int j,
-                     double scaleImage,
+                     double scale_image,
                      int xPos,
                      int yPos)
 {
@@ -36,7 +36,7 @@ Character::Character(const char* name,
 
     selected = false;
 
-    image.init(renderer, path, scaleImage, xPos, yPos);
+    image.init(renderer, path, scale_image, xPos, yPos);
 }
 
 void Character::initStatsAndPos(const char* name,
@@ -65,9 +65,9 @@ void Character::initStatsAndPos(const char* name,
 }
 
 
-void Character::initImage(SDL_Renderer* renderer, const char* path, double scaleImage, int xPos, int yPos)
+void Character::initImage(SDL_Renderer* renderer, const char* path, double scale_image, int xPos, int yPos)
 {
-    image.init(renderer, path, scaleImage, xPos, yPos);
+    image.init(renderer, path, scale_image, xPos, yPos);
 }
 
 Character::~Character()
