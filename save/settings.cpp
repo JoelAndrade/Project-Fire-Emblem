@@ -2,6 +2,7 @@
 
 #include <File_Util.h>
 
+// Defalult settings
 settings_t settings = {
     .widowWidth   = 1280,
     .windowHeight = 720

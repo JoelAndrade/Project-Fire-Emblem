@@ -8,10 +8,10 @@
 #include <SDL_Util.h>
 #include <character.h>
 
-#define BLOCK_LENGTH     80
-#define OPTION_BLOCK  0.075
-#define CAMERA_CHANGE    10
-#define REVERT true
+#define BLOCK_LENGTH     (80)
+#define OPTION_BLOCK  (0.075)
+#define CAMERA_CHANGE    (10)
+#define REVERT (true)
 
 SDL_Point leftClick;
 SDL_Point focus;
@@ -48,6 +48,7 @@ map lvl1Map;
 static void renderOptions(option_box_t box);
 static void renderMoveHighlight(void);
 static void renderAttHighlight(void);
+static bool renderAttackBox(int i, int j);
 static void renderPostMoveAttack(int i, int j);
 static void renderCursorHighlightGrid(void);
 
@@ -59,6 +60,7 @@ static void attackEvent(void);
 
 static void clickIndex(int* x, int* y);
 static void ajustSprites(int xAjust, int yAjust);
+static void arrageText(int numBoxes, ...);
 
 static void imagesInit(void);
 static void destroyImages(void);
@@ -158,7 +160,10 @@ static void runLevel_1(void)
 
                     case POSTMOVE:
                         optionSelectEvent(wait_box.flat.newRect, DEFAULT);
-                        optionSelectEvent(attack_box.flat.newRect, ATTACK);
+                        if (renderAttackBox(characterSelect->i, characterSelect->j))
+                        {
+                            optionSelectEvent(attack_box.flat.newRect, ATTACK);
+                        }
                         break;
 
                     case ATTACK:
@@ -368,7 +373,10 @@ static void renderScreen(void)
         
         textBox.render(window.renderer);
         renderOptions(wait_box);
-        renderOptions(attack_box);
+        if (renderAttackBox(characterSelect->i, characterSelect->j))
+        {
+            renderOptions(attack_box);
+        }
         break;
 
     case ATTACK:
@@ -467,6 +475,43 @@ static void renderPostMoveAttack(int i, int j)
     }
 }
 
+static bool renderAttackBox(int i, int j)
+{
+    if (lvl1Map.pieceLocations[i - 1][j] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i - 1][j]->allegiance != HERO)
+        {
+            return true;
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i][j - 1] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i][j - 1]->allegiance != HERO)
+        {
+            return true;
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i][j + 1] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i][j + 1]->allegiance != HERO)
+        {
+            return true;
+        }
+    }
+
+    if (lvl1Map.pieceLocations[i + 1][j] != NULL)
+    {
+        if (lvl1Map.pieceLocations[i + 1][j]->allegiance != HERO)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void renderOptions(option_box_t box)
 {
     if (SDL_PointInRect(&mousePos, &box.flat.newRect) && hold)
@@ -507,12 +552,22 @@ static void pieceSelectEvent(void)
     {
         characterSelect = lvl1Map.pieceLocations[leftClick.y][leftClick.x];
         lvl1Map.fillMoveAttSpaces(characterSelect->i, characterSelect->j, characterSelect->moves);
-        printField(lvl1Map.moveAttSpaces[0], ROW, COL); // TODO: remove this line
+        // printField(lvl1Map.moveAttSpaces[0], ROW, COL); // TODO: remove this line
         levelMode = PIECE_SELECT;
+
+        if (characterSelect->allegiance == HERO)
+        {
+            arrageText(4, &move_box, &items_box, &stats_box, &settings_box);
+        }
+        else
+        {
+            arrageText(3, &items_box, &stats_box, &settings_box);
+        }
     }
     else
     {
         levelMode = OPTIONS;
+        arrageText(1, &settings_box);
     }
 }
 
@@ -560,10 +615,19 @@ static bool moveEvent(bool revert)
         if (!revert)
         {
             levelMode = POSTMOVE;
+            if (renderAttackBox(characterSelect->i, characterSelect->j))
+            {
+                arrageText(2, &wait_box, &attack_box);
+            }
+            else
+            {
+                arrageText(1, &wait_box);
+            }
         }
         else
         {
             levelMode = PIECE_SELECT;
+            arrageText(4, &move_box, &items_box, &stats_box, &settings_box);
         }
 
         return true;
@@ -584,6 +648,32 @@ void attackEvent(void)
             levelMode = DEFAULT;
         }
     }
+}
+
+static void arrageText(int numBoxes, ...)
+{
+    textBox.newRect.h = numBoxes*85*SCALE;
+    textBox.newRect.makeDimensions();
+
+    va_list args;
+    va_start(args, numBoxes);
+    for (int i = 1; i < (2*numBoxes); i = i + 2)
+    {
+        option_box_t* box = va_arg(args, option_box_t*);
+
+        box->flat.newRect.y  = (i*textBox.newRect.h)/(2*numBoxes);
+        box->light.newRect.y = (i*textBox.newRect.h)/(2*numBoxes);
+        box->click.newRect.y = (i*textBox.newRect.h)/(2*numBoxes);
+
+        box->flat.newRect.makeDimensions();
+        box->light.newRect.makeDimensions();
+        box->click.newRect.makeDimensions();
+
+        box->flat.newRect.shiftY();
+        box->light.newRect.shiftY();
+        box->click.newRect.shiftY();
+    }
+    va_end(args);
 }
 
 static void clickIndex(int* x, int* y)

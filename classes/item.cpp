@@ -1,6 +1,7 @@
 #include "item.h"
 #include "character.h"
 
+// item class 
 item::item(){}
 item::item(const char* name, int uses, item_type_t type, void (*itemFunc)(void* characterObject))
 {
@@ -42,6 +43,6 @@ void chainMail(void* characterObject)
 void potion(void* characterObject)
 {
     Character* characterVar = (Character*)characterObject;
-    
+
     characterVar->hp += 50;
 }

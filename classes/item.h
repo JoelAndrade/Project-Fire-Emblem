@@ -13,12 +13,12 @@ public:
     const char* name;
     item_type_t type;
     int uses;
-    void (*itemFunc)(void* characterObject);
 
     item();
     item(const char* name, int uses, item_type_t type, void (*itemFunc)(void* characterObject));
 
     void init(const char* name, int uses, item_type_t type, void (*itemFunc)(void* characterObject));
+    void (*itemFunc)(void* characterObject);
 
     ~item();
 };
