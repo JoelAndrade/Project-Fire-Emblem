@@ -8,8 +8,6 @@
 
 static texture_image title_screen;
 
-static Mix_Music* music = NULL;
-
 static void run_title_screen(void);
 static void render_screen(void);
 static void images_init(void);
@@ -103,10 +101,10 @@ static void sound_init(void)
 {
     music = Mix_LoadMUS("sound/music/15. Understanding What We've Grown To Be.mp3");
     Mix_PlayMusic(music, -1);
-    Mix_VolumeMusic(0);
+    Mix_VolumeMusic(10);
 }
 
 static void destroy_sound(void)
 {
-    Mix_FreeMusic(music);
+    Mix_FadeOutMusic(1000);
 }

@@ -63,7 +63,7 @@ static void run_settings(void)
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     hold = event.button.state;
-                    menu_event(video_box.flat.new_rect, VIDEO_SETTINGS);
+                    menu_event(&video_box.flat.new_rect, VIDEO_SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -95,9 +95,9 @@ static void render_screen(void)
 
     background.render(window.renderer);
 
-    render_box(game_box);
-    render_box(video_box);
-    render_box(audio_box);
+    render_box(&game_box);
+    render_box(&video_box);
+    render_box(&audio_box);
 
     mouse_cursor.render(window.renderer);
     

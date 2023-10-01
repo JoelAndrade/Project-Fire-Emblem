@@ -7,7 +7,7 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-int main_menu_mode;
+Main_Menu_t main_menu_mode;
 
 texture_image background;
 
@@ -25,49 +25,47 @@ static option_box_t settings_box;
 option_box_t apply_box;
 option_box_t arrow_box;
 
-static Mix_Music* music = NULL;
-
 static void run_main_menu(void);
 static void render_screen(void);
 static void sound_init(void);
 static void destroy_sound(void);
 
-void menu_event(SDL_Rect rect, int event)
+void menu_event(SDL_Rect* rect, Main_Menu_t event)
 {
-    if (SDL_PointInRect(&mouse_pos, &rect))
+    if (SDL_PointInRect(&mouse_pos, rect))
     {
         main_menu_mode = event;
     }
 }
 
-void render_box(option_box_t box)
+void render_box(option_box_t* box)
 {
-    if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect) && hold)
+    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
     {
-        box.click.render(window.renderer);
+        box->click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect))
+    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
-        box.light.render(window.renderer);
+        box->light.render(window.renderer);
     }
     else
     {
-        box.flat.render(window.renderer);
+        box->flat.render(window.renderer);
     }
 }
-void render_box(option_box_t box, SDL_RendererFlip)
+void render_box(option_box_t* box, SDL_RendererFlip)
 {
-    if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect) && hold)
+    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
     {
-        box.click.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->click.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
-    else if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect))
+    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
-        box.light.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->light.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
     else
     {
-        box.flat.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->flat.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
     }
 }
 
@@ -132,8 +130,8 @@ static void run_main_menu(void) {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
                     hold = event.button.state;
-                    menu_event(new_game_box.flat.new_rect, NEWGAME);
-                    menu_event(settings_box.flat.new_rect, SETTINGS);
+                    menu_event(&new_game_box.flat.new_rect, NEWGAME);
+                    menu_event(&settings_box.flat.new_rect, SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -167,9 +165,9 @@ static void render_screen(void)
 
     background.render(window.renderer);
 
-    render_box(new_game_box);
-    render_box(continue_box);
-    render_box(settings_box);
+    render_box(&new_game_box);
+    render_box(&continue_box);
+    render_box(&settings_box);
 
     mouse_cursor.render(window.renderer);
     
@@ -290,5 +288,5 @@ static void sound_init(void)
 
 static void destroy_sound(void)
 {
-    Mix_FreeMusic(music);
+    Mix_FadeOutMusic(1000);
 }

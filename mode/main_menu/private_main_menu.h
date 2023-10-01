@@ -18,7 +18,7 @@ typedef enum Main_Menu_e {
 
 } Main_Menu_t;
 
-extern int main_menu_mode;
+extern Main_Menu_t main_menu_mode;
 
 extern texture_image background;
 
@@ -32,9 +32,9 @@ extern option_box_t ap_ratio_720_box;
 extern option_box_t apply_box;
 extern option_box_t arrow_box;
 
-void render_box(option_box_t box);
-void render_box(option_box_t box, SDL_RendererFlip);
-void menu_event(SDL_Rect rect, int event);
+void render_box(option_box_t* box);
+void render_box(option_box_t* box, SDL_RendererFlip);
+void menu_event(SDL_Rect* rect, Main_Menu_t event);
 
 void settings_main_menu(void);
 void video_settings_main_menu(void);

@@ -21,7 +21,7 @@ static struct ap_ratio_s {
 static void run_video_settings(void);
 static void render_screen(void);
 static void arrow_event(ap_ratio_s* myBox, int numBoxes);
-static void apply_event(SDL_Rect rect);
+static void apply_event(SDL_Rect* rect);
 static void position_arrows(void);
 
 void video_settings_main_menu(void)
@@ -77,7 +77,7 @@ static void run_video_settings(void)
                 {
                     hold = event.button.state;
                     arrow_event(&ap_ratio_box, sizeof(ap_ratio_box.box)/sizeof(ap_ratio_box.box[0]));
-                    apply_event(apply_box.flat.new_rect);
+                    apply_event(&apply_box.flat.new_rect);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -110,17 +110,17 @@ static void render_screen(void)
     background.render(window.renderer);
 
     ap_ratio_box.render(window.renderer);
-    render_box(apply_box);
+    render_box(&apply_box);
 
     arrow_box.flat.new_rect  = ap_ratio_box.left_arrow_rect;
     arrow_box.light.new_rect = ap_ratio_box.left_arrow_rect;
     arrow_box.click.new_rect = ap_ratio_box.left_arrow_rect;
-    render_box(arrow_box, SDL_FLIP_HORIZONTAL);
+    render_box(&arrow_box, SDL_FLIP_HORIZONTAL);
 
     arrow_box.flat.new_rect  = ap_ratio_box.right_arrow_rect;
     arrow_box.light.new_rect = ap_ratio_box.right_arrow_rect;
     arrow_box.click.new_rect = ap_ratio_box.right_arrow_rect;
-    render_box(arrow_box);
+    render_box(&arrow_box);
 
     mouse_cursor.render(window.renderer);
     
@@ -131,17 +131,17 @@ static void arrow_event(ap_ratio_s* myBox, int numBoxes)
 {
     if (SDL_PointInRect(&mouse_pos, &myBox->left_arrow_rect) && (myBox->i > 0))
     {
-        --myBox->i;
+        myBox->i--;
     }
     else if (SDL_PointInRect(&mouse_pos, &myBox->right_arrow_rect) && (myBox->i < numBoxes - 1))
     {
-        ++myBox->i;
+        myBox->i++;
     }
 }
 
-static void apply_event(SDL_Rect rect)
+static void apply_event(SDL_Rect* rect)
 {
-    if (SDL_PointInRect(&mouse_pos, &rect))
+    if (SDL_PointInRect(&mouse_pos, rect))
     {
         switch (ap_ratio_box.i)
         {

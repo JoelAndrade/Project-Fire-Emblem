@@ -12,10 +12,12 @@
 #include <SDL_Util.h>
 
 win window;
-texture_image mouse_cursor;
 int fps = 60; // make this a macro if the fps is fixed
-
 int mode = TITLE_SCREEN;
+
+Mix_Music* music;
+
+texture_image mouse_cursor;
 bool hold = false;
 SDL_Point mouse_pos;
 
@@ -35,9 +37,9 @@ void check_mouse(void)
 int main(int argc, char* args[]) {
     //Init SDL Stuff
     SDL_Init(SDL_INIT_EVERYTHING);
-    IMG_Init(IMG_INIT_PNG);
-    IMG_Init(IMG_INIT_JPG);
+    IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
     TTF_Init();
+    Mix_Init(MIX_INIT_MP3);
     SDL_ShowCursor(SDL_DISABLE);
     load_settings_file();
 
@@ -77,7 +79,7 @@ int main(int argc, char* args[]) {
 // Add transparentcy to game settings
 
 // TODO: Implement sound
-// Smooth the transitions of the music
+// Find out how to add sound effects
 
 // TODO: Make basic board
 // Add a villian on the board with vilain interactions
@@ -85,7 +87,10 @@ int main(int argc, char* args[]) {
 // Might want to make the board a square to leave the side with menuing and camera
 // Need to be able to handle animation
 // Add keyboard shortcuts
-// Might want add double click chort cuts
+// Implent item usage
+
+// Might want add double click short cuts
+// Might need to implent custom fonts
 
 // TODO: Have all the board meckanics all on one file. 
 // Have details about specific (size, characters, etc.) on a diffent file

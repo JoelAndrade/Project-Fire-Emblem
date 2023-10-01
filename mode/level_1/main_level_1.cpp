@@ -45,7 +45,7 @@ Character villain_sprite;
 Character* character_select;
 map lvl1_map;
 
-static void render_options(option_box_t box);
+static void render_options(option_box_t* box);
 static void render_move_highlight(void);
 static void render_attck_highlight(void);
 static bool render_attack_box(int i, int j);
@@ -54,7 +54,7 @@ static void render_cursor_highlight_grid(void);
 
 static void piece_select_event(void);
 static bool outside_textbox_event(void);
-static bool option_select_event(SDL_Rect rect, levelMode_t modeSelect);
+static bool option_select_event(SDL_Rect* rect, levelMode_t modeSelect);
 static bool move_event(bool revert = false);
 static void attack_event(void);
 
@@ -130,7 +130,7 @@ static void run_level_1(void)
                     case OPTIONS:
                         if (!outside_textbox_event())
                         {
-                            option_select_event(settings_box.flat.new_rect, SETTINGS);
+                            option_select_event(&settings_box.flat.new_rect, SETTINGS);
                         }
                         break;
                     
@@ -140,16 +140,20 @@ static void run_level_1(void)
                             if (move_event());
                             else if (!outside_textbox_event())
                             {
-                                option_select_event(move_box.flat.new_rect, MOVE);
-                                option_select_event(settings_box.flat.new_rect, SETTINGS);
+                                option_select_event(&move_box.flat.new_rect, MOVE);
+                                if (option_select_event(&items_box.flat.new_rect, ITEM))
+                                {
+                                    arrage_text(5, &wait_box, &attack_box, &move_box, &items_box, &stats_box);
+                                }
+                                option_select_event(&settings_box.flat.new_rect, SETTINGS);
                             }
                         }
                         else
                         {
                             if (!outside_textbox_event())
                             {
-                                option_select_event(stats_box.flat.new_rect, STATS);
-                                option_select_event(settings_box.flat.new_rect, SETTINGS);
+                                option_select_event(&stats_box.flat.new_rect, STATS);
+                                option_select_event(&settings_box.flat.new_rect, SETTINGS);
                             }
                         }
                         break;
@@ -158,11 +162,14 @@ static void run_level_1(void)
                         move_event();
                         break;
 
+                    case ITEM:
+                        break;
+
                     case POSTMOVE:
-                        option_select_event(wait_box.flat.new_rect, DEFAULT);
+                        option_select_event(&wait_box.flat.new_rect, DEFAULT);
                         if (render_attack_box(character_select->i, character_select->j))
                         {
-                            option_select_event(attack_box.flat.new_rect, ATTACK);
+                            option_select_event(&attack_box.flat.new_rect, ATTACK);
                         }
                         break;
 
@@ -198,6 +205,11 @@ static void run_level_1(void)
                     
                     case MOVE:
                         level_mode = PIECE_SELECT;
+                        break;
+                    
+                    case ITEM:
+                        level_mode = PIECE_SELECT;
+                        arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
                         break;
 
                     case POSTMOVE:
@@ -338,7 +350,7 @@ static void render_screen(void)
     
     case OPTIONS:
         text_box.render(window.renderer);
-        render_options(settings_box);
+        render_options(&settings_box);
         break;
     
     case PIECE_SELECT:
@@ -349,16 +361,16 @@ static void render_screen(void)
         text_box.render(window.renderer);
         if (character_select->allegiance == HERO)
         {
-            render_options(move_box);
-            render_options(items_box);
-            render_options(stats_box);
-            render_options(settings_box);
+            render_options(&move_box);
+            render_options(&items_box);
+            render_options(&stats_box);
+            render_options(&settings_box);
         }
         else
         {
-            render_options(items_box);
-            render_options(stats_box);
-            render_options(settings_box);
+            render_options(&items_box);
+            render_options(&stats_box);
+            render_options(&settings_box);
         }
         break;
 
@@ -368,14 +380,23 @@ static void render_screen(void)
         render_cursor_highlight_grid();
         break;
 
+    case ITEM:
+        text_box.render(window.renderer);
+        render_options(&wait_box);
+        render_options(&attack_box);
+        render_options(&move_box);
+        render_options(&items_box);
+        render_options(&stats_box);
+        break;
+
     case POSTMOVE:
         render_cursor_highlight_grid();
         
         text_box.render(window.renderer);
-        render_options(wait_box);
+        render_options(&wait_box);
         if (render_attack_box(character_select->i, character_select->j))
         {
-            render_options(attack_box);
+            render_options(&attack_box);
         }
         break;
 
@@ -512,19 +533,19 @@ static bool render_attack_box(int i, int j)
     return false;
 }
 
-static void render_options(option_box_t box)
+static void render_options(option_box_t* box)
 {
-    if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect) && hold)
+    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
     {
-        box.click.render(window.renderer);
+        box->click.render(window.renderer);
     }
-    else if (SDL_PointInRect(&mouse_pos, &box.flat.new_rect))
+    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
-        box.light.render(window.renderer);
+        box->light.render(window.renderer);
     }
     else
     {
-        box.flat.render(window.renderer);
+        box->flat.render(window.renderer);
     }
 }
 
@@ -571,9 +592,9 @@ static void piece_select_event(void)
     }
 }
 
-static bool option_select_event(SDL_Rect rect, levelMode_t modeSelect)
+static bool option_select_event(SDL_Rect* rect, levelMode_t modeSelect)
 {
-    if (SDL_PointInRect(&mouse_pos, &rect))
+    if (SDL_PointInRect(&mouse_pos, rect))
     {
         level_mode = modeSelect;
         return true;

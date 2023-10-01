@@ -13,6 +13,7 @@ typedef enum levelMode_e {
     OPTIONS,
     PIECE_SELECT,
     MOVE,
+    ITEM,
     POSTMOVE,
     ATTACK,
     STATS,

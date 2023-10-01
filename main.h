@@ -4,6 +4,7 @@
 #include "save/settings.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 #include <File_Util.h>
 
@@ -23,10 +24,12 @@ typedef struct option_box_s {
 } option_box_t;
 
 extern win window;
-extern texture_image mouse_cursor;
 extern int fps;
-
 extern int mode;
+
+extern Mix_Music* music;
+
+extern texture_image mouse_cursor;
 extern bool hold;
 extern SDL_Point mouse_pos;
 
