@@ -43,6 +43,7 @@ texture_image text_box;
 Character hero_sprite;
 Character villain_sprite;
 Character* character_select;
+item* item_select;
 map lvl1_map;
 
 static void render_options(option_box_t* box);
@@ -54,7 +55,7 @@ static void render_cursor_highlight_grid(void);
 
 static void piece_select_event(void);
 static bool outside_textbox_event(void);
-static bool option_select_event(SDL_Rect* rect, levelMode_t modeSelect);
+static bool option_select_event(option_box_t* rect, levelMode_t modeSelect);
 static bool move_event(bool revert = false);
 static void attack_event(void);
 
@@ -130,7 +131,7 @@ static void run_level_1(void)
                     case OPTIONS:
                         if (!outside_textbox_event())
                         {
-                            option_select_event(&settings_box.flat.new_rect, SETTINGS);
+                            option_select_event(&settings_box, SETTINGS);
                         }
                         break;
                     
@@ -140,20 +141,20 @@ static void run_level_1(void)
                             if (move_event());
                             else if (!outside_textbox_event())
                             {
-                                option_select_event(&move_box.flat.new_rect, MOVE);
-                                if (option_select_event(&items_box.flat.new_rect, ITEM))
+                                option_select_event(&move_box, MOVE);
+                                if (option_select_event(&items_box, ITEM))
                                 {
                                     arrage_text(5, &wait_box, &attack_box, &move_box, &items_box, &stats_box);
                                 }
-                                option_select_event(&settings_box.flat.new_rect, SETTINGS);
+                                option_select_event(&settings_box, SETTINGS);
                             }
                         }
                         else
                         {
                             if (!outside_textbox_event())
                             {
-                                option_select_event(&stats_box.flat.new_rect, STATS);
-                                option_select_event(&settings_box.flat.new_rect, SETTINGS);
+                                option_select_event(&stats_box, STATS);
+                                option_select_event(&settings_box, SETTINGS);
                             }
                         }
                         break;
@@ -163,13 +164,57 @@ static void run_level_1(void)
                         break;
 
                     case ITEM:
+                        bool item_selected;
+                        
+                        if (item_selected = option_select_event(&wait_box, ITEM_OPTIONS))
+                        {
+                            item_select = &character_select->items.slot_1;
+                        }
+                        else if (item_selected = option_select_event(&attack_box, ITEM_OPTIONS))
+                        {
+                            item_select = &character_select->items.slot_2;
+                        }
+                        else if (item_selected = option_select_event(&move_box, ITEM_OPTIONS))
+                        {
+                            item_select = &character_select->items.slot_3;
+                        }
+                        else if (item_selected = option_select_event(&items_box, ITEM_OPTIONS))
+                        {
+                            item_select = &character_select->items.slot_4;
+                        }
+                        else if (item_selected = option_select_event(&stats_box, ITEM_OPTIONS))
+                        {
+                            item_select = &character_select->items.slot_5;
+                        }
+
+                        if (item_selected)
+                        {
+                            switch (item_select->type)
+                            {
+                                case WEAPON:
+                                    arrage_text(2, &stats_box, &items_box);
+                                    break;
+
+                                case HOLD:
+                                    arrage_text(1, &items_box);
+                                    break;
+
+                                case CONSUMABLE:
+                                    arrage_text(2, &move_box, &items_box);
+                                    break;
+                            }
+                        }
+
+                        break;
+                    
+                    case ITEM_OPTIONS:
                         break;
 
                     case POSTMOVE:
-                        option_select_event(&wait_box.flat.new_rect, DEFAULT);
+                        option_select_event(&wait_box, DEFAULT);
                         if (render_attack_box(character_select->i, character_select->j))
                         {
-                            option_select_event(&attack_box.flat.new_rect, ATTACK);
+                            option_select_event(&attack_box, ATTACK);
                         }
                         break;
 
@@ -210,6 +255,11 @@ static void run_level_1(void)
                     case ITEM:
                         level_mode = PIECE_SELECT;
                         arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
+                        break;
+
+                    case ITEM_OPTIONS:
+                        level_mode = ITEM;
+                        arrage_text(5, &wait_box, &attack_box, &move_box, &items_box, &stats_box);
                         break;
 
                     case POSTMOVE:
@@ -387,6 +437,25 @@ static void render_screen(void)
         render_options(&move_box);
         render_options(&items_box);
         render_options(&stats_box);
+        break;
+
+    case ITEM_OPTIONS:
+        text_box.render(window.renderer);
+        switch (item_select->type)
+        {
+        case WEAPON:
+            render_options(&stats_box);
+            render_options(&items_box);
+            break;
+        case HOLD:
+            render_options(&items_box);
+            break;
+        case CONSUMABLE:
+            render_options(&move_box);
+            render_options(&items_box);
+            break;
+        }
+
         break;
 
     case POSTMOVE:
@@ -592,9 +661,9 @@ static void piece_select_event(void)
     }
 }
 
-static bool option_select_event(SDL_Rect* rect, levelMode_t modeSelect)
+static bool option_select_event(option_box_t* box, levelMode_t modeSelect)
 {
-    if (SDL_PointInRect(&mouse_pos, rect))
+    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
         level_mode = modeSelect;
         return true;
@@ -843,29 +912,33 @@ static void destroy_images(void)
 
 static void sprites_init(void)
 {
-    hero_sprite.initStatsAndPos("sprite", // name
-                            69,      // hp
-                            69,      // attack
-                            69,      // defence
-                            69,      // special attack
-                            69,      // special defence
-                            69,      // luck
-                            4,       // moves
-                            HERO,    // allegiance
-                            4,       // i
-                            7);      // j
+    hero_sprite.init_stats_and_pos("sprite", // name
+                                   69,       // hp
+                                   69,       // attack
+                                   69,       // defence
+                                   69,       // special attack
+                                   69,       // special defence
+                                   69,       // luck
+                                   4,        // moves
+                                   HERO,     // allegiance
+                                   4,        // i
+                                   7);       // j
     lvl1_map.piece_locations[hero_sprite.i][hero_sprite.j] = &hero_sprite;
+    hero_sprite.items.slot_1.init("Weapon Item", 50, WEAPON, swords);
+    hero_sprite.items.slot_2.init("Hold Item", 50, HOLD, chain_mail);
+    hero_sprite.items.slot_3.init("Consumable Item", 50, CONSUMABLE, potion);
+    hero_sprite.items.num_items = 3;
 
-    villain_sprite.initStatsAndPos("badGuySprite", // name
-                            69,      // hp
-                            69,      // attack
-                            69,      // defence
-                            69,      // special attack
-                            69,      // special defence
-                            69,      // luck
-                            4,       // moves
-                            VILLAIN, // allegiance
-                            1,       // i
-                            7);      // j
+    villain_sprite.init_stats_and_pos("badGuySprite", // name
+                                      69,            // hp
+                                      69,            // attack
+                                      69,            // defence
+                                      69,            // special attack
+                                      69,            // special defence
+                                      69,            // luck
+                                      4,             // moves
+                                      VILLAIN,       // allegiance
+                                      1,             // i
+                                      7);            // j
     lvl1_map.piece_locations[villain_sprite.i][villain_sprite.j] = &villain_sprite;
 }

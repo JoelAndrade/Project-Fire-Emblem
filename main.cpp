@@ -23,7 +23,7 @@ SDL_Point mouse_pos;
 
 void check_mouse(void)
 {
-    if(window.mouse_in_window())
+    if (window.mouse_in_window())
     {
         SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
     }
@@ -76,10 +76,11 @@ int main(int argc, char* args[]) {
 
 // TODO: Make main menu
 // Make audio settings
-// Add transparentcy to game settings
+// Add transparentcy settings to game settings
 
 // TODO: Implement sound
 // Find out how to add sound effects
+// Need to precise fade out the music when the time comes
 
 // TODO: Make basic board
 // Add a villian on the board with vilain interactions
@@ -88,6 +89,7 @@ int main(int argc, char* args[]) {
 // Need to be able to handle animation
 // Add keyboard shortcuts
 // Implent item usage
+// Need to rework the boxes to autogen images
 
 // Might want add double click short cuts
 // Might need to implent custom fonts

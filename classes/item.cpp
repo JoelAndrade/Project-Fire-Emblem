@@ -26,23 +26,23 @@ item::~item(){}
 // Weapon items
 void swords(void* character_object)
 {
-    Character* characterVar = (Character*)character_object;
+    Character* character_var = (Character*)character_object;
 
-    characterVar->attack += 5;
+    character_var->attack += 5;
 }
 
 // Hold items
-void chainMail(void* character_object)
+void chain_mail(void* character_object)
 {
-    Character* characterVar = (Character*)character_object;
+    Character* character_var = (Character*)character_object;
 
-    characterVar->defence += 10;
+    character_var->defence += 10;
 }
 
 // Consumables items
 void potion(void* character_object)
 {
-    Character* characterVar = (Character*)character_object;
+    Character* character_var = (Character*)character_object;
 
-    characterVar->hp += 50;
+    character_var->hp += 50;
 }

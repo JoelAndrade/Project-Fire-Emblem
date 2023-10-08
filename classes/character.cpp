@@ -39,17 +39,17 @@ Character::Character(const char* name,
     image.init(renderer, path, scale_image, xPos, yPos);
 }
 
-void Character::initStatsAndPos(const char* name,
-                                int hp,
-                                int attack,
-                                int defence,
-                                int speAtt,
-                                int speDef,
-                                int luck,
-                                int moves,
-                                allegiance_t allegiance,
-                                int i,
-                                int j)
+void Character::init_stats_and_pos(const char* name,
+                                   int hp,
+                                   int attack,
+                                   int defence,
+                                   int speAtt,
+                                   int speDef,
+                                   int luck,
+                                   int moves,
+                                   allegiance_t allegiance,
+                                   int i,
+                                   int j)
 {
     this->name = name;
     this->hp = hp;
@@ -65,7 +65,7 @@ void Character::initStatsAndPos(const char* name,
 }
 
 
-void Character::initImage(SDL_Renderer* renderer, const char* path, double scale_image, int xPos, int yPos)
+void Character::init_image(SDL_Renderer* renderer, const char* path, double scale_image, int xPos, int yPos)
 {
     image.init(renderer, path, scale_image, xPos, yPos);
 }

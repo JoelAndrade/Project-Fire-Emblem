@@ -19,6 +19,8 @@ typedef struct item_list_s {
     item slot_3;
     item slot_4;
     item slot_5;
+
+    int num_items;
 } item_list_t;
 
 class Character
@@ -57,19 +59,19 @@ public:
               int xPos = 0,
               int yPos = 0);
 
-    void initStatsAndPos(const char* name,
-                         int hp,
-                         int attack,
-                         int defence,
-                         int speAtt,
-                         int speDef,
-                         int luck,
-                         int moves,
-                         allegiance_t allegiance,
-                         int i,
-                         int j);
+    void init_stats_and_pos(const char* name,
+                            int hp,
+                            int attack,
+                            int defence,
+                            int speAtt,
+                            int speDef,
+                            int luck,
+                            int moves,
+                            allegiance_t allegiance,
+                            int i,
+                            int j);
 
-    void initImage(SDL_Renderer* renderer, const char* path, double scale_image = 1.0, int xPos = 0, int yPos = 0);
+    void init_image(SDL_Renderer* renderer, const char* path, double scale_image = 1.0, int xPos = 0, int yPos = 0);
 
     ~Character();
 };
