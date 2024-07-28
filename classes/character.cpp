@@ -5,7 +5,7 @@ Character::Character()
     selected = false;
 }
 
-Character::Character(const char* name,
+Character::Character(const char *name,
                      int hp,
                      int attack,
                      int defence,
@@ -14,8 +14,8 @@ Character::Character(const char* name,
                      int luck,
                      int moves,
                      allegiance_t allegiance,
-                     SDL_Renderer* renderer,
-                     const char* path,
+                     SDL_Renderer *renderer,
+                     const char *path,
                      int i,
                      int j,
                      double scale_image,
@@ -39,7 +39,7 @@ Character::Character(const char* name,
     image.init(renderer, path, scale_image, xPos, yPos);
 }
 
-void Character::init_stats_and_pos(const char* name,
+void Character::init_stats_and_pos(const char *name,
                                    int hp,
                                    int attack,
                                    int defence,
@@ -65,12 +65,12 @@ void Character::init_stats_and_pos(const char* name,
 }
 
 
-void Character::init_image(SDL_Renderer* renderer, const char* path, double scale_image, int xPos, int yPos)
+void Character::init_image(SDL_Renderer *renderer, const char *path, double scale_image, int xPos, int yPos)
 {
     image.init(renderer, path, scale_image, xPos, yPos);
 }
 
 Character::~Character()
 {
-    image.destroy();
+    image.~TextureImage();
 }

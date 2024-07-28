@@ -1,4 +1,4 @@
-#include "../../main.h"
+#include "main.h"
 #include "private_main_menu.h"
 
 #include <SDL2/SDL.h>
@@ -91,15 +91,15 @@ static void render_screen(void)
     check_mouse();
     update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
-    window.clearRender();
+    window.clear_render();
 
-    background.render(window.renderer);
+    background.render();
 
     render_box(&game_box);
     render_box(&video_box);
     render_box(&audio_box);
 
-    mouse_cursor.render(window.renderer);
+    mouse_cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }

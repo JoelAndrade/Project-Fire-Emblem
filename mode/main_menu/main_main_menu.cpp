@@ -1,4 +1,4 @@
-#include "../../main.h"
+#include "main.h"
 #include "main_main_menu.h"
 #include "private_main_menu.h"
 
@@ -9,7 +9,7 @@
 
 Main_Menu_t main_menu_mode;
 
-texture_image background;
+TextureImage background;
 
 option_box_t game_box;
 option_box_t video_box;
@@ -42,30 +42,30 @@ void render_box(option_box_t* box)
 {
     if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
     {
-        box->click.render(window.renderer);
+        box->click.render();
     }
     else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
-        box->light.render(window.renderer);
+        box->light.render();
     }
     else
     {
-        box->flat.render(window.renderer);
+        box->flat.render();
     }
 }
 void render_box(option_box_t* box, SDL_RendererFlip)
 {
     if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
     {
-        box->click.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->click.render_flip(SDL_FLIP_HORIZONTAL);
     }
     else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
     {
-        box->light.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->light.render_flip(SDL_FLIP_HORIZONTAL);
     }
     else
     {
-        box->flat.render_flip(window.renderer, SDL_FLIP_HORIZONTAL);
+        box->flat.render_flip(SDL_FLIP_HORIZONTAL);
     }
 }
 
@@ -161,15 +161,15 @@ static void render_screen(void)
     check_mouse();
     update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
-    window.clearRender();
+    window.clear_render();
 
-    background.render(window.renderer);
+    background.render();
 
     render_box(&new_game_box);
     render_box(&continue_box);
     render_box(&settings_box);
 
-    mouse_cursor.render(window.renderer);
+    mouse_cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
@@ -211,72 +211,72 @@ void images_init_main_menu(void)
     arrow_box.light.init(window.renderer, "images/Images/main_menu_images/ArrowH.png",        0.2*SCALE);
     arrow_box.click.init(window.renderer, "images/Images/main_menu_images/ArrowHL.png",       0.2*SCALE);
 
-    new_game_box.flat.new_rect.shiftXY();
-    new_game_box.light.new_rect.shiftXY();
-    new_game_box.click.new_rect.shiftXY();
-    continue_box.light.new_rect.shiftXY();
-    continue_box.flat.new_rect.shiftXY();
-    continue_box.click.new_rect.shiftXY();
-    settings_box.flat.new_rect.shiftXY();
-    settings_box.light.new_rect.shiftXY();
-    settings_box.click.new_rect.shiftXY();
+    rect_shiftXY(&new_game_box.flat.new_rect);
+    rect_shiftXY(&new_game_box.light.new_rect);
+    rect_shiftXY(&new_game_box.click.new_rect);
+    rect_shiftXY(&continue_box.light.new_rect);
+    rect_shiftXY(&continue_box.flat.new_rect);
+    rect_shiftXY(&continue_box.click.new_rect);
+    rect_shiftXY(&settings_box.flat.new_rect);
+    rect_shiftXY(&settings_box.light.new_rect);
+    rect_shiftXY(&settings_box.click.new_rect);
 
-    game_box.flat.new_rect.shiftXY();
-    game_box.light.new_rect.shiftXY();
-    game_box.click.new_rect.shiftXY();
-    video_box.light.new_rect.shiftXY();
-    video_box.flat.new_rect.shiftXY();
-    video_box.click.new_rect.shiftXY();
-    audio_box.flat.new_rect.shiftXY();
-    audio_box.light.new_rect.shiftXY();
-    audio_box.click.new_rect.shiftXY();
+    rect_shiftXY(&game_box.flat.new_rect);
+    rect_shiftXY(&game_box.light.new_rect);
+    rect_shiftXY(&game_box.click.new_rect);
+    rect_shiftXY(&video_box.light.new_rect);
+    rect_shiftXY(&video_box.flat.new_rect);
+    rect_shiftXY(&video_box.click.new_rect);
+    rect_shiftXY(&audio_box.flat.new_rect);
+    rect_shiftXY(&audio_box.light.new_rect);
+    rect_shiftXY(&audio_box.click.new_rect);
 
-    ap_ratio_1080_box.flat.new_rect.shiftXY();
-    ap_ratio_720_box.flat.new_rect.shiftXY();
+    rect_shiftXY(&ap_ratio_1080_box.flat.new_rect);
+    rect_shiftXY(&ap_ratio_720_box.flat.new_rect);
 
-    apply_box.flat.new_rect.shiftXY();
-    apply_box.light.new_rect.shiftXY();
-    apply_box.click.new_rect.shiftXY();
+    rect_shiftXY(&apply_box.flat.new_rect);
+    rect_shiftXY(&apply_box.light.new_rect);
+    rect_shiftXY(&apply_box.click.new_rect);
 
-    arrow_box.flat.new_rect.shiftXY();
-    arrow_box.light.new_rect.shiftXY();
-    arrow_box.click.new_rect.shiftXY();
+    rect_shiftXY(&arrow_box.flat.new_rect);
+    rect_shiftXY(&arrow_box.light.new_rect);
+    rect_shiftXY(&arrow_box.click.new_rect);
 }
 
 void destroy_images_main_menu(void)
 {
-    background.destroy();
+    background.~TextureImage();
 
-    new_game_box.flat.destroy();
-    new_game_box.light.destroy();
-    new_game_box.click.destroy();
-    continue_box.light.destroy();
-    continue_box.flat.destroy();
-    continue_box.click.destroy();
-    settings_box.flat.destroy();
-    settings_box.light.destroy();
-    settings_box.click.destroy();
+    new_game_box.flat.~TextureImage();
+    new_game_box.light.~TextureImage();
+    new_game_box.click.~TextureImage();
+    continue_box.light.~TextureImage();
+    continue_box.flat.~TextureImage();
+    continue_box.click.~TextureImage();
+    settings_box.flat.~TextureImage();
+    settings_box.light.~TextureImage();
+    settings_box.click.~TextureImage();
 
-    game_box.flat.destroy();
-    game_box.light.destroy();
-    game_box.click.destroy();
-    video_box.light.destroy();
-    video_box.flat.destroy();
-    video_box.click.destroy();
-    audio_box.flat.destroy();
-    audio_box.light.destroy();
-    audio_box.click.destroy();
+    game_box.flat.~TextureImage();
+    game_box.light.~TextureImage();
+    game_box.click.~TextureImage();
+    video_box.light.~TextureImage();
+    video_box.flat.~TextureImage();
+    video_box.click.~TextureImage();
+    audio_box.flat.~TextureImage();
+    audio_box.light.~TextureImage();
+    audio_box.click.~TextureImage();
 
-    ap_ratio_1080_box.flat.destroy();
-    ap_ratio_720_box.flat.destroy();
+    ap_ratio_1080_box.flat.~TextureImage();
+    ap_ratio_720_box.flat.~TextureImage();
 
-    apply_box.flat.destroy();
-    apply_box.light.destroy();
-    apply_box.click.destroy();
+    apply_box.flat.~TextureImage();
+    apply_box.light.~TextureImage();
+    apply_box.click.~TextureImage();
 
-    arrow_box.flat.destroy();
-    arrow_box.light.destroy();
-    arrow_box.click.destroy();
+    arrow_box.flat.~TextureImage();
+    arrow_box.light.~TextureImage();
+    arrow_box.click.~TextureImage();
 }
 
 static void sound_init(void)

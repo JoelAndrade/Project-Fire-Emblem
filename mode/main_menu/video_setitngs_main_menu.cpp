@@ -1,4 +1,4 @@
-#include "../../main.h"
+#include "main.h"
 #include "private_main_menu.h"
 
 #include <SDL2/SDL.h>
@@ -9,11 +9,11 @@ static struct ap_ratio_s {
     SDL_Rect left_arrow_rect;
     SDL_Rect right_arrow_rect;
     unsigned int i;
-    texture_image box[2];
+    TextureImage box[2];
 
-    void render(SDL_Renderer* renderer)
+    void render()
     {
-        box[i].render(renderer);
+        box[i].render();
     }
 
 } ap_ratio_box;
@@ -105,11 +105,11 @@ static void render_screen(void)
     check_mouse();
     update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
     
-    window.clearRender();
+    window.clear_render();
 
-    background.render(window.renderer);
+    background.render();
 
-    ap_ratio_box.render(window.renderer);
+    ap_ratio_box.render();
     render_box(&apply_box);
 
     arrow_box.flat.new_rect  = ap_ratio_box.left_arrow_rect;
@@ -122,7 +122,7 @@ static void render_screen(void)
     arrow_box.click.new_rect = ap_ratio_box.right_arrow_rect;
     render_box(&arrow_box);
 
-    mouse_cursor.render(window.renderer);
+    mouse_cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
@@ -185,8 +185,8 @@ static void position_arrows(void)
         .h = arrow_box.flat.new_rect.h
     };
 
-    ap_ratio_box.left_arrow_rect.makeDimensions();
-    ap_ratio_box.right_arrow_rect.makeDimensions();
-    ap_ratio_box.left_arrow_rect.shiftXY();
-    ap_ratio_box.right_arrow_rect.shiftXY();
+    rect_make_dimensions(&ap_ratio_box.left_arrow_rect);
+    rect_make_dimensions(&ap_ratio_box.right_arrow_rect);
+    rect_shiftXY(&ap_ratio_box.left_arrow_rect);
+    rect_shiftXY(&ap_ratio_box.right_arrow_rect);
 }

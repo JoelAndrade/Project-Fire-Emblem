@@ -1,7 +1,8 @@
 #ifndef PRIVATE_LEVEL_1_H
 #define PRIVATE_LEVEL_1_H
 
-#include <Character.h>
+#include "classes/character.h"
+
 #include <SDL_Util.h>
 #include <stdint.h>
 

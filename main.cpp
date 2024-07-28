@@ -5,19 +5,20 @@
 #include "mode/level_1/main_level_1.h"
 
 #include <iostream>
+#include <File_Util.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-win window;
+Window window;
 int fps = 60; // make this a macro if the fps is fixed
 int mode = TITLE_SCREEN;
 
-Mix_Music* music;
+Mix_Music *music;
 
-texture_image mouse_cursor;
+TextureImage mouse_cursor;
 bool hold = false;
 SDL_Point mouse_pos;
 

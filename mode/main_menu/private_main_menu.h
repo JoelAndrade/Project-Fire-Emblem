@@ -1,7 +1,7 @@
 #ifndef PRIVATE_MAIN_MENU_H
 #define PRIVATE_MAIN_MENU_H
 
-#include "../../main.h"
+#include "main.h"
 
 #include <SDL2/SDL.h>
 #include <SDL_CLasses.h>
@@ -20,7 +20,7 @@ typedef enum Main_Menu_e {
 
 extern Main_Menu_t main_menu_mode;
 
-extern texture_image background;
+extern TextureImage background;
 
 extern option_box_t game_box;
 extern option_box_t video_box;

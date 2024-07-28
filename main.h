@@ -6,30 +6,31 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
-#include <File_Util.h>
 
 #define SCALE (settings.window_height/720)
 
-typedef enum modes_e {
+typedef enum modes_e
+{
     QUIT,
     TITLE_SCREEN,
     MAIN_MENU,
     LEVEL_1,
 } modes_t;
 
-typedef struct option_box_s {
-    texture_image flat;
-    texture_image light;
-    texture_image click;
+typedef struct option_box_s
+{
+    TextureImage flat;
+    TextureImage light;
+    TextureImage click;
 } option_box_t;
 
-extern win window;
+extern Window window;
 extern int fps;
 extern int mode;
 
 extern Mix_Music* music;
 
-extern texture_image mouse_cursor;
+extern TextureImage mouse_cursor;
 extern bool hold;
 extern SDL_Point mouse_pos;
 

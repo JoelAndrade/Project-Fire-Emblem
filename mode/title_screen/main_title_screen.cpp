@@ -1,4 +1,4 @@
-#include "../../main.h"
+#include "main.h"
 #include "main_title_screen.h"
 
 #include <SDL2/SDL.h>
@@ -6,7 +6,7 @@
 #include <SDL_CLasses.h>
 #include <SDL_Util.h>
 
-static texture_image title_screen;
+static TextureImage title_screen;
 
 static void run_title_screen(void);
 static void render_screen(void);
@@ -78,10 +78,10 @@ static void run_title_screen(void)
 
 static void render_screen(void)
 {
-    window.clearRender();
+    window.clear_render();
 
-    title_screen.render(window.renderer);
-    mouse_cursor.render(window.renderer);
+    title_screen.render();
+    mouse_cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
@@ -94,7 +94,7 @@ static void images_init(void)
 
 static void destroy_images(void)
 {
-    title_screen.destroy();
+    title_screen.~TextureImage();
 }
 
 static void sound_init(void)
