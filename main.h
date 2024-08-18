@@ -7,6 +7,8 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL_CLasses.h>
 
+#include <iostream>
+
 #define SCALE (settings.window_height/720)
 
 typedef enum modes_e
@@ -19,21 +21,16 @@ typedef enum modes_e
 
 typedef struct option_box_s
 {
+    TextureText text;
     TextureImage flat;
     TextureImage light;
     TextureImage click;
 } option_box_t;
 
 extern Window window;
+extern MouseCursor cursor;
+extern Mix_Music* music;
 extern int fps;
 extern int mode;
-
-extern Mix_Music* music;
-
-extern TextureImage mouse_cursor;
-extern bool hold;
-extern SDL_Point mouse_pos;
-
-void check_mouse(void);
 
 #endif // MAIN_H 

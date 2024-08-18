@@ -64,9 +64,6 @@ static void run_title_screen(void)
             }
         }
 
-        check_mouse();
-        update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
-    
         render_screen();
 
         frame_cap(fps, starting_tick);
@@ -78,17 +75,19 @@ static void run_title_screen(void)
 
 static void render_screen(void)
 {
+    cursor.update_cursor_pos(window.window);
+
     window.clear_render();
 
     title_screen.render();
-    mouse_cursor.render();
+    cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
 
 static void images_init(void)
 {
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
     title_screen.init(window.renderer, "images/Images/title_images/startMenu.jpg", window.w, window.h);
 }
 
@@ -101,7 +100,7 @@ static void sound_init(void)
 {
     music = Mix_LoadMUS("sound/music/15. Understanding What We've Grown To Be.mp3");
     Mix_PlayMusic(music, -1);
-    Mix_VolumeMusic(10);
+    Mix_VolumeMusic(0);
 }
 
 static void destroy_sound(void)

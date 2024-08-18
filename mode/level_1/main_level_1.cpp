@@ -13,7 +13,7 @@
 #define CAMERA_CHANGE (10)
 #define REVERT (true)
 
-SDL_Point left_click;
+SDL_Point click_index;
 SDL_Point focus;
 SDL_Point camera;
 
@@ -27,18 +27,18 @@ TextureImage stone_tile;
 TextureImage tree_tile;
 TextureImage water_tile;
 
-option_box_t attack_box;
-option_box_t items_box;
-option_box_t move_box;
-option_box_t stats_box;
-option_box_t wait_box;
-option_box_t settings_box;
+option_box_t option_block_1;
+option_box_t option_block_2;
+option_box_t option_block_3;
+option_box_t option_block_4;
+option_box_t option_block_5;
+option_box_t option_block_6;
 
 TextureImage cursor_highlight;
 TextureImage move_highlight;
 TextureImage attack_highlight;
 
-TextureImage text_box;
+TextureImage text_box_holder;
 
 Character hero_sprite;
 Character villain_sprite;
@@ -59,13 +59,15 @@ static bool option_select_event(option_box_t* rect, levelMode_t modeSelect);
 static bool move_event(bool revert = false);
 static void attack_event(void);
 
-static void click_index(int* x, int* y);
+static void get_click_index(int* x, int* y);
 static void ajust_sprites(int xAjust, int yAjust);
-static void arrage_text(int numBoxes, ...);
+static void arrage_text(int num_boxes, ...);
 
 static void images_init(void);
 static void destroy_images(void);
 static void sprites_init(void);
+static void init_block(option_box_t *option_block, const char *block_name);
+static void destroy_block(option_box_t *option_block);
 
 static void run_level_1(void);
 static void render_screen(void);
@@ -105,7 +107,7 @@ static void run_level_1(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = true;
+                    cursor.hold = true;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -117,10 +119,10 @@ static void run_level_1(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = false;
-                    left_click.x = event.button.x;
-                    left_click.y = event.button.y;
-                    click_index(&left_click.x, &left_click.y);
+                    cursor.hold = false;
+                    click_index.x = event.button.x;
+                    click_index.y = event.button.y;
+                    get_click_index(&click_index.x, &click_index.y);
 
                     switch (level_mode)
                     {
@@ -131,7 +133,7 @@ static void run_level_1(void)
                     case OPTIONS:
                         if (!outside_textbox_event())
                         {
-                            option_select_event(&settings_box, SETTINGS);
+                            option_select_event(&option_block_1, SETTINGS);
                         }
                         break;
                     
@@ -141,20 +143,31 @@ static void run_level_1(void)
                             if (move_event());
                             else if (!outside_textbox_event())
                             {
-                                option_select_event(&move_box, MOVE);
-                                if (option_select_event(&items_box, ITEM))
+                                option_select_event(&option_block_1, MOVE);
+                                if (option_select_event(&option_block_2, ITEM))
                                 {
-                                    arrage_text(5, &wait_box, &attack_box, &move_box, &items_box, &stats_box);
+                                    option_block_1.text.change_text(character_select->items.slot_1.name);
+                                    option_block_2.text.change_text(character_select->items.slot_2.name);
+                                    option_block_3.text.change_text(character_select->items.slot_3.name);
+                                    arrage_text(3, &option_block_1, &option_block_2, &option_block_3);
                                 }
-                                option_select_event(&settings_box, SETTINGS);
+                                option_select_event(&option_block_3, STATS);
+                                option_select_event(&option_block_4, SETTINGS);
                             }
                         }
                         else
                         {
                             if (!outside_textbox_event())
                             {
-                                option_select_event(&stats_box, STATS);
-                                option_select_event(&settings_box, SETTINGS);
+                                if (option_select_event(&option_block_1, ITEM))
+                                {
+                                    option_block_1.text.change_text(character_select->items.slot_1.name);
+                                    option_block_2.text.change_text(character_select->items.slot_2.name);
+                                    option_block_3.text.change_text(character_select->items.slot_3.name);
+                                    arrage_text(3, &option_block_1, &option_block_2, &option_block_3);
+                                }
+                                option_select_event(&option_block_2, STATS);
+                                option_select_event(&option_block_3, SETTINGS);
                             }
                         }
                         break;
@@ -166,23 +179,23 @@ static void run_level_1(void)
                     case ITEM:
                         bool item_selected;
                         
-                        if (item_selected = option_select_event(&wait_box, ITEM_OPTIONS))
+                        if (item_selected = option_select_event(&option_block_1, ITEM_OPTIONS))
                         {
                             item_select = &character_select->items.slot_1;
                         }
-                        else if (item_selected = option_select_event(&attack_box, ITEM_OPTIONS))
+                        else if (item_selected = option_select_event(&option_block_2, ITEM_OPTIONS))
                         {
                             item_select = &character_select->items.slot_2;
                         }
-                        else if (item_selected = option_select_event(&move_box, ITEM_OPTIONS))
+                        else if (item_selected = option_select_event(&option_block_3, ITEM_OPTIONS))
                         {
                             item_select = &character_select->items.slot_3;
                         }
-                        else if (item_selected = option_select_event(&items_box, ITEM_OPTIONS))
+                        else if (item_selected = option_select_event(&option_block_4, ITEM_OPTIONS))
                         {
                             item_select = &character_select->items.slot_4;
                         }
-                        else if (item_selected = option_select_event(&stats_box, ITEM_OPTIONS))
+                        else if (item_selected = option_select_event(&option_block_5, ITEM_OPTIONS))
                         {
                             item_select = &character_select->items.slot_5;
                         }
@@ -192,15 +205,20 @@ static void run_level_1(void)
                             switch (item_select->type)
                             {
                                 case WEAPON:
-                                    arrage_text(2, &stats_box, &items_box);
+                                    option_block_1.text.change_text("Equip Weapon");
+                                    option_block_2.text.change_text("Desc");
+                                    arrage_text(2, &option_block_1, &option_block_2);
                                     break;
 
                                 case HOLD:
-                                    arrage_text(1, &items_box);
+                                    option_block_1.text.change_text("Desc");
+                                    arrage_text(1, &option_block_1);
                                     break;
 
                                 case CONSUMABLE:
-                                    arrage_text(2, &move_box, &items_box);
+                                    option_block_1.text.change_text("Use Item");
+                                    option_block_2.text.change_text("Desc");
+                                    arrage_text(2, &option_block_1, &option_block_2);
                                     break;
                             }
                         }
@@ -211,10 +229,10 @@ static void run_level_1(void)
                         break;
 
                     case POSTMOVE:
-                        option_select_event(&wait_box, DEFAULT);
+                        option_select_event(&option_block_1, DEFAULT);
                         if (render_attack_box(character_select->i, character_select->j))
                         {
-                            option_select_event(&attack_box, ATTACK);
+                            option_select_event(&option_block_2, ATTACK);
                         }
                         break;
 
@@ -254,12 +272,21 @@ static void run_level_1(void)
                     
                     case ITEM:
                         level_mode = PIECE_SELECT;
-                        arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
+                        option_block_1.text.change_text("move");
+                        option_block_2.text.change_text("items");
+                        option_block_3.text.change_text("stats");
+                        option_block_4.text.change_text("settings");
+                        arrage_text(4, &option_block_1, &option_block_2, &option_block_3, &option_block_4);
                         break;
 
                     case ITEM_OPTIONS:
                         level_mode = ITEM;
-                        arrage_text(5, &wait_box, &attack_box, &move_box, &items_box, &stats_box);
+                        option_block_1.text.change_text("wait");
+                        option_block_2.text.change_text("attack");
+                        option_block_3.text.change_text("move");
+                        option_block_4.text.change_text("items");
+                        option_block_5.text.change_text("stats");
+                        arrage_text(5, &option_block_1, &option_block_2, &option_block_3, &option_block_4, &option_block_5);
                         break;
 
                     case POSTMOVE:
@@ -335,8 +362,7 @@ static void run_level_1(void)
 
 static void render_screen(void)
 {
-    check_mouse();
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
 
     window.clear_render();
 
@@ -399,8 +425,8 @@ static void render_screen(void)
         break;
     
     case OPTIONS:
-        text_box.render();
-        render_options(&settings_box);
+        text_box_holder.render();
+        render_options(&option_block_1);
         break;
     
     case PIECE_SELECT:
@@ -408,19 +434,19 @@ static void render_screen(void)
         render_attck_highlight();
         render_cursor_highlight_grid();
 
-        text_box.render();
+        text_box_holder.render();
         if (character_select->allegiance == HERO)
         {
-            render_options(&move_box);
-            render_options(&items_box);
-            render_options(&stats_box);
-            render_options(&settings_box);
+            render_options(&option_block_1); // move
+            render_options(&option_block_2); // items
+            render_options(&option_block_3); // stats
+            render_options(&option_block_4); // settings
         }
         else
         {
-            render_options(&items_box);
-            render_options(&stats_box);
-            render_options(&settings_box);
+            render_options(&option_block_1); // items
+            render_options(&option_block_2); // stats
+            render_options(&option_block_3); // settings
         }
         break;
 
@@ -431,28 +457,26 @@ static void render_screen(void)
         break;
 
     case ITEM:
-        text_box.render();
-        render_options(&wait_box);
-        render_options(&attack_box);
-        render_options(&move_box);
-        render_options(&items_box);
-        render_options(&stats_box);
+        text_box_holder.render();
+        render_options(&option_block_1); // Item 1
+        render_options(&option_block_2); // Item 2
+        render_options(&option_block_3); // Item 3
         break;
 
     case ITEM_OPTIONS:
-        text_box.render();
+        text_box_holder.render();
         switch (item_select->type)
         {
         case WEAPON:
-            render_options(&stats_box);
-            render_options(&items_box);
+            render_options(&option_block_1); // Equip Weapon
+            render_options(&option_block_2); // Desc
             break;
         case HOLD:
-            render_options(&items_box);
+            render_options(&option_block_1); // Desc
             break;
         case CONSUMABLE:
-            render_options(&move_box);
-            render_options(&items_box);
+            render_options(&option_block_1); // Use Item
+            render_options(&option_block_2); // Desc
             break;
         }
 
@@ -461,11 +485,11 @@ static void render_screen(void)
     case POSTMOVE:
         render_cursor_highlight_grid();
         
-        text_box.render();
-        render_options(&wait_box);
+        text_box_holder.render();
+        render_options(&option_block_1); // wait
         if (render_attack_box(character_select->i, character_select->j))
         {
-            render_options(&attack_box);
+            render_options(&option_block_2); // attack
         }
         break;
 
@@ -485,7 +509,7 @@ static void render_screen(void)
         break;
     }
 
-    mouse_cursor.render();
+    cursor.render();
 
     SDL_RenderPresent(window.renderer);
 }
@@ -527,7 +551,7 @@ static void render_post_move_attack(int i, int j)
     if (lvl1_map.piece_locations[i - 1][j] != NULL)
     {
         if (lvl1_map.piece_locations[i - 1][j]->allegiance != HERO)
-        {                                                                 // [ ][x][ ]
+        {                                                                  // [ ][x][ ]
             attack_highlight.new_rect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
             attack_highlight.new_rect.y = (i - 1)*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attack_highlight.render();
@@ -537,7 +561,7 @@ static void render_post_move_attack(int i, int j)
     if (lvl1_map.piece_locations[i][j - 1] != NULL)
     {
         if (lvl1_map.piece_locations[i][j - 1]->allegiance != HERO)
-        {                                                                 // [ ][ ][ ]
+        {                                                                  // [ ][ ][ ]
             attack_highlight.new_rect.x = (j - 1)*BLOCK_LENGTH - camera.x; // [x][o][ ]
             attack_highlight.new_rect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attack_highlight.render();
@@ -547,7 +571,7 @@ static void render_post_move_attack(int i, int j)
     if (lvl1_map.piece_locations[i][j + 1] != NULL)
     {
         if (lvl1_map.piece_locations[i][j + 1]->allegiance != HERO)
-        {                                                                 // [ ][ ][ ]
+        {                                                                  // [ ][ ][ ]
             attack_highlight.new_rect.x = (j + 1)*BLOCK_LENGTH - camera.x; // [ ][o][x]
             attack_highlight.new_rect.y =       i*BLOCK_LENGTH - camera.y; // [ ][ ][ ]
             attack_highlight.render();
@@ -557,7 +581,7 @@ static void render_post_move_attack(int i, int j)
     if (lvl1_map.piece_locations[i + 1][j] != NULL)
     {
         if (lvl1_map.piece_locations[i + 1][j]->allegiance != HERO)
-        {                                                                 // [ ][ ][ ]
+        {                                                                  // [ ][ ][ ]
             attack_highlight.new_rect.x =       j*BLOCK_LENGTH - camera.x; // [ ][o][ ]
             attack_highlight.new_rect.y = (i + 1)*BLOCK_LENGTH - camera.y; // [ ][x][ ]
             attack_highlight.render();
@@ -604,11 +628,11 @@ static bool render_attack_box(int i, int j)
 
 static void render_options(option_box_t* box)
 {
-    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
+    if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect) && cursor.hold)
     {
         box->click.render();
     }
-    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
+    else if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect))
     {
         box->light.render();
     }
@@ -616,19 +640,21 @@ static void render_options(option_box_t* box)
     {
         box->flat.render();
     }
+
+    box->text.render();
 }
 
 static void render_cursor_highlight_grid(void)
 {
-    cursor_highlight.new_rect.x = ((mouse_pos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
-    cursor_highlight.new_rect.y = ((mouse_pos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
+    cursor_highlight.new_rect.x = ((cursor.mouse_pos.x + camera.x)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.x;
+    cursor_highlight.new_rect.y = ((cursor.mouse_pos.y + camera.y)/BLOCK_LENGTH) * BLOCK_LENGTH - camera.y;
     cursor_highlight.render();
 }
 
 
 static bool outside_textbox_event(void)
 {
-    if (!SDL_PointInRect(&mouse_pos, &text_box.new_rect))
+    if (!SDL_PointInRect(&cursor.mouse_pos, &text_box_holder.new_rect))
     {
         level_mode = DEFAULT;
         return true;
@@ -638,34 +664,42 @@ static bool outside_textbox_event(void)
 
 static void piece_select_event(void)
 {
-    if (lvl1_map.collision[left_click.y][left_click.x] == 'p')
+    if (lvl1_map.collision[click_index.y][click_index.x] == 'p')
     {
-        character_select = lvl1_map.piece_locations[left_click.y][left_click.x];
+        character_select = lvl1_map.piece_locations[click_index.y][click_index.x];
         lvl1_map.fill_move_attack_spaces(character_select->i, character_select->j, character_select->moves);
         // print_field(lvl1_map.move_attack_spaces[0], ROW, COL); // TODO: remove this line
         level_mode = PIECE_SELECT;
 
         if (character_select->allegiance == HERO)
-        {
-            arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
+        {  
+            option_block_1.text.change_text("move");
+            option_block_2.text.change_text("items");
+            option_block_3.text.change_text("stats");
+            option_block_4.text.change_text("settings");
+            arrage_text(4, &option_block_1, &option_block_2, &option_block_3, &option_block_4);
         }
         else
         {
-            arrage_text(3, &items_box, &stats_box, &settings_box);
+            option_block_1.text.change_text("items");
+            option_block_2.text.change_text("stats");
+            option_block_3.text.change_text("settings");
+            arrage_text(3, &option_block_1, &option_block_2, &option_block_3);
         }
     }
     else
     {
         level_mode = OPTIONS;
-        arrage_text(1, &settings_box);
+        option_block_1.text.change_text("settings");
+        arrage_text(1, &option_block_1);
     }
 }
 
-static bool option_select_event(option_box_t* box, levelMode_t modeSelect)
+static bool option_select_event(option_box_t* box, levelMode_t mode_select)
 {
-    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
+    if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect))
     {
-        level_mode = modeSelect;
+        level_mode = mode_select;
         return true;
     }
 
@@ -674,31 +708,31 @@ static bool option_select_event(option_box_t* box, levelMode_t modeSelect)
 
 static bool move_event(bool revert)
 {
-    static SDL_Point prevCharacterPos;
+    static SDL_Point prev_character_pos;
 
-    if (LIMITS('0', lvl1_map.move_attack_spaces[left_click.y][left_click.x], '0' + character_select->moves) || revert)
+    if (LIMITS('0', lvl1_map.move_attack_spaces[click_index.y][click_index.x], '0' + character_select->moves) || revert)
     {
         if (!revert)
         {
-            prevCharacterPos.x = character_select->j;
-            prevCharacterPos.y = character_select->i;
+            prev_character_pos.x = character_select->j;
+            prev_character_pos.y = character_select->i;
         }
         else
         {
-            left_click.x = prevCharacterPos.x;
-            left_click.y = prevCharacterPos.y;
+            click_index.x = prev_character_pos.x;
+            click_index.y = prev_character_pos.y;
         }
 
-        char tempChar = lvl1_map.collision[left_click.y][left_click.x];
-        lvl1_map.collision[left_click.y][left_click.x] = lvl1_map.collision[character_select->i][character_select->j];
-        lvl1_map.collision[character_select->i][character_select->j] = tempChar;
+        char temp_char = lvl1_map.collision[click_index.y][click_index.x];
+        lvl1_map.collision[click_index.y][click_index.x] = lvl1_map.collision[character_select->i][character_select->j];
+        lvl1_map.collision[character_select->i][character_select->j] = temp_char;
 
-        Character* tempCharacter = lvl1_map.piece_locations[left_click.y][left_click.x];
-        lvl1_map.piece_locations[left_click.y][left_click.x] = lvl1_map.piece_locations[character_select->i][character_select->j];
+        Character* tempCharacter = lvl1_map.piece_locations[click_index.y][click_index.x];
+        lvl1_map.piece_locations[click_index.y][click_index.x] = lvl1_map.piece_locations[character_select->i][character_select->j];
         lvl1_map.piece_locations[character_select->i][character_select->j] = tempCharacter;
 
-        character_select->i = left_click.y;
-        character_select->j = left_click.x;
+        character_select->i = click_index.y;
+        character_select->j = click_index.x;
         character_select->image.new_rect.x = character_select->j*BLOCK_LENGTH - camera.x;
         character_select->image.new_rect.y = character_select->i*BLOCK_LENGTH - camera.y;
 
@@ -707,17 +741,24 @@ static bool move_event(bool revert)
             level_mode = POSTMOVE;
             if (render_attack_box(character_select->i, character_select->j))
             {
-                arrage_text(2, &wait_box, &attack_box);
+                option_block_1.text.change_text("wait");
+                option_block_2.text.change_text("attack");
+                arrage_text(2, &option_block_1, &option_block_2);
             }
             else
             {
-                arrage_text(1, &wait_box);
+                option_block_1.text.change_text("wait");
+                arrage_text(1, &option_block_1);
             }
         }
         else
         {
             level_mode = PIECE_SELECT;
-            arrage_text(4, &move_box, &items_box, &stats_box, &settings_box);
+            option_block_1.text.change_text("move");
+            option_block_2.text.change_text("items");
+            option_block_3.text.change_text("stats");
+            option_block_4.text.change_text("settings");
+            arrage_text(4, &option_block_1, &option_block_2, &option_block_3, &option_block_4);    
         }
 
         return true;
@@ -728,45 +769,47 @@ static bool move_event(bool revert)
 
 void attack_event(void)
 {
-    if (lvl1_map.piece_locations[left_click.y][left_click.x] != NULL)
+    NULL_CHECK(lvl1_map.piece_locations[click_index.y][click_index.x]);
+
+    if (lvl1_map.piece_locations[click_index.y][click_index.x]->allegiance == VILLAIN)
     {
-        if (lvl1_map.piece_locations[left_click.y][left_click.x]->allegiance == VILLAIN)
-        {
-            // TODO: Need a functions that calculates the damage, crit, and misses
-            lvl1_map.piece_locations[left_click.y][left_click.x]->hp -= character_select->attack;
-            std::cout << lvl1_map.piece_locations[left_click.y][left_click.x]->hp << std::endl; // TODO: remove this line
-            level_mode = DEFAULT;
-        }
+        // TODO: Need a functions that calculates the damage, crit, and misses
+        lvl1_map.piece_locations[click_index.y][click_index.x]->hp -= character_select->attack;
+        std::cout << lvl1_map.piece_locations[click_index.y][click_index.x]->hp << std::endl; // TODO: remove this line
+        level_mode = DEFAULT;
     }
 }
 
-static void arrage_text(int numBoxes, ...)
+static void arrage_text(int num_boxes, ...)
 {
-    text_box.new_rect.h = numBoxes*85*SCALE;
-    rect_make_dimensions(&text_box.new_rect);
+    text_box_holder.new_rect.h = num_boxes*85*SCALE;
+    rect_make_dimensions(&text_box_holder.new_rect);
 
     va_list args;
-    va_start(args, numBoxes);
-    for (int i = 1; i < (2*numBoxes); i = i + 2)
+    va_start(args, num_boxes);
+    for (int i = 1; i < (2*num_boxes); i = i + 2)
     {
-        option_box_t* box = va_arg(args, option_box_t*);
+        option_box_t *box = va_arg(args, option_box_t *);
 
-        box->flat.new_rect.y  = (i*text_box.new_rect.h)/(2*numBoxes);
-        box->light.new_rect.y = (i*text_box.new_rect.h)/(2*numBoxes);
-        box->click.new_rect.y = (i*text_box.new_rect.h)/(2*numBoxes);
+        box->flat.new_rect.y  = (i*text_box_holder.new_rect.h)/(2*num_boxes);
+        box->light.new_rect.y = (i*text_box_holder.new_rect.h)/(2*num_boxes);
+        box->click.new_rect.y = (i*text_box_holder.new_rect.h)/(2*num_boxes);
+        box->text.rect.y      = (i*text_box_holder.new_rect.h)/(2*num_boxes);
 
         rect_make_dimensions(&box->flat.new_rect);
         rect_make_dimensions(&box->light.new_rect);
         rect_make_dimensions(&box->click.new_rect);
+        rect_make_dimensions(&box->text.rect);
 
         rect_shiftY(&box->flat.new_rect);
         rect_shiftY(&box->light.new_rect);
         rect_shiftY(&box->click.new_rect);
+        rect_shiftY(&box->text.rect);
     }
     va_end(args);
 }
 
-static void click_index(int* x, int* y)
+static void get_click_index(int *x, int *y)
 {
     *x = (*x + camera.x)/BLOCK_LENGTH;
     *y = (*y + camera.y)/BLOCK_LENGTH;
@@ -785,9 +828,9 @@ static void ajust_sprites(int xAjust, int yAjust)
 
 static void images_init(void)
 {
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
 
-    tile.init(window.renderer,      "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
+    tile.init(window.renderer,       "images/Images/level_1_images/blockDark.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
     dirt_tile.init(window.renderer,  "images/Images/level_1_images/dirttile.png",  BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
     grass_tile.init(window.renderer, "images/Images/level_1_images/grasstile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
     house_tile.init(window.renderer, "images/Images/level_1_images/housetile.png", BLOCK_LENGTH, BLOCK_LENGTH, 0, 0);
@@ -798,72 +841,45 @@ static void images_init(void)
     hero_sprite.image.init(window.renderer,    "images/Images/level_1_images/sprite.png",        0.1, 7*BLOCK_LENGTH, 4*BLOCK_LENGTH);
     villain_sprite.image.init(window.renderer, "images/Images/level_1_images/badGuySprite.png", 0.13, 7*BLOCK_LENGTH, 1*BLOCK_LENGTH);
 
-    text_box.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
-    rect_shiftX(&text_box.new_rect, 2); // This is here to fix all the other boxes
+    text_box_holder.init(window.renderer, "images/Images/level_1_images/TextBox.png", 0.28*SCALE, window.w, 0);
+    rect_shiftX(&text_box_holder.new_rect, 2); // This is here to fix all the other boxes
 
     cursor_highlight.init(window.renderer, SDL_yellow, BLOCK_LENGTH, BLOCK_LENGTH);
     move_highlight.init(window.renderer,   SDL_cyan,   BLOCK_LENGTH, BLOCK_LENGTH);
     attack_highlight.init(window.renderer, SDL_red,    BLOCK_LENGTH, BLOCK_LENGTH);
 
-    move_box.flat.init(window.renderer,  "images/Images/level_1_images/Move.png",   OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
-    move_box.light.init(window.renderer, "images/Images/level_1_images/MoveH.png",  OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
-    move_box.click.init(window.renderer, "images/Images/level_1_images/MoveHL.png", OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
+    init_block(&option_block_1, "move");
+    init_block(&option_block_2, "items");
+    init_block(&option_block_3, "stats");
+    init_block(&option_block_4, "settings");
+    init_block(&option_block_5, "wait");
+    init_block(&option_block_6, "attack");
 
-    items_box.flat.init(window.renderer,  "images/Images/level_1_images/Items.png",   OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-    items_box.light.init(window.renderer, "images/Images/level_1_images/ItemsH.png",  OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-    items_box.click.init(window.renderer, "images/Images/level_1_images/ItemsHL.png", OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-
-    stats_box.flat.init(window.renderer,  "images/Images/level_1_images/Stats.png",   OPTION_BLOCK, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
-    stats_box.light.init(window.renderer, "images/Images/level_1_images/StatsH.png",  OPTION_BLOCK, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
-    stats_box.click.init(window.renderer, "images/Images/level_1_images/StatsHL.png", OPTION_BLOCK, text_box.new_rect.topX, 5*text_box.new_rect.h/8);
-
-    settings_box.flat.init(window.renderer,  "images/Images/level_1_images/Settings.png",   OPTION_BLOCK, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
-    settings_box.light.init(window.renderer, "images/Images/level_1_images/SettingsH.png",  OPTION_BLOCK, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
-    settings_box.click.init(window.renderer, "images/Images/level_1_images/SettingsHL.png", OPTION_BLOCK, text_box.new_rect.topX, 7*text_box.new_rect.h/8);
-
-    wait_box.flat.init(window.renderer,  "images/Images/level_1_images/Wait.png",   OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
-    wait_box.light.init(window.renderer, "images/Images/level_1_images/WaitH.png",  OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
-    wait_box.click.init(window.renderer, "images/Images/level_1_images/WaitHL.png", OPTION_BLOCK, text_box.new_rect.topX, text_box.new_rect.h/8);
-
-    attack_box.flat.init(window.renderer,  "images/Images/level_1_images/Attack.png",   OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-    attack_box.light.init(window.renderer, "images/Images/level_1_images/AttackH.png",  OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-    attack_box.click.init(window.renderer, "images/Images/level_1_images/AttackHL.png", OPTION_BLOCK, text_box.new_rect.topX, 3*text_box.new_rect.h/8);
-
-    rect_shiftXY(&move_box.flat.new_rect);
-    rect_shiftXY(&move_box.light.new_rect);
-    rect_shiftXY(&move_box.click.new_rect);
-
-    rect_shiftXY(&items_box.flat.new_rect);
-    rect_shiftXY(&items_box.light.new_rect);
-    rect_shiftXY(&items_box.click.new_rect);
-
-    rect_shiftXY(&stats_box.flat.new_rect);
-    rect_shiftXY(&stats_box.light.new_rect);
-    rect_shiftXY(&stats_box.click.new_rect);
-
-    rect_shiftXY(&settings_box.flat.new_rect);
-    rect_shiftXY(&settings_box.light.new_rect);
-    rect_shiftXY(&settings_box.click.new_rect);
-
-    rect_shiftXY(&wait_box.flat.new_rect);
-    rect_shiftXY(&wait_box.light.new_rect);
-    rect_shiftXY(&wait_box.click.new_rect);
-
-    rect_shiftXY(&attack_box.flat.new_rect);
-    rect_shiftXY(&attack_box.light.new_rect);
-    rect_shiftXY(&attack_box.click.new_rect);
-
-    text_box.set_alpha(200);
-    move_box.flat.set_alpha(200);
-    items_box.flat.set_alpha(200);
-    stats_box.flat.set_alpha(200);
-    settings_box.flat.set_alpha(200);
-    wait_box.flat.set_alpha(200);
-    attack_box.flat.set_alpha(200);
-
+    text_box_holder.set_alpha(200);
     cursor_highlight.set_alpha(50);
     move_highlight.set_alpha(100);
     attack_highlight.set_alpha(100);
+}
+
+static void init_block(option_box_t *option_block, const char *block_name)
+{
+    option_block->flat.init(window.renderer,  SDL_yellow, 175, 65, text_box_holder.new_rect.topX, text_box_holder.new_rect.h/8);
+    option_block->light.init(window.renderer, SDL_blue,   175, 65, text_box_holder.new_rect.topX, text_box_holder.new_rect.h/8);
+    option_block->click.init(window.renderer, SDL_cyan,   175, 65, text_box_holder.new_rect.topX, text_box_holder.new_rect.h/8);
+    option_block->text.init(window.renderer, "fonts/arial.ttf", block_name, 20, option_block->flat.new_rect.x, option_block->flat.new_rect.y);
+    rect_shiftXY(&option_block->flat.new_rect);
+    rect_shiftXY(&option_block->light.new_rect);
+    rect_shiftXY(&option_block->click.new_rect);
+    rect_shiftXY(&option_block->text.rect);
+    option_block->flat.set_alpha(200);
+}
+
+static void destroy_block(option_box_t *option_block)
+{
+    option_block->flat.~TextureImage();
+    option_block->light.~TextureImage();
+    option_block->click.~TextureImage();
+    option_block->text.~TextureText();
 }
 
 static void destroy_images(void)
@@ -883,31 +899,14 @@ static void destroy_images(void)
     move_highlight.~TextureImage();
     attack_highlight.~TextureImage();
 
-    text_box.~TextureImage();
+    text_box_holder.~TextureImage();
 
-    move_box.flat.~TextureImage(); 
-    move_box.light.~TextureImage(); 
-    move_box.click.~TextureImage();
-
-    items_box.flat.~TextureImage(); 
-    items_box.light.~TextureImage(); 
-    items_box.click.~TextureImage();
-
-    stats_box.flat.~TextureImage(); 
-    stats_box.light.~TextureImage(); 
-    stats_box.click.~TextureImage();
-
-    settings_box.flat.~TextureImage(); 
-    settings_box.light.~TextureImage(); 
-    settings_box.click.~TextureImage(); 
-
-    wait_box.flat.~TextureImage();
-    wait_box.light.~TextureImage();
-    wait_box.click.~TextureImage();
-
-    attack_box.flat.~TextureImage();
-    attack_box.light.~TextureImage();
-    attack_box.click.~TextureImage();
+    destroy_block(&option_block_1);
+    destroy_block(&option_block_2);
+    destroy_block(&option_block_3);
+    destroy_block(&option_block_4);
+    destroy_block(&option_block_5);
+    destroy_block(&option_block_6);
 }
 
 static void sprites_init(void)

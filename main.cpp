@@ -13,27 +13,11 @@
 #include <SDL_Util.h>
 
 Window window;
-int fps = 60; // make this a macro if the fps is fixed
-int mode = TITLE_SCREEN;
-
+MouseCursor cursor;
 Mix_Music *music;
 
-TextureImage mouse_cursor;
-bool hold = false;
-SDL_Point mouse_pos;
-
-void check_mouse(void)
-{
-    if (window.mouse_in_window())
-    {
-        SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
-    }
-    else
-    {
-        mouse_pos.x = window.w;
-        mouse_pos.y = window.h;
-    }
-}
+int fps = 60; // make this a macro if the fps is fixed
+int mode = TITLE_SCREEN;
 
 int main(int argc, char* args[]) {
     //Init SDL Stuff
@@ -45,7 +29,7 @@ int main(int argc, char* args[]) {
     load_settings_file();
 
     window.init(settings.widow_width, settings.window_height, "Loading...");
-    mouse_cursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
+    cursor.init(window.renderer, "images/Images/Cursor.png", 0.05);
 
     Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048);
 
@@ -66,7 +50,7 @@ int main(int argc, char* args[]) {
     }
 
     // Save and clean everything
-    write_save(&settings, sizeof(settings), "./setting.bin");
+    write_save(&settings, sizeof(settings), "setting.bin");
     SDL_DestroyWindow(window.window); //This closed the window
     SDL_DestroyRenderer(window.renderer);
     SDL_Quit(); //Closed the SDL program

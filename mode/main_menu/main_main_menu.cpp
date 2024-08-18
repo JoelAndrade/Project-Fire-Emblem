@@ -32,7 +32,7 @@ static void destroy_sound(void);
 
 void menu_event(SDL_Rect* rect, Main_Menu_t event)
 {
-    if (SDL_PointInRect(&mouse_pos, rect))
+    if (SDL_PointInRect(&cursor.mouse_pos, rect))
     {
         main_menu_mode = event;
     }
@@ -40,11 +40,11 @@ void menu_event(SDL_Rect* rect, Main_Menu_t event)
 
 void render_box(option_box_t* box)
 {
-    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
+    if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect) && cursor.hold)
     {
         box->click.render();
     }
-    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
+    else if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect))
     {
         box->light.render();
     }
@@ -55,11 +55,11 @@ void render_box(option_box_t* box)
 }
 void render_box(option_box_t* box, SDL_RendererFlip)
 {
-    if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect) && hold)
+    if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect) && cursor.hold)
     {
         box->click.render_flip(SDL_FLIP_HORIZONTAL);
     }
-    else if (SDL_PointInRect(&mouse_pos, &box->flat.new_rect))
+    else if (SDL_PointInRect(&cursor.mouse_pos, &box->flat.new_rect))
     {
         box->light.render_flip(SDL_FLIP_HORIZONTAL);
     }
@@ -117,7 +117,7 @@ static void run_main_menu(void) {
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -129,7 +129,7 @@ static void run_main_menu(void) {
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                     menu_event(&new_game_box.flat.new_rect, NEWGAME);
                     menu_event(&settings_box.flat.new_rect, SETTINGS);
                 }
@@ -158,8 +158,7 @@ static void run_main_menu(void) {
 
 static void render_screen(void)
 {
-    check_mouse();
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
     
     window.clear_render();
 
@@ -169,14 +168,14 @@ static void render_screen(void)
     render_box(&continue_box);
     render_box(&settings_box);
 
-    mouse_cursor.render();
+    cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
 
 void images_init_main_menu(void)
 {
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
 
     background.init(window.renderer, "images/Images/main_menu_images/menuBackground.jpg", window.w, window.h);
 
@@ -283,7 +282,7 @@ static void sound_init(void)
 {
     music = Mix_LoadMUS("sound/music/Fire Emblem Theme.mp3");
     Mix_PlayMusic(music, -1);
-    Mix_VolumeMusic(10);
+    Mix_VolumeMusic(0);
 }
 
 static void destroy_sound(void)

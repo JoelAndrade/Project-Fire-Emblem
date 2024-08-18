@@ -63,7 +63,7 @@ static void run_video_settings(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -75,7 +75,7 @@ static void run_video_settings(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                     arrow_event(&ap_ratio_box, sizeof(ap_ratio_box.box)/sizeof(ap_ratio_box.box[0]));
                     apply_event(&apply_box.flat.new_rect);
                 }
@@ -102,8 +102,7 @@ static void run_video_settings(void)
 
 static void render_screen(void)
 {
-    check_mouse();
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
     
     window.clear_render();
 
@@ -122,18 +121,18 @@ static void render_screen(void)
     arrow_box.click.new_rect = ap_ratio_box.right_arrow_rect;
     render_box(&arrow_box);
 
-    mouse_cursor.render();
+    cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
 
 static void arrow_event(ap_ratio_s* myBox, int numBoxes)
 {
-    if (SDL_PointInRect(&mouse_pos, &myBox->left_arrow_rect) && (myBox->i > 0))
+    if (SDL_PointInRect(&cursor.mouse_pos, &myBox->left_arrow_rect) && (myBox->i > 0))
     {
         myBox->i--;
     }
-    else if (SDL_PointInRect(&mouse_pos, &myBox->right_arrow_rect) && (myBox->i < numBoxes - 1))
+    else if (SDL_PointInRect(&cursor.mouse_pos, &myBox->right_arrow_rect) && (myBox->i < numBoxes - 1))
     {
         myBox->i++;
     }
@@ -141,7 +140,7 @@ static void arrow_event(ap_ratio_s* myBox, int numBoxes)
 
 static void apply_event(SDL_Rect* rect)
 {
-    if (SDL_PointInRect(&mouse_pos, rect))
+    if (SDL_PointInRect(&cursor.mouse_pos, rect))
     {
         switch (ap_ratio_box.i)
         {

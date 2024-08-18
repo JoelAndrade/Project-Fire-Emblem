@@ -50,7 +50,7 @@ static void run_settings(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -62,7 +62,7 @@ static void run_settings(void)
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    hold = event.button.state;
+                    cursor.hold = event.button.state;
                     menu_event(&video_box.flat.new_rect, VIDEO_SETTINGS);
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
@@ -88,8 +88,7 @@ static void run_settings(void)
 
 static void render_screen(void)
 {
-    check_mouse();
-    update_cursor_pos(&mouse_cursor.new_rect, mouse_pos.x, mouse_pos.y);
+    cursor.update_cursor_pos(window.window);
     
     window.clear_render();
 
@@ -99,7 +98,7 @@ static void render_screen(void)
     render_box(&video_box);
     render_box(&audio_box);
 
-    mouse_cursor.render();
+    cursor.render();
     
     SDL_RenderPresent(window.renderer);
 }
